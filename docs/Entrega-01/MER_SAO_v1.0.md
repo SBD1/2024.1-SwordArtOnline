@@ -1,12 +1,3 @@
-## Histórico de versões
-
-
-| Versão |    Data    | Descrição                                      | Autor                                               | Revisão                                                      |
-| :----: | :--------: | ---------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------ |
-| `1.0`  | 22/07/2024 | Criação do documento MER             | [Douglas Marinho](https://github.com/M4RINH0)   | [Henrique Torres](https://github.com/henriqtorresl)          |
-
-
-
 # MER - Modelo Entidade Relacionamento
 
 O Modelo Entidade Relacionamento de um bancos de dados é um modelo conceitual que descreve as entidades de um domínio de negócios, com seus atributos e seus relacionamentos.
@@ -95,3 +86,10 @@ O Modelo Entidade Relacionamento de um bancos de dados é um modelo conceitual q
 
 - O NPC possui um único inventário (1,1)
 - O inventário pertence a apenas um NPC (1,1)
+
+## Histórico de versão
+
+| Versão |    Data    | Descrição                                      | Autor                                               | Revisão                                                      |
+| :----: | :--------: | ---------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------ |
+| `1.0`  | 22/07/2024 | Criação do documento MER                       | [Douglas Marinho](https://github.com/M4RINH0)       | [Henrique Torres](https://github.com/henriqtorresl)          |
+
