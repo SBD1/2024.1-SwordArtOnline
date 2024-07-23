@@ -13,7 +13,7 @@
 
 ## Jogo
 
-Após o acesso a um novo aparelho de realidade virtual, ao entrar no jogo Sword Art Online, todos os jogadores ficam presos nesse mundo cheio de inimigos e criaturas perigosas. Eles são informados que, caso morram no jogo, perderão suas vidas no mundo real. Para se salvar e voltar à realidade, você precisa derrotar todos os chefes dos 100 andares. Será que você tem o que é preciso?
+Após o acesso a um novo aparelho de realidade virtual, ao entrar no jogo Sword Art Online um mundo com diversos ambientes presentes em um tipo de edificio flutuante com 100 andares, todos os jogadores ficam presos nesse mundo cheio de inimigos e criaturas perigosas. Eles são informados que, caso morram no jogo, perderão suas vidas no mundo real. Para se salvar e voltar à realidade, você precisa derrotar todos os chefes dos 100 andares. Será que você tem o que é preciso?
 
 ### Como o jogo funciona?
 
