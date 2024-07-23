@@ -43,7 +43,7 @@ Prepare-se para uma aventura intensa e emocionante, onde cada decisão pode sign
 
 | Módulo | Link da gravação                                                                                    | Data       |
 | ------ | --------------------------------------------------------------------------------------------------- | ---------- |
-| 1      | [Apresentação Módulo 1]()                                                                           |      -     |
+| 1      | [Apresentação Módulo 1](https://youtu.be/DtC8UW9KK5I)                                               | 22/07/2024 |
 | 2      | [Apresentação Módulo 2]()                                                                           |      -     |
 | 3      | [Apresentação Módulo 3]()                                                                           |      -     |
 | Final  | [Apresentação Final]()                                                                              |      -     |
