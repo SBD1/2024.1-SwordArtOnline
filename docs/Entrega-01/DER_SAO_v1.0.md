@@ -1,8 +1,9 @@
 ## Histórico de versões
 
-| Versão |  Data  | Descrição             | Autor                                                         |
-| :----: | :--------: | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `1.0` | 22/07/2024 | Criação do documento DER      | [Douglas Marinho](https://github.com/M4RINH0)                                  |
+| Versão |    Data    | Descrição                                      | Autor                                               | Revisão                                                      |
+| :----: | :--------: | ---------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------ |
+| `1.0`  | 22/07/2024 | Criação do documento DER      | [Douglas Marinho](https://github.com/M4RINH0)   | [Henrique Torres](https://github.com/henriqtorresl)          |
+
 
 # Diagrama Entidade-Relacionamento
 
