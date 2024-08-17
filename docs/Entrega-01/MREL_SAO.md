@@ -5,11 +5,21 @@
 O Modelo Relacional(MREL) apresenta um diagrama lógico de como as entidades e seus relacionamentos serão mapeados no banco de dados. Esse artefato é um modelo não atrelado a nenhum sistema de gerenciamento de banco de dados (SGBD) específico.
 
 <br/>
+A seguir na figura 1 temos a versão 1.0 do MREL
 
-<img src= '/docs/images/MREL.png' />
+<img src= '/docs/images/MREL-SAO 1.0.png' />
 
 <div style="text-align: center">
   <p>Figura 1: MREL Sword Art Online</p>
+  <p style="margin-top: -1%; font-size: 12px">Fonte: Douglas Marinho e Henrique Torres</p>
+</div>
+
+A seguir na figura 1 temos a versão 2.0 do MREL
+
+<img src= '/docs/images/MREL-SAO 2.0.png' />
+
+<div style="text-align: center">
+  <p>Figura 2: MREL Sword Art Online</p>
   <p style="margin-top: -1%; font-size: 12px">Fonte: Douglas Marinho e Henrique Torres</p>
 </div>
 
