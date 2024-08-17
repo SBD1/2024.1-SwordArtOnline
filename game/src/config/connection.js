@@ -22,7 +22,3 @@ const connection = async () => {
 module.exports = {
     connection
 }
-
-
-// Subir o banco com container docker:
-// `docker run -d -p 5432:5432 -e POSTGRES_DB=db_sword_art_online -e POSTGRES_USER=user_sao -e POSTGRES_PASSWORD=sao123 --name=container-db-sao  postgres` 
