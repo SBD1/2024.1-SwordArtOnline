@@ -1,4 +1,7 @@
-require('dotenv').config();
-const db = require('./config/connection');
+// const db = require('./config/connection');
+// db.connection();
+const { welcomeToGame } = require('./services/welcomeToGame');
 
-db.connection();
+welcomeToGame();
+
+// Documentar o passo a passo de como rodar o jogo...
