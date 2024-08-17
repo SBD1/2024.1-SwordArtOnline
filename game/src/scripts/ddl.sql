@@ -12,8 +12,8 @@ CREATE TYPE tipo_item AS ENUM ('Consumivel', 'Arma');
 CREATE TYPE tipo_efeito AS ENUM ('Ataque', 'Magia', 'Cura');
 
 -- Tabelas:
-CREATE TABLE IF NOT EXISTS Localizacao (
-    id_localizacao INTEGER PRIMARY KEY NOT NULL,
+CREATE TABLE Localizacao (
+    id_localizacao SERIAL PRIMARY KEY,
     andar INTEGER NOT NULL,
     descricao VARCHAR NOT NULL,
     estacao tipo_estacao NOT NULL,
@@ -23,8 +23,8 @@ CREATE TABLE IF NOT EXISTS Localizacao (
     CONSTRAINT FK_Localizacao_Posterior FOREIGN KEY (localizacao_posterior) REFERENCES Localizacao (id_localizacao)
 );
 
-CREATE TABLE IF NOT EXISTS Sala (
-    id_sala INTEGER PRIMARY KEY NOT NULL,
+CREATE TABLE Sala (
+    id_sala SERIAL PRIMARY KEY,
     nome VARCHAR NOT NULL,
     tipo tipo_sala NOT NULL,
     sala_anterior INTEGER,
@@ -35,8 +35,8 @@ CREATE TABLE IF NOT EXISTS Sala (
     CONSTRAINT FK_Sala_Localizacao FOREIGN KEY (id_localizacao) REFERENCES Localizacao (id_localizacao)
 );
 
-CREATE TABLE IF NOT EXISTS Item (
-    id_item INTEGER PRIMARY KEY NOT NULL,
+CREATE TABLE Item (
+    id_item SERIAL PRIMARY KEY,
     nome VARCHAR NOT NULL,
     tipo tipo_item NOT NULL,
     descricao VARCHAR NOT NULL,
@@ -44,12 +44,12 @@ CREATE TABLE IF NOT EXISTS Item (
     efeito tipo_efeito NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS Inventario (
-    id_inventario INTEGER PRIMARY KEY NOT NULL,
+CREATE TABLE Inventario (
+    id_inventario SERIAL PRIMARY KEY,
     qnt_max INTEGER NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS Inventario_Item (
+CREATE TABLE Inventario_Item (
     id_inventario INTEGER NOT NULL,
     id_item INTEGER NOT NULL,
     PRIMARY KEY (id_inventario, id_item),
@@ -57,8 +57,8 @@ CREATE TABLE IF NOT EXISTS Inventario_Item (
     CONSTRAINT FK_Inventario_Item_Item FOREIGN KEY (id_item) REFERENCES Item (id_item)
 );
 
-CREATE TABLE IF NOT EXISTS Inimigo (
-    id_inimigo INTEGER PRIMARY KEY NOT NULL,
+CREATE TABLE Inimigo (
+    id_inimigo SERIAL PRIMARY KEY,
     nome VARCHAR NOT NULL,
     ataque INTEGER NOT NULL,
     defesa INTEGER NOT NULL,
@@ -66,22 +66,22 @@ CREATE TABLE IF NOT EXISTS Inimigo (
     CONSTRAINT FK_Inimigo_Drop FOREIGN KEY (item_drop) REFERENCES Item (id_item)
 );
 
-CREATE TABLE IF NOT EXISTS Boss (
-    id_boss INTEGER PRIMARY KEY NOT NULL,
+CREATE TABLE Boss (
+    id_boss SERIAL PRIMARY KEY,
     passiva passiva_boss NOT NULL,
     id_inimigo INTEGER NOT NULL,
     buff INTEGER NOT NULL,
     CONSTRAINT FK_Boss_Inimigo FOREIGN KEY (id_inimigo) REFERENCES Inimigo (id_inimigo)
 );
 
-CREATE TABLE IF NOT EXISTS Mob (
-    id_mob INTEGER PRIMARY KEY NOT NULL,
+CREATE TABLE Mob (
+    id_mob SERIAL PRIMARY KEY,
     id_inimigo INTEGER NOT NULL,
     CONSTRAINT FK_Mob_Inimigo FOREIGN KEY (id_inimigo) REFERENCES Inimigo (id_inimigo)
 );
 
-CREATE TABLE IF NOT EXISTS Instancia_Inimigo (
-    id_instancia INTEGER PRIMARY KEY NOT NULL,
+CREATE TABLE Instancia_Inimigo (
+    id_instancia SERIAL PRIMARY KEY,
     vida INTEGER NOT NULL,
     sala_atual INTEGER NOT NULL,
     id_inimigo INTEGER NOT NULL,
@@ -89,8 +89,8 @@ CREATE TABLE IF NOT EXISTS Instancia_Inimigo (
     CONSTRAINT FK_Instancia_Inimigo_Inimigo FOREIGN KEY (id_inimigo) REFERENCES Inimigo (id_inimigo)
 );
 
-CREATE TABLE IF NOT EXISTS NPC (
-    id_npc INTEGER PRIMARY KEY NOT NULL,
+CREATE TABLE NPC (
+    id_npc SERIAL PRIMARY KEY,
     profissao INTEGER NOT NULL,
     nome VARCHAR NOT NULL,
     fala VARCHAR NOT NULL,
@@ -100,24 +100,24 @@ CREATE TABLE IF NOT EXISTS NPC (
     CONSTRAINT FK_NPC_Drop FOREIGN KEY (item_drop) REFERENCES Item (id_item)
 );
 
-CREATE TABLE IF NOT EXISTS Missao (
-    id_missao INTEGER PRIMARY KEY NOT NULL,
+CREATE TABLE Missao (
+    id_missao SERIAL PRIMARY KEY,
     nome VARCHAR NOT NULL,
     descricao VARCHAR NOT NULL,
     recompensa_xp INTEGER NOT NULL,
     status status_missao NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS Classe (
-    id_classe INTEGER PRIMARY KEY NOT NULL,
+CREATE TABLE Classe (
+    id_classe SERIAL PRIMARY KEY,
     nome nome_classe NOT NULL,
     descricao VARCHAR NOT NULL,
     atributo_melhorado atributo NOT NULL,
     buff INTEGER NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS Jogador (
-    id_jogador INTEGER PRIMARY KEY NOT NULL,
+CREATE TABLE Jogador (
+    id_jogador SERIAL PRIMARY KEY,
     xp INTEGER NOT NULL,
     nivel INTEGER NOT NULL,
     defesa INTEGER NOT NULL,
@@ -135,8 +135,8 @@ CREATE TABLE IF NOT EXISTS Jogador (
     CONSTRAINT FK_Jogador_Sala FOREIGN KEY (sala_atual) REFERENCES Sala (id_sala)
 );
 
-CREATE TABLE IF NOT EXISTS Batalha (
-    id_batalha INTEGER PRIMARY KEY NOT NULL,
+CREATE TABLE Batalha (
+    id_batalha SERIAL PRIMARY KEY,
     venceu BOOLEAN NOT NULL,
     id_instancia INTEGER NOT NULL,
     id_jogador INTEGER NOT NULL,
@@ -144,8 +144,8 @@ CREATE TABLE IF NOT EXISTS Batalha (
     CONSTRAINT FK_Batalha_Jogador FOREIGN KEY (id_jogador) REFERENCES Jogador (id_jogador)
 );
 
-CREATE TABLE IF NOT EXISTS Dialogo (
-    id_dialogo INTEGER PRIMARY KEY NOT NULL,
+CREATE TABLE Dialogo (
+    id_dialogo SERIAL PRIMARY KEY,
     decisao tipo_decisao NOT NULL,
     id_npc INTEGER NOT NULL,
     id_jogador INTEGER NOT NULL,
@@ -153,7 +153,7 @@ CREATE TABLE IF NOT EXISTS Dialogo (
     CONSTRAINT FK_Dialogo_Jogador FOREIGN KEY (id_jogador) REFERENCES Jogador (id_jogador)
 );
 
-CREATE TABLE IF NOT EXISTS Jogador_Missao (
+CREATE TABLE Jogador_Missao (
     id_jogador INTEGER NOT NULL,
     id_missao INTEGER NOT NULL,
     PRIMARY KEY (id_jogador, id_missao),
