@@ -1,6 +1,6 @@
 const { connection } = require('../config/connection');
 
-const getAll = async (id) => {
+const getAll = async () => {
     let client, classe;
     const sql = `SELECT * FROM classe;`;
 
@@ -19,12 +19,13 @@ const getAll = async (id) => {
 
 const getById = async (id) => {
     let client, classe;
-    const sql = `SELECT * FROM classe WHERE id_classe = ${id};`;
+    const sql = 'SELECT * FROM classe WHERE id_classe = $1;';
+    const values = [id];
 
     try {
         client = await connection();
 
-        const response = await client.query(sql);
+        const response = await client.query(sql, values);
         classe = response.rows[0];
     } catch (err) {
         console.error('Erro ao buscar a classe:', err);

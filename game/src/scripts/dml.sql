@@ -68,8 +68,12 @@ INSERT INTO Boss (passiva, id_inimigo, buff) VALUES
 ('Defesa', 2, 150);
 
 -- Inserindo instancias de mob e dragao
-insert into instancia_inimigo (vida, sala_atual, id_inimigo) values
+INSERT INTO instancia_inimigo (vida, sala_atual, id_inimigo) values
 (60, 1, 1),
 (60, 2, 2),
 (60, 2, 2),
 (150, 3, 2);
+
+-- Inserindo NPC
+INSERT INTO NPC (profissao, nome, fala, sala_atual, item_drop)
+VALUES (1, 'Guardião da Aldeia', 'Bem-vindo, aventureiro! Pegue esta espada para começar sua jornada.', 1, 1);

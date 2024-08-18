@@ -1,8 +1,8 @@
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
-const { connection } = require('../config/connection');
-const { rl } = require('../config/readlineConfig');
+const { connection } = require('./config/connection');
+const { rl } = require('./config/readlineConfig');
 
 const executeSQLFile = async (filePath) => {
   let client;
@@ -19,11 +19,11 @@ const executeSQLFile = async (filePath) => {
 }
 
 (async () => {
-  const sqlDdlFilePath = path.join(__dirname, '../scripts/ddl.sql');
+  const sqlDdlFilePath = path.join(__dirname, './scripts/ddl.sql');
   await executeSQLFile(sqlDdlFilePath);
   console.log('Script DDL executado com sucesso...\n');
 
-  const sqlDmlFilePath = path.join(__dirname, '../scripts/dml.sql');
+  const sqlDmlFilePath = path.join(__dirname, './scripts/dml.sql');
   await executeSQLFile(sqlDmlFilePath);
   console.log('Script DML executado com sucesso...\n');
 

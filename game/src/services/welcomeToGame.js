@@ -1,6 +1,6 @@
 const { createPlayer } = require('./createPlayer');
 const { question } = require('../config/readlineConfig');
-const { clearTerminal, typeWriter } = require('../config/terminalUtils'); // Importa as funções
+const { clearTerminal, typeWriter } = require('../config/terminalUtils');
 
 const askQuestion = async () => {
     const input = await question(' -> ');

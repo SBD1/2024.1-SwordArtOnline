@@ -1,10 +1,12 @@
 // Função para limpar o terminal
-const clearTerminal = () => {
-    process.stdout.write('\x1Bc');
+const clearTerminal = (timeout = 0) => {            // O timeout é em milisegundos..
+    setTimeout(() => {
+        process.stdout.write('\x1Bc');
+    }, timeout);
 };
 
 // Função para efeito de digitação
-const typeWriter = (text, delay = 50) => {
+const typeWriter = (text, delay = 40) => {
     return new Promise(resolve => {
         let index = 0;
         const interval = setInterval(() => {

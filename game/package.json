@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "inicialize-game": "node src/database/inicializeGame.js"
+    "inicialize-game": "node src/inicializeGame.js"
   },
   "author": "",
   "license": "ISC",

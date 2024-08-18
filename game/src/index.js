@@ -1,5 +1,3 @@
-// const db = require('./config/connection');
-// db.connection();
 const { welcomeToGame } = require('./services/welcomeToGame');
 
 welcomeToGame();

@@ -3,10 +3,10 @@ const { connection } = require('../config/connection');
 const insert = async (qnt_max) => {
     let client;
     const sql = `INSERT INTO inventario (qnt_max) VALUES ($1);`;
+    const values = [qnt_max];
 
     try {
         client = await connection();
-        const values = [qnt_max];
 
         await client.query(sql, values);
     } catch (err) {
