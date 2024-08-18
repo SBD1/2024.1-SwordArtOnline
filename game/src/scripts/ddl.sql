@@ -126,7 +126,7 @@ CREATE TABLE Jogador (
     vida INTEGER NOT NULL,
     nome VARCHAR NOT NULL,
     inventario INTEGER NOT NULL,
-    item_atual INTEGER NOT NULL,
+    item_atual INTEGER,
     classe INTEGER NOT NULL,
     sala_atual INTEGER NOT NULL,
     CONSTRAINT FK_Jogador_Inventario FOREIGN KEY (inventario) REFERENCES Inventario (id_inventario),
