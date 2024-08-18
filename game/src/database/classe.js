@@ -2,7 +2,7 @@ const { connection } = require('../config/connection');
 
 const getAll = async (id) => {
     let client, classe;
-    const sql = `SELECT nome, descricao, atributo_melhorado, buff FROM classe;`;
+    const sql = `SELECT * FROM classe;`;
 
     try {
         client = await connection();
@@ -10,7 +10,7 @@ const getAll = async (id) => {
         const response = await client.query(sql);
         classe = response.rows;
     } catch (err) {
-        console.error('Erro ao buscar a classe:', err);
+        console.error('\nErro ao buscar a classe:', err);
     } finally {
         if (client) client.release();
         return classe;
@@ -19,7 +19,7 @@ const getAll = async (id) => {
 
 const getById = async (id) => {
     let client, classe;
-    const sql = `SELECT nome, descricao, atributo_melhorado, buff FROM classe WHERE id_classe = ${id};`;
+    const sql = `SELECT * FROM classe WHERE id_classe = ${id};`;
 
     try {
         client = await connection();

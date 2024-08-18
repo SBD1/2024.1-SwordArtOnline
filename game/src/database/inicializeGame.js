@@ -2,6 +2,7 @@ require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const { connection } = require('../config/connection');
+const { rl } = require('../config/readlineConfig');
 
 const executeSQLFile = async (filePath) => {
   let client;
@@ -27,4 +28,5 @@ const executeSQLFile = async (filePath) => {
   console.log('Script DML executado com sucesso...\n');
 
   console.log('Jogo pronto pra ser inicializado!');
+  rl.close();
 })();

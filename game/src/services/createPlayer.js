@@ -1,49 +1,100 @@
 const { question, rl } = require('../config/readlineConfig');
 const classeDatabase = require('../database/classe');
+const inventarioDatabase = require('../database/inventario');
+const jogadorDatabase = require('../database/jogador');
+const { clearTerminal, typeWriter } = require('../config/terminalUtils');
 
 const selectClasse = async () => {
+    clearTerminal();
     const classes = await classeDatabase.getAll();
 
-    if (classes.length !== 0) {
-        console.log('Escolha uma classe:\n');
+    if (classes.length === 0) {
+        await typeWriter('\nNão foi possível listar as classes. Tente novamente mais tarde...');
+        rl.close(); // Fecha o readline
+        return;
+    }
 
-        classes.forEach((classe, index) => {
-            console.log(`${index + 1} - ${classe.nome}\n`);
-        });
+    await typeWriter('**Escolha uma classe:** \n');
+    for (const [index, classe] of classes.entries()) {
+        await typeWriter(` ${index + 1} - **${classe.nome}**\n`);
+        await typeWriter(`   Descrição: ${classe.descricao}\n`);
+        await typeWriter(`   Aumenta **${classe.buff} pontos** de ${classe.atributo_melhorado}\n\n`);
+    }
 
-        const input = await question('Classe:\t');
+    while (true) {
+        const input = await question('Digite o número da classe desejada: ');
         const selectedIndex = parseInt(input) - 1;
 
         if (selectedIndex >= 0 && selectedIndex < classes.length) {
             const selectedClasse = classes[selectedIndex];
-            console.log(`Você escolheu a classe ${selectedClasse.nome}.`);
-            return selectedClasse.nome;
+            await typeWriter(`\nVocê escolheu a classe **${selectedClasse.nome}**!`);
+            return selectedClasse;
         } else {
-            console.log('Opção inválida. Digite um número válido...');
-            return await selectClasse();  // Chama a função novamente para tentar uma nova entrada
+            await typeWriter('\nOpção inválida. Por favor, digite um número válido...\n');
         }
-    } else {
-        console.log('Não foi possível listar as classes...');
-        rl.close(); // Fecha o readline
     }
+};
+
+
+const applyClassBuff = (classe, defesa, magia, ataque, vida) => {
+    switch (classe.atributo_melhorado) {
+        case 'Vida':
+            vida += classe.buff;
+            break;
+        case 'Magia':
+            magia += classe.buff;
+            break;
+        case 'Defesa':
+            defesa += classe.buff;
+            break;
+        case 'Ataque':
+            ataque += classe.buff;
+            break;
+    }
+
+    return { defesa, magia, ataque, vida };
 };
 
 const createPlayer = async () => {
     const xp = 0;
     const nivel = 1;
-    const defesa = 50;
-    const magia = 50;
-    const ataque = 50;
-    const vida = 100;
+    let defesa = 50;
+    let magia = 50;
+    let ataque = 50;
+    let vida = 100;
+    const sala_atual = 1;
 
-    console.log('\n\t--- Criação de Personagem ---\n');
-    const nome = await question('Nome:\t');
+    await typeWriter('\n***Criação de Personagem***\n');
+    const nome = await question('Digite o nome do seu personagem: ');
 
     const classe = await selectClasse();
+    const atributosBuffados = applyClassBuff(classe, defesa, magia, ataque, vida);
 
-    console.log(`\nPersonagem criado! Nome: ${nome}, Classe: ${classe}`);
+    await inventarioDatabase.insert(50);
+    const inventario = await inventarioDatabase.getLastInserted();
 
-    // rl.close(); 
+    await jogadorDatabase.insert(
+        xp, 
+        nivel, 
+        atributosBuffados.defesa, 
+        atributosBuffados.magia, 
+        atributosBuffados.ataque, 
+        atributosBuffados.vida, 
+        nome, 
+        inventario.id_inventario, 
+        classe.id_classe, 
+        sala_atual
+    );
+
+    await typeWriter(`\n**Personagem Criado!**`);
+    await typeWriter(`  Nome: **${nome}**`);
+    await typeWriter(`  Classe: **${classe.nome}**`);
+    await typeWriter(`  Vida: **${atributosBuffados.vida}**`);
+    await typeWriter(`  Magia: **${atributosBuffados.magia}**`);
+    await typeWriter(`  Defesa: **${atributosBuffados.defesa}**`);
+    await typeWriter(`  Ataque: **${atributosBuffados.ataque}**\n`);
+
+    rl.close(); 
 };
 
 module.exports = {
