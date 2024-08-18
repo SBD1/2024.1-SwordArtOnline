@@ -17,11 +17,11 @@ INSERT INTO localizacao (id_localizacao, andar, descricao, estacao, localizacao_
 
 
 -- Construindo os relacionamentos entre as localizações:
-update localizacao set localizacao_posterior = 2
-where id_localizacao = 1;
+UPDATE localizacao SET localizacao_posterior = 2
+WHERE id_localizacao = 1;
 
-update localizacao set localizacao_posterior = 3
-where id_localizacao = 2;
+UPDATE localizacao SET localizacao_posterior = 3
+WHERE id_localizacao = 2;
 
 
 -- Inserindo as salas
@@ -36,13 +36,14 @@ INSERT INTO sala (id_sala, nome, tipo, sala_anterior, sala_posterior, id_localiz
 
 
 -- Construindo os relacionamentos entre as salas:
-where id_sala = 1;
+UPDATE sala SET sala_posterior = 2
+WHERE id_sala = 1;
 
-update sala set sala_anterior = 1, sala_posterior = 3
-where id_sala = 2;
+UPDATE sala SET sala_anterior = 1, sala_posterior = 3
+WHERE id_sala = 2;
 
-update sala set sala_anterior = 2
-where id_sala = 3;
+UPDATE sala SET sala_anterior = 2
+WHERE id_sala = 3;
 
 
 -- Inserindo itens iniciais do jogo
