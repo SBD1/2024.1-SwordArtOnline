@@ -10,8 +10,7 @@ const connection = async () => {
     });
  
     const client = await pool.connect();
-    console.log('Conexão com o banco realizada com sucesso!');
- 
+     
     client.release();
  
     global.connection = pool;
