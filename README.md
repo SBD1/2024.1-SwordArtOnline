@@ -53,18 +53,17 @@ Prepare-se para uma aventura intensa e emocionante, onde cada decisão pode sign
 
 - Módulo 1
 
-  - [Diagrama Entidade-Relacionamento](./docs/Entrega-01/DER_SAO_v1.0.md)
-  - [Dicionário de Dados](./docs/Entrega-01/DD_SAO_v1.0.md)
-  - [Modelo Entidade-Relacionamento](./docs/Entrega-01/MER_SAO_v1.0.md)
-  - [Modelo Relacional](./docs/Entrega-01/MREL_SAO_v1.0.md)
+  - [Diagrama Entidade-Relacionamento](./docs/Entrega-01/DER_SAO.md)
+  - [Dicionário de Dados](./docs/Entrega-01/DD_SAO.md)
+  - [Modelo Entidade-Relacionamento](./docs/Entrega-01/MER_SAO.md)
+  - [Modelo Relacional](./docs/Entrega-01/MREL_SAO.md)
 
 - Módulo 2
 
-  - [Normalização]()
-  - [DDL]()
-  - [DML]()
-  - [DQL]()
-  - [Álgebra Relacional]()
+  - [Normalização](./docs/Entrega-01/) Documentos da entrega 1 normalizados e com comparação de versões
+  - [DDL](./docs/Entrega-02/ddl.sql)
+  - [DML](./docs/Entrega-02/dml.sql)
+  - [DQL](./docs/Entrega-02/dql.sql)
 
 - Módulo 3
 
