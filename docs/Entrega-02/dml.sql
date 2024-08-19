@@ -1,3 +1,11 @@
+-- --------------------------------------------------------------------------------------
+-- Data Criacao ...........: 18/08/2024                                                --
+-- Autor(es) ..............: Douglas Marinho e Henrique Torres                         --
+-- Versao ..............: 1.0                                                          --
+-- Banco de Dados .........: PostgreSQL                                                --
+-- Descricao .........: Inserções de Modelo de cada tabela para o Banco de Dados.      --
+-- --------------------------------------------------------------------------------------
+
 INSERT INTO classe (nome, descricao, atributo_melhorado, buff) VALUES
 ('Assassino', 'Especialista em eliminar inimigos com rapidez, focado em ataques furtivos e resistente a danos diretos.', 'Vida', 50),
 ('Mago', 'Mestre das artes arcanas, usa magia poderosa para atacar de longe e conjurar feitiços variados.', 'Magia', 70),
