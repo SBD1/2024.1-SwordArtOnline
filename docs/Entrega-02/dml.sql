@@ -85,3 +85,25 @@ INSERT INTO instancia_inimigo (vida, sala_atual, id_inimigo) values
 -- Inserindo NPC
 INSERT INTO NPC (profissao, nome, fala, sala_atual, item_drop)
 VALUES (1, 'Guardião da Aldeia', 'Bem-vindo, aventureiro! Pegue esta arma para começar sua jornada.', 1, 1);
+
+-- Inserindo Jogador
+INSERT INTO jogador (xp, nivel, defesa, magia, ataque, vida, nome, inventario, classe, sala_atual) 
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
+
+-- Inserindo inventário
+INSERT INTO inventario (qnt_max) VALUES ($1);
+
+-- Criando um diálogo
+INSERT INTO dialogo (decisao, id_npc, id_jogador) VALUES ($1, $2, $3);
+
+-- Começando uma batalha
+INSERT INTO batalha (venceu, id_instancia, id_jogador) VALUES ($1, $2, $3);
+
+-- Adicionando um item ao inventário do jogador
+INSERT INTO inventario_item (id_inventario, id_item) VALUES ($1, $2);
+
+-- Inserindo missao
+INSERT INTO missao (nome, descricao, recompensa_xp, status) VALUES ($1, $2);
+
+-- Jogador pegou uma missao
+INSERT INTO jogador_missao (id_jogador, id_missao) VALUES ($1, $2)
