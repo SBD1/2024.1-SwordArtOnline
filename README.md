@@ -44,7 +44,7 @@ Prepare-se para uma aventura intensa e emocionante, onde cada decisão pode sign
 | Módulo | Link da gravação                                                                                    | Data       |
 | ------ | --------------------------------------------------------------------------------------------------- | ---------- |
 | 1      | [Apresentação Módulo 1](https://youtu.be/DtC8UW9KK5I)                                               | 22/07/2024 |
-| 2      | [Apresentação Módulo 2]()                                                                           |      -     |
+| 2      | [Apresentação Módulo 2]()                                                                           | 19/08/2024 |
 | 3      | [Apresentação Módulo 3]()                                                                           |      -     |
 | Final  | [Apresentação Final]()                                                                              |      -     |
 
@@ -79,4 +79,4 @@ Prepare-se para uma aventura intensa e emocionante, onde cada decisão pode sign
 | Versão |    Data    | Descrição                                      | Autor                                               | Revisão                                                      |
 | :----: | :--------: | ---------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------ |
 | `1.0`  | 21/07/2024 | Criação do README e enredo | [Douglas Marinho](https://github.com/M4RINH0)  | [Henrique Torres](https://github.com/henriqtorresl)          |
-| `2.0`  | 19/08/2024 | Atualização de links para entrega 2 | [Douglas Marinho](https://github.com/M4RINH0)  | [Henrique Torres](https://github.com/henriqtorresl)          |
+| `2.0`  | 19/08/2024 | Atualização de links para módulo 2 | [Douglas Marinho](https://github.com/M4RINH0)  | [Henrique Torres](https://github.com/henriqtorresl)          |
