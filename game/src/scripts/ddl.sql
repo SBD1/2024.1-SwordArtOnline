@@ -4,7 +4,7 @@
 CREATE TYPE tipo_sala AS ENUM ('Comum', 'Boss');
 CREATE TYPE status_missao AS ENUM ('Em andamento', 'Concluido');
 CREATE TYPE passiva_boss AS ENUM ('Vida', 'Defesa', 'Ataque');
-CREATE TYPE nome_classe AS ENUM ('Assassino', 'Mago', 'Tanque', 'Espadachin');
+CREATE TYPE nome_classe AS ENUM ('Assassino', 'Mago', 'Tanque', 'Espadachim');
 CREATE TYPE atributo AS ENUM ('Vida', 'Defesa', 'Ataque', 'Magia');
 CREATE TYPE tipo_decisao AS ENUM ('Aceitar', 'Recusar', 'Ignorar');
 CREATE TYPE tipo_estacao AS ENUM ('Outono', 'Inverno', 'Primavera', 'Verao');
