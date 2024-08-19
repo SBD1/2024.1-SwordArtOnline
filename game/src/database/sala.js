@@ -2,7 +2,7 @@ const { connection } = require('../config/connection');
 
 const getSalaInformations = async (id_sala) => {
     let client, sala;
-    const sql = 'SELECT * FROM sala INNER JOIN localizacao using (id_localizacao) WHERE id_sala = ($1);';
+    const sql = 'SELECT * FROM sala INNER JOIN localizacao using (id_localizacao) WHERE id_sala = $1;';
     const values = [id_sala];
 
     try {
@@ -55,7 +55,7 @@ const getMobsInRoom = async (id_sala) => {
 }
 
 const getBossInRoom = async (id_sala) => {
-    let client, npc;
+    let client, boss;
     const sql = 'SELECT * FROM instancia_inimigo INNER JOIN inimigo USING (id_inimigo) INNER JOIN boss USING (id_inimigo) WHERE sala_atual = $1;';
     const values = [id_sala];
 
@@ -63,12 +63,12 @@ const getBossInRoom = async (id_sala) => {
         client = await connection();
 
         const response = await client.query(sql, values);
-        npc = response.rows;
+        boss = response.rows;
     } catch (err) {
         console.error('Erro ao buscar a sala:', err);
     } finally {
         if (client) client.release();
-        return npc;
+        return boss;
     }
 }
 

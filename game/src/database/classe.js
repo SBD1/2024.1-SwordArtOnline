@@ -17,25 +17,6 @@ const getAll = async () => {
     }
 }
 
-const getById = async (id) => {
-    let client, classe;
-    const sql = 'SELECT * FROM classe WHERE id_classe = $1;';
-    const values = [id];
-
-    try {
-        client = await connection();
-
-        const response = await client.query(sql, values);
-        classe = response.rows[0];
-    } catch (err) {
-        console.error('Erro ao buscar a classe:', err);
-    } finally {
-        if (client) client.release();
-        return classe;
-    }
-}
-
 module.exports = {
-    getAll,
-    getById
+    getAll
 }
