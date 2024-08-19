@@ -6,7 +6,7 @@ const clearTerminal = (timeout = 0) => {            // O timeout é em milisegun
 };
 
 // Função para efeito de digitação
-const typeWriter = (text, delay = 40) => {
+const typeWriter = (text, delay = 30) => {
     return new Promise(resolve => {
         let index = 0;
         const interval = setInterval(() => {

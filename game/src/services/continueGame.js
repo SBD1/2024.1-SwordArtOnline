@@ -49,8 +49,9 @@ const getOldGames = async () => {
                 await typeWriter(`  Magia: **${selectedPlayer.magia}**`);
                 await typeWriter(`  Defesa: **${selectedPlayer.defesa}**`);
                 await typeWriter(`  Ataque: **${selectedPlayer.ataque}**\n`);
+                await typeWriter(`\n`);
 
-                interactions.describeCurrentRoom(selectedPlayer);
+                await interactions.describeCurrentRoom(selectedPlayer);
                 break;
             } else {
                 await typeWriter('\nOpção inválida. Por favor, digite um número válido...\n');

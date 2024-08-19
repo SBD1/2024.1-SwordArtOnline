@@ -89,6 +89,14 @@ CREATE TABLE Instancia_Inimigo (
     CONSTRAINT FK_Instancia_Inimigo_Inimigo FOREIGN KEY (id_inimigo) REFERENCES Inimigo (id_inimigo)
 );
 
+CREATE TABLE Missao (
+    id_missao SERIAL PRIMARY KEY,
+    nome VARCHAR NOT NULL,
+    descricao VARCHAR NOT NULL,
+    recompensa_xp INTEGER NOT NULL,
+    status status_missao NOT NULL
+);
+
 CREATE TABLE NPC (
     id_npc SERIAL PRIMARY KEY,
     profissao INTEGER NOT NULL,
@@ -96,16 +104,10 @@ CREATE TABLE NPC (
     fala VARCHAR NOT NULL,
     sala_atual INTEGER NOT NULL,
     item_drop INTEGER NOT NULL,
+    missao INTEGER,
     CONSTRAINT FK_NPC_Sala FOREIGN KEY (sala_atual) REFERENCES Sala (id_sala),
-    CONSTRAINT FK_NPC_Drop FOREIGN KEY (item_drop) REFERENCES Item (id_item)
-);
-
-CREATE TABLE Missao (
-    id_missao SERIAL PRIMARY KEY,
-    nome VARCHAR NOT NULL,
-    descricao VARCHAR NOT NULL,
-    recompensa_xp INTEGER NOT NULL,
-    status status_missao NOT NULL
+    CONSTRAINT FK_NPC_Drop FOREIGN KEY (item_drop) REFERENCES Item (id_item),
+    CONSTRAINT FK_NPC_Missao FOREIGN KEY (missao) REFERENCES Missao (id_missao)
 );
 
 CREATE TABLE Classe (

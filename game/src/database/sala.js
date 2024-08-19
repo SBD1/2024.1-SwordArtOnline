@@ -20,7 +20,7 @@ const getSalaInformations = async (id_sala) => {
 
 const getNpcsInRoom = async (id_sala) => {
     let client, npcs;
-    const sql = 'select * from npc where sala_atual = $1;';
+    const sql = 'SELECT * FROM npc WHERE sala_atual = $1;';
     const values = [id_sala];
 
     try {
@@ -38,7 +38,7 @@ const getNpcsInRoom = async (id_sala) => {
 
 const getMobsInRoom = async (id_sala) => {
     let client, mobs;
-    const sql = 'select * from instancia_inimigo inner join inimigo using (id_inimigo) inner join mob using (id_inimigo) where sala_atual = $1;';
+    const sql = 'SELECT * FROM instancia_inimigo INNER JOIN inimigo USING (id_inimigo) INNER JOIN mob USING (id_inimigo) WHERE sala_atual = $1;';
     const values = [id_sala];
 
     try {
@@ -56,7 +56,7 @@ const getMobsInRoom = async (id_sala) => {
 
 const getBossInRoom = async (id_sala) => {
     let client, npc;
-    const sql = 'select * from instancia_inimigo inner join inimigo using (id_inimigo) inner join boss using (id_inimigo) where sala_atual = $1;';
+    const sql = 'SELECT * FROM instancia_inimigo INNER JOIN inimigo USING (id_inimigo) INNER JOIN boss USING (id_inimigo) WHERE sala_atual = $1;';
     const values = [id_sala];
 
     try {

@@ -93,7 +93,7 @@ const createPlayer = async () => {
         await typeWriter(`  Ataque: **${atributosBuffados.ataque}**\n`);
 
         const jogador = await jogadorDatabase.getByNome(nome);
-        interactions.describeCurrentRoom(jogador);
+        await interactions.describeCurrentRoom(jogador);
     }, 500);
 };
 

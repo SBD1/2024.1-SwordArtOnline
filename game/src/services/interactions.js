@@ -1,6 +1,8 @@
-const { question, rl } = require('../config/readlineConfig');
+const { question } = require('../config/readlineConfig');
 const { typeWriter, clearTerminal } = require('../config/terminalUtils');
 const salaDatabase = require('../database/sala');
+const inventarioDatabase = require('../database/inventario');
+const inventarioItemDatabase = require('../database/inventarioItem');
 
 // Exibe opções para o jogador e trata a escolha
 const getOptions = async (jogador, sala) => {
@@ -119,45 +121,15 @@ const detailRoom = async (jogador, sala) => {
         if (selectedOption) {
             switch (selectedOption.text) {
                 case 'Conversar com um NPC':
-                    await typeWriter(`\nEscolha um NPC para conversar:\n`, 30);
-                    for (let i = 0; i < npcs.length; i++) {
-                        await typeWriter(`${i + 1} - ${npcs[i].nome}\n`, 20);
-                    }
-                    const npcChoice = parseInt(await question('\n-> '), 10);
-                    if (npcChoice > 0 && npcChoice <= npcs.length) {
-                        await typeWriter(`\nVocê escolhe conversar com ${npcs[npcChoice - 1].nome}.\n`, 30);
-                        // Implemente a lógica para conversar com o NPC
-                    } else {
-                        await typeWriter('\nOpção inválida. Por favor, escolha um NPC válido.', 30);
-                    }
+                    talkWithNpc(npcs);
                     break;
 
                 case 'Batalhar com um mob':
-                    await typeWriter(`\nEscolha um mob para batalhar:\n`, 30);
-                    for (let i = 0; i < mobs.length; i++) {
-                        await typeWriter(`${i + 1} - ${mobs[i].nome}\n`, 20);
-                    }
-                    const mobChoice = parseInt(await question('\n-> '), 10);
-                    if (mobChoice > 0 && mobChoice <= mobs.length) {
-                        await typeWriter(`\nVocê se prepara para batalhar com ${mobs[mobChoice - 1].nome}.\n`, 30);
-                        // Implemente a lógica para batalhar com o mob
-                    } else {
-                        await typeWriter('\nOpção inválida. Por favor, escolha um mob válido.', 30);
-                    }
+                    battleWithMob(mobs);
                     break;
 
                 case 'Batalhar com o Boss':
-                    await typeWriter(`\nEscolha o Boss para batalhar:\n`, 30);
-                    for (let i = 0; i < boss.length; i++) {
-                        await typeWriter(`${i + 1} - ${boss[i].nome}\n`, 20);
-                    }
-                    const bossChoice = parseInt(await question('\n-> '), 10);
-                    if (bossChoice > 0 && bossChoice <= boss.length) {
-                        await typeWriter(`\nVocê enfrenta o Boss ${boss[bossChoice - 1].nome}!\n`, 30);
-                        // Implemente a lógica para batalhar com o Boss
-                    } else {
-                        await typeWriter('\nOpção inválida. Por favor, escolha um Boss válido.', 30);
-                    }
+                    battleWithBoss(boss);
                     break;
 
                 case 'Ir para a sala anterior':
@@ -186,42 +158,89 @@ const detailRoom = async (jogador, sala) => {
 };
 
 const describeCurrentRoom = async (jogador) => {
-    clearTerminal(500);
+    clearTerminal();
     const sala = await salaDatabase.getSalaInformations(jogador.sala_atual);
 
-    setInterval( async () => {
-        await typeWriter(
-            `
-            Você está na sala: ${sala.nome} (Tipo: ${sala.tipo})
-            Localização:
-                Andar: ${sala.andar}
-                Descrição: ${sala.descricao}
-                Estação: ${sala.estacao}
-            `
-            , 20);
-        
-            await typeWriter('\nDigite 1 para ver suas opções:');
-            while (true) {
-                const option =  parseInt(await question('\n-> '), 10);
-        
-                if (option === 1) {
-                    await getOptions(jogador, sala);
-                } else {
-                    await typeWriter('\nOpção inválida. Por favor, digite um número válido...');
-                }
-            }
-    }, 500);
+    await typeWriter(`\nVocê está na sala: ${sala.nome} (Tipo: ${sala.tipo})`);
+    await typeWriter(`Localização:`);
+    await typeWriter(`  Andar: ${sala.andar}`);
+    await typeWriter(`  Descrição: ${sala.descricao}`);
+
+    await typeWriter('\nDigite 1 para ver suas opções:');
+    while (true) {
+        const option = parseInt(await question('\n-> '), 10);
+
+        if (option === 1) {
+            await getOptions(jogador, sala);
+        } else {
+            await typeWriter('\nOpção inválida. Por favor, digite um número válido...');
+        }
+    }
 }
 
 // Abre o inventário
 const openInventory = async (jogador) => {
-    // Implemente a lógica para abrir o inventário aqui
-    console.log('abrir o inventário')
+    const inventario = await inventarioDatabase.openInventory(jogador.id_inventario);
+
+    if (inventario) {
+        // Lógica de abrir o inventário e mostrar as coisas
+    } else {
+        await typeWriter('\n\tSeu inventário está vazio... ;-;\n');
+    }
 };
 
 // Ver arma atual
 const detailCurrentItem = async () => {
     // detalhar 
+}
+
+// Conversar com um NPC
+const talkWithNpc = async (npcs) => {
+    await typeWriter(`\nEscolha um NPC para conversar:\n`, 30);
+    for (let i = 0; i < npcs.length; i++) {
+        await typeWriter(`${i + 1} - ${npcs[i].nome}\n`, 20);
+    }
+    const npcChoice = parseInt(await question('\n-> '), 10);
+    if (npcChoice > 0 && npcChoice <= npcs.length) {
+        const currentNpc = npcs[npcChoice - 1];
+
+        await typeWriter(`\nVocê caminha até o ${currentNpc.nome}.\n`, 30);
+        await typeWriter(`\t"${currentNpc.nome}"\n`);
+
+
+    } else {
+        await typeWriter('\nOpção inválida. Por favor, escolha um NPC válido.', 30);
+    }
+}
+
+// Batalhar com um inimigo
+const battleWithMob = async (mobs) => {
+    await typeWriter(`\nEscolha um mob para batalhar:\n`, 30);
+    for (let i = 0; i < mobs.length; i++) {
+        await typeWriter(`${i + 1} - ${mobs[i].nome}\n`, 20);
+    }
+    const mobChoice = parseInt(await question('\n-> '), 10);
+    if (mobChoice > 0 && mobChoice <= mobs.length) {
+        await typeWriter(`\nVocê se prepara para batalhar com ${mobs[mobChoice - 1].nome}.\n`, 30);
+        // Implemente a lógica para batalhar com o mob
+    } else {
+        await typeWriter('\nOpção inválida. Por favor, escolha um mob válido.', 30);
+    }
+}
+
+// Batalhar com um boss
+const battleWithBoss = async (boss) => {
+    await typeWriter(`\nEscolha o Boss para batalhar:\n`, 30);
+    for (let i = 0; i < boss.length; i++) {
+        await typeWriter(`${i + 1} - ${boss[i].nome}\n`, 20);
+    }
+    const bossChoice = parseInt(await question('\n-> '), 10);
+    if (bossChoice > 0 && bossChoice <= boss.length) {
+        await typeWriter(`\nVocê enfrenta o Boss ${boss[bossChoice - 1].nome}!\n`, 30);
+        // Implemente a lógica para batalhar com o Boss
+    } else {
+        await typeWriter('\nOpção inválida. Por favor, escolha um Boss válido.', 30);
+    }
 }
 
 module.exports = {
