@@ -1,4 +1,4 @@
-const { question, rl } = require('../config/readlineConfig');
+const { question } = require('../config/readlineConfig');
 const { clearTerminal, typeWriter } = require('../config/terminalUtils');
 const classeDatabase = require('../database/classe');
 const inventarioDatabase = require('../database/inventario');
@@ -69,7 +69,7 @@ const createPlayer = async () => {
         const atributosBuffados = applyClassBuff(classe, defesa, magia, ataque, vida);
 
         await inventarioDatabase.insert(50);
-        const inventario = await inventarioDatabase.getLastInserted();
+        const id_inventario = await inventarioDatabase.getLastInserted();
 
         await jogadorDatabase.insert(
             xp,
@@ -79,7 +79,7 @@ const createPlayer = async () => {
             atributosBuffados.ataque,
             atributosBuffados.vida,
             nome,
-            inventario.id_inventario,
+            id_inventario,
             classe.id_classe,
             sala_atual
         );

@@ -5,9 +5,9 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-const question = (query) => {
+const question = (string) => {
     return new Promise((resolve) => {
-        rl.question(query, (answer) => {
+        rl.question(string, (answer) => {
             resolve(answer);
         });
     });

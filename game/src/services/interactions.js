@@ -186,28 +186,31 @@ const detailRoom = async (jogador, sala) => {
 };
 
 const describeCurrentRoom = async (jogador) => {
-    clearTerminal();
+    clearTerminal(500);
     const sala = await salaDatabase.getSalaInformations(jogador.sala_atual);
-    await typeWriter(
-    `
-    Você está na sala: ${sala.nome} (Tipo: ${sala.tipo})
-    Localização:
-        Andar: ${sala.andar}
-        Descrição: ${sala.descricao}
-        Estação: ${sala.estacao}
-    `
-    , 20);
 
-    await typeWriter('\nDigite 1 para ver suas opções:');
-    while (true) {
-        const option =  parseInt(await question('\n-> '), 10);
-
-        if (option === 1) {
-            await getOptions(jogador, sala);
-        } else {
-            await typeWriter('\nOpção inválida. Por favor, digite um número válido...');
-        }
-    }
+    setInterval( async () => {
+        await typeWriter(
+            `
+            Você está na sala: ${sala.nome} (Tipo: ${sala.tipo})
+            Localização:
+                Andar: ${sala.andar}
+                Descrição: ${sala.descricao}
+                Estação: ${sala.estacao}
+            `
+            , 20);
+        
+            await typeWriter('\nDigite 1 para ver suas opções:');
+            while (true) {
+                const option =  parseInt(await question('\n-> '), 10);
+        
+                if (option === 1) {
+                    await getOptions(jogador, sala);
+                } else {
+                    await typeWriter('\nOpção inválida. Por favor, digite um número válido...');
+                }
+            }
+    }, 500);
 }
 
 // Abre o inventário

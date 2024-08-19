@@ -35,7 +35,24 @@ const getByNome = async (nome) => {
     }
 }
 
+const getAll = async () => {
+    let client, jogadores;
+    const sql = 'SELECT id_jogador, xp, nivel, defesa, magia, ataque, vida, j.nome, inventario, item_atual, classe, sala_atual, c.nome as nome_classe FROM jogador AS j INNER JOIN classe AS c ON j.classe = c.id_classe;';
+
+    try {
+        client = await connection();
+        const response = await client.query(sql);
+        jogadores = response.rows;
+    } catch (err) {
+        console.error('\nErro ao criar jogador:', err);
+    } finally {
+        if (client) client.release();
+        return jogadores;
+    }
+}
+
 module.exports = {
     insert,
-    getByNome
+    getByNome,
+    getAll
 };

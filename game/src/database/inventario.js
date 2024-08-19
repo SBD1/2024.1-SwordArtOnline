@@ -18,19 +18,20 @@ const insert = async (qnt_max) => {
 
 // Trás o último inventário que foi inserido no banco..
 const getLastInserted = async () => {
-    let client, inventario;
-    const sql = `SELECT * FROM inventario ORDER BY id_inventario DESC LIMIT 1;`;
+    let client, id_inventario;
+    const sql = `SELECT MAX(id_inventario) AS last_id_inserted FROM inventario i;`; // Retorna o id do último inventario inserido...
 
     try {
         client = await connection();
 
         const response = await client.query(sql);
-        inventario = response.rows[0];
+        id_inventario = response.rows[0].last_id_inserted;
+        console.log(id_inventario)
     } catch (err) {
         console.error('\nErro ao criar inventario:', err);
     } finally {
         if (client) client.release();
-        return inventario;
+        return id_inventario;
     }
 }
 
