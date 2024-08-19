@@ -86,24 +86,49 @@ INSERT INTO instancia_inimigo (vida, sala_atual, id_inimigo) values
 INSERT INTO NPC (profissao, nome, fala, sala_atual, item_drop)
 VALUES (1, 'Guardião da Aldeia', 'Bem-vindo, aventureiro! Pegue esta arma para começar sua jornada.', 1, 1);
 
+-- Inserindo inventário
+INSERT INTO inventario (qnt_max) VALUES 
+(10),
+(15),
+(20);
+
 -- Inserindo Jogador
 INSERT INTO jogador (xp, nivel, defesa, magia, ataque, vida, nome, inventario, classe, sala_atual) 
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
+VALUES 
+(100, 1, 20, 10, 15, 100, 'Kirito', 1, 'Espadachim', 1),
+(200, 2, 25, 15, 20, 120, 'Asuna', 2, 'Mago', 2),
+(50, 1, 30, 5, 10, 150, 'Klein', 3, 'Tanque', 1);
 
--- Inserindo inventário
-INSERT INTO inventario (qnt_max) VALUES ($1);
 
 -- Criando um diálogo
-INSERT INTO dialogo (decisao, id_npc, id_jogador) VALUES ($1, $2, $3);
+INSERT INTO dialogo (decisao, id_npc, id_jogador) VALUES 
+('Aceitar Missão', 1, 1),
+('Comprar Item', 1, 2),
+('Recusar Ajuda', 1, 3);
+
 
 -- Começando uma batalha
-INSERT INTO batalha (venceu, id_instancia, id_jogador) VALUES ($1, $2, $3);
+INSERT INTO batalha (venceu, id_instancia, id_jogador) VALUES 
+(true, 1, 1),
+(false, 2, 2),
+(true, 3, 3);
+
 
 -- Adicionando um item ao inventário do jogador
-INSERT INTO inventario_item (id_inventario, id_item) VALUES ($1, $2);
+INSERT INTO inventario_item (id_inventario, id_item) VALUES 
+(1, 1),
+(2, 3),
+(3, 5);
 
 -- Inserindo missao
-INSERT INTO missao (nome, descricao, recompensa_xp, status) VALUES ($1, $2);
+INSERT INTO missao (nome, descricao, recompensa_xp, status) VALUES 
+('Derrote o Guardião', 'Derrote o boss do 1º andar para liberar o próximo nível.', 100, 'Pendente'),
+('Salve o Aldeão', 'Ajude o aldeão perdido na floresta do 3º andar.', 50, 'Concluída'),
+('Colete Ervas Medicinais', 'Colete 10 ervas na floresta do 2º andar.', 30, 'Pendente');
+
 
 -- Jogador pegou uma missao
-INSERT INTO jogador_missao (id_jogador, id_missao) VALUES ($1, $2)
+INSERT INTO jogador_missao (id_jogador, id_missao) VALUES 
+(1, 1),
+(2, 2),
+(3, 3);
