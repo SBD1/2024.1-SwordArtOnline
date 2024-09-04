@@ -104,7 +104,6 @@ CREATE TABLE NPC (
     fala VARCHAR NOT NULL,
     item_drop INTEGER NOT NULL,
     missao INTEGER,
-    CONSTRAINT FK_NPC_Sala FOREIGN KEY (sala_atual) REFERENCES Sala (id_sala),
     CONSTRAINT FK_NPC_Drop FOREIGN KEY (item_drop) REFERENCES Item (id_item),
     CONSTRAINT FK_NPC_Missao FOREIGN KEY (missao) REFERENCES Missao (id_missao)
 );
@@ -113,7 +112,8 @@ CREATE TABLE Instancia_NPC (
     id_instancia_npc SERIAL PRIMARY KEY,
     sala_atual INTEGER NOT NULL,
     id_npc INTEGER NOT NULL,
-    CONSTRAINT FK_Instancia_NPC_NPC FOREIGN KEY (id_npc) REFERENCES NPC (id_npc),
+    CONSTRAINT FK_NPC_Sala FOREIGN KEY (sala_atual) REFERENCES Sala (id_sala),
+    CONSTRAINT FK_Instancia_NPC_NPC FOREIGN KEY (id_npc) REFERENCES NPC (id_npc)
 );
 
 CREATE TABLE Classe (
