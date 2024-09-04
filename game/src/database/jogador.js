@@ -1,5 +1,23 @@
 const { connection } = require('../config/connection');
 
+// Esse metodo chama a procedure responsável pela criação de todas as localizações, salas, instancias de npc e inimigo e o jogador
+const createNewGame = async (xp, nivel, defesa, magia, ataque, vida, nome, inventario, classe) => {
+    let client;
+    const sql = `
+        SELECT inicializarJogo($1, $2, $3, $4, $5, $6, $7, $8, $9);
+    `;
+    const values = [xp, nivel, defesa, magia, ataque, vida, nome, inventario, classe];
+
+    try {
+        client = await connection();
+        await client.query(sql, values);
+    } catch (err) {
+        console.error('\nErro ao criar jogador:', err);
+    } finally {
+        if (client) client.release();
+    }
+}
+
 const insert = async (xp, nivel, defesa, magia, ataque, vida, nome, inventario, classe, sala_atual) => {
     let client;
     const sql = `
@@ -52,6 +70,7 @@ const getAll = async () => {
 }
 
 module.exports = {
+    createNewGame,
     insert,
     getByNome,
     getAll

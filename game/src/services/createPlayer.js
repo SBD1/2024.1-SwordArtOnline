@@ -4,6 +4,7 @@ const classeDatabase = require('../database/classe');
 const inventarioDatabase = require('../database/inventario');
 const jogadorDatabase = require('../database/jogador');
 const interactions = require('./interactions');
+const { executeSQLFile } = require('../config/executeFile');
 
 const selectClasse = async () => {
     clearTerminal();
@@ -59,7 +60,6 @@ const createPlayer = async () => {
     let magia = 50;
     let ataque = 50;
     let vida = 100;
-    const sala_atual = 1;
 
     setTimeout( async () => {
         await typeWriter('\n***Criação de Personagem***\n');
@@ -71,7 +71,7 @@ const createPlayer = async () => {
         await inventarioDatabase.insert(50);
         const id_inventario = await inventarioDatabase.getLastInserted();
 
-        await jogadorDatabase.insert(
+        await jogadorDatabase.createNewGame(
             xp,
             nivel,
             atributosBuffados.defesa,
@@ -80,8 +80,7 @@ const createPlayer = async () => {
             atributosBuffados.vida,
             nome,
             id_inventario,
-            classe.id_classe,
-            sala_atual
+            classe.id_classe
         );
 
         await typeWriter(`\n**Personagem Criado!**`);
@@ -93,6 +92,7 @@ const createPlayer = async () => {
         await typeWriter(`  Ataque: **${atributosBuffados.ataque}**\n`);
 
         const jogador = await jogadorDatabase.getByNome(nome);
+
         await interactions.describeCurrentRoom(jogador);
     }, 500);
 };
