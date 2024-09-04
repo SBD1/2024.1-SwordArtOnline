@@ -172,8 +172,18 @@ CREATE TABLE Jogador_Missao (
 -----------------------------------------------------------------------------------------
 -- Procedures:
 
--- Procedure que inicializa as salas do primeiro andar
-CREATE OR REPLACE FUNCTION inicializarSalasPrimeiroAndar(localizacao_sala INTEGER)
+-- Procedure que inicializa as salas do primeiro andar e cria o jogador
+CREATE OR REPLACE FUNCTION inicializarSalasPrimeiroAndar(
+	localizacao_sala INTEGER,
+	xp_jogador INTEGER, 
+	nivel_jogador INTEGER, 
+	defesa_jogador INTEGER, 
+	magia_jogador INTEGER, 
+	ataque_jogador INTEGER, 
+	vida_jogador INTEGER, 
+	nome_jogador VARCHAR, 
+	inventario_jogador INTEGER, 
+	classe_jogador INTEGER)
 RETURNS VOID AS
 $$
 DECLARE 
@@ -184,9 +194,14 @@ BEGIN
 	INSERT INTO sala (nome, tipo, sala_anterior, sala_posterior, id_localizacao) VALUES
 	('Hall de Entrada', 'Comum', NULL, NULL, localizacao_sala)
 	RETURNING id_sala INTO primeira_sala;
+
+	-- Criando o Jogador
+	INSERT INTO jogador (xp, nivel, defesa, magia, ataque, vida, nome, inventario, classe, sala_atual) 
+    VALUES (xp_jogador,  nivel_jogador, defesa_jogador, magia_jogador, ataque_jogador, vida_jogador, nome_jogador, inventario_jogador, classe_jogador, primeira_sala)
+   	RETURNING nome INTO nome_jogador;
 	
 	INSERT INTO sala (nome, tipo, sala_anterior, sala_posterior, id_localizacao) VALUES
-	('Planicies', 'Comum', primeira_sala, NULL, localizacao_sala)
+	('Planícies', 'Comum', primeira_sala, NULL, localizacao_sala)
 	RETURNING id_sala INTO segunda_sala;
 	
 	INSERT INTO sala (nome, tipo, sala_anterior, sala_posterior, id_localizacao) VALUES
@@ -201,23 +216,31 @@ BEGIN
 	WHERE id_sala = segunda_sala;
 
 	-- Populando as salas do primeiro andar:
-	-- Inserindo instancias de mob e dragao
+	-- Inserindo instâncias de mob e dragão
 	INSERT INTO instancia_inimigo (vida, sala_atual, id_inimigo) values
 	(60, primeira_sala, 1),
 	(60, segunda_sala, 2),
 	(60, segunda_sala, 2),
 	(150, terceira_sala, 2);
 	
-	-- Inserindo instancia de NPC
-	INSERT INTO instancia_npc (sala_atual, id_npc)
-	VALUES (primeira_sala, 1);
+
+	-- Inserindo instância de NPC (Comentado na sua descrição, mas sem implementação)
+	INSERT INTO instancia_npc (sala_atual, id_npc) values (primeira_sala, 1);
 END;
 $$
 LANGUAGE plpgsql;
 
-
 -- Procedure de criação das localizações
-CREATE OR REPLACE FUNCTION inicializarLocalizacoes()
+CREATE OR REPLACE FUNCTION inicializarJogo(
+	xp_jogador INTEGER, 
+	nivel_jogador INTEGER, 
+	defesa_jogador INTEGER, 
+	magia_jogador INTEGER, 
+	ataque_jogador INTEGER, 
+	vida_jogador INTEGER, 
+	nome_jogador VARCHAR, 
+	inventario_jogador INTEGER, 
+	classe_jogador INTEGER)
 RETURNS VOID AS
 $$
 DECLARE
@@ -230,12 +253,13 @@ BEGIN
     VALUES 
     (1, 'Entrada da cidade dos inícios com uma arquitetura medieval europeia, um ponto de partida comum para aventuras.', 'Primavera', NULL, NULL)
     RETURNING id_localizacao INTO primeiro_andar;
+	
+   	-- Salas do primeiro andar e criação do jogador:
+   	SELECT inicializarSalasPrimeiroAndar(primeiro_andar, xp_jogador, nivel_jogador, defesa_jogador, magia_jogador, ataque_jogador, vida_jogador, nome_jogador, inventario_jogador, classe_jogador)
+  	INTO nome_jogador;
    
-   -- Inserindo as salas do primeiro andar..
-   PERFORM inicializarSalasPrimeiroAndar(primeiro_andar);
-   
-   -- Segundo andar
-   INSERT INTO localizacao (andar, descricao, estacao, localizacao_anterior, localizacao_posterior) 
+   	-- Segundo andar
+   	INSERT INTO localizacao (andar, descricao, estacao, localizacao_anterior, localizacao_posterior) 
     VALUES 
     (2, 'Um Vale de Montanhas com paisagens rochosas e uma série de cavernas e desfiladeiros', 'Primavera', primeiro_andar, NULL)
     RETURNING id_localizacao INTO segundo_andar;
