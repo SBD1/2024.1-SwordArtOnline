@@ -99,10 +99,10 @@ CREATE TABLE Missao (
 
 CREATE TABLE NPC (
     id_npc SERIAL PRIMARY KEY,
-    profissao INTEGER NOT NULL,
+    profissao VARCHAR NOT NULL,
     nome VARCHAR NOT NULL,
     fala VARCHAR NOT NULL,
-    item_drop INTEGER NOT NULL,
+    item_drop INTEGER,
     missao INTEGER,
     CONSTRAINT FK_NPC_Drop FOREIGN KEY (item_drop) REFERENCES Item (id_item),
     CONSTRAINT FK_NPC_Missao FOREIGN KEY (missao) REFERENCES Missao (id_missao)
@@ -168,3 +168,92 @@ CREATE TABLE Jogador_Missao (
     CONSTRAINT FK_Jogador_Missao_Jogador FOREIGN KEY (id_jogador) REFERENCES Jogador (id_jogador),
     CONSTRAINT FK_Jogador_Missao_Missao FOREIGN KEY (id_missao) REFERENCES Missao (id_missao)
 );
+
+-----------------------------------------------------------------------------------------
+-- Procedures:
+
+-- Procedure que inicializa as salas do primeiro andar
+CREATE OR REPLACE FUNCTION inicializarSalasPrimeiroAndar(localizacao_sala INTEGER)
+RETURNS VOID AS
+$$
+DECLARE 
+	primeira_sala INTEGER;
+	segunda_sala INTEGER;
+	terceira_sala INTEGER;
+BEGIN
+	INSERT INTO sala (nome, tipo, sala_anterior, sala_posterior, id_localizacao) VALUES
+	('Hall de Entrada', 'Comum', NULL, NULL, localizacao_sala)
+	RETURNING id_sala INTO primeira_sala;
+	
+	INSERT INTO sala (nome, tipo, sala_anterior, sala_posterior, id_localizacao) VALUES
+	('Planicies', 'Comum', primeira_sala, NULL, localizacao_sala)
+	RETURNING id_sala INTO segunda_sala;
+	
+	INSERT INTO sala (nome, tipo, sala_anterior, sala_posterior, id_localizacao) VALUES
+	('Sala do Guardião', 'Boss', segunda_sala, NULL, localizacao_sala)
+	RETURNING id_sala INTO terceira_sala;
+
+	-- Construindo os relacionamentos entre as salas:
+	UPDATE sala SET sala_posterior = segunda_sala
+	WHERE id_sala = primeira_sala;
+	
+	UPDATE sala SET sala_posterior = terceira_sala
+	WHERE id_sala = segunda_sala;
+
+	-- Populando as salas do primeiro andar:
+	-- Inserindo instancias de mob e dragao
+	INSERT INTO instancia_inimigo (vida, sala_atual, id_inimigo) values
+	(60, primeira_sala, 1),
+	(60, segunda_sala, 2),
+	(60, segunda_sala, 2),
+	(150, terceira_sala, 2);
+	
+	-- Inserindo instancia de NPC
+	INSERT INTO instancia_npc (sala_atual, id_npc)
+	VALUES (primeira_sala, 1);
+END;
+$$
+LANGUAGE plpgsql;
+
+
+-- Procedure de criação das localizações
+CREATE OR REPLACE FUNCTION inicializarLocalizacoes()
+RETURNS VOID AS
+$$
+DECLARE
+	primeiro_andar INTEGER;
+	segundo_andar INTEGER;
+	terceiro_andar INTEGER;
+BEGIN
+	-- Primeiro andar
+	INSERT INTO localizacao (andar, descricao, estacao, localizacao_anterior, localizacao_posterior) 
+    VALUES 
+    (1, 'Entrada da cidade dos inícios com uma arquitetura medieval europeia, um ponto de partida comum para aventuras.', 'Primavera', NULL, NULL)
+    RETURNING id_localizacao INTO primeiro_andar;
+   
+   -- Inserindo as salas do primeiro andar..
+   PERFORM inicializarSalasPrimeiroAndar(primeiro_andar);
+   
+   -- Segundo andar
+   INSERT INTO localizacao (andar, descricao, estacao, localizacao_anterior, localizacao_posterior) 
+    VALUES 
+    (2, 'Um Vale de Montanhas com paisagens rochosas e uma série de cavernas e desfiladeiros', 'Primavera', primeiro_andar, NULL)
+    RETURNING id_localizacao INTO segundo_andar;
+    
+    -- Terceiro andar
+    INSERT INTO localizacao (andar, descricao, estacao, localizacao_anterior, localizacao_posterior) 
+    VALUES 
+    (3, 'Uma Floresta de Névoa o terceiro andar é caracterizado por uma floresta densa e misteriosa, coberta por uma névoa constante', 'Outono', segundo_andar, NULL)
+    RETURNING id_localizacao INTO terceiro_andar;
+   
+   -- Construindo os relacionamentos entre as localizações
+	UPDATE localizacao 
+	SET localizacao_posterior = segundo_andar
+	WHERE id_localizacao = primeiro_andar;
+
+	UPDATE localizacao 
+	SET localizacao_posterior = terceiro_andar
+	WHERE id_localizacao = segundo_andar;
+END;
+$$
+LANGUAGE plpgsql;
