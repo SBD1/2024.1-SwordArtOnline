@@ -6,7 +6,7 @@ CREATE TYPE status_missao AS ENUM ('Em andamento', 'Concluido');
 CREATE TYPE passiva_boss AS ENUM ('Vida', 'Defesa', 'Ataque');
 CREATE TYPE nome_classe AS ENUM ('Assassino', 'Mago', 'Tanque', 'Espadachim');
 CREATE TYPE atributo AS ENUM ('Vida', 'Defesa', 'Ataque', 'Magia');
-CREATE TYPE tipo_decisao AS ENUM ('Aceitar', 'Recusar', 'Ignorar');
+CREATE TYPE tipo_decisao AS ENUM ('Aceitar', 'Ignorar');
 CREATE TYPE tipo_estacao AS ENUM ('Outono', 'Inverno', 'Primavera', 'Verao');
 CREATE TYPE tipo_item AS ENUM ('Consumivel', 'Arma');
 CREATE TYPE tipo_efeito AS ENUM ('Ataque', 'Magia', 'Cura');
@@ -63,6 +63,7 @@ CREATE TABLE Inimigo (
     ataque INTEGER NOT NULL,
     defesa INTEGER NOT NULL,
     item_drop INTEGER NOT NULL,
+    xp INTEGER NOT NULL,
     CONSTRAINT FK_Inimigo_Drop FOREIGN KEY (item_drop) REFERENCES Item (id_item)
 );
 
