@@ -294,54 +294,55 @@ CREATE OR REPLACE FUNCTION updateNpc()
 RETURNS TRIGGER AS
 $$
 DECLARE
-	interacao BOOLEAN;
-	id_missao INTEGER;
-	id_item_npc INTEGER;
-	id_inventario_jogador INTEGER;
+    interacao BOOLEAN;
+    id_missao INTEGER;
+    id_item_npc INTEGER;
+    id_inventario_jogador INTEGER;
 BEGIN 
-	-- Vendo se o jogador ja interagiu com o npc ou não
-	SELECT interagiu_jogador INTO interacao 
-	FROM instancia_npc 
-	INNER JOIN npc USING (id_npc) 
-	WHERE id_instancia_npc = NEW.id_instancia_npc;
+    -- Vendo se o jogador já interagiu com o npc ou não
+    SELECT interagiu_jogador INTO interacao 
+    FROM instancia_npc 
+    INNER JOIN npc USING (id_npc) 
+    WHERE id_instancia_npc = NEW.id_instancia_npc;
 
-	-- Pegando o inventario do jogador
-	SELECT inventario INTO id_inventario_jogador 
-	FROM jogador 
-	WHERE id_jogador = NEW.id_jogador;
-	
-	-- Pegando a missão do NPC
-	SELECT missao INTO id_missao 
-	FROM instancia_npc 
-	INNER JOIN npc USING (id_npc) 
-	WHERE id_instancia_npc = NEW.id_instancia_npc;
+    -- Pegando o inventário do jogador
+    SELECT inventario INTO id_inventario_jogador 
+    FROM jogador 
+    WHERE id_jogador = NEW.id_jogador;
+    
+    -- Pegando a missão do NPC
+    SELECT missao INTO id_missao 
+    FROM instancia_npc 
+    INNER JOIN npc USING (id_npc) 
+    WHERE id_instancia_npc = NEW.id_instancia_npc;
 
-	-- Pegando o item do NPC
-	SELECT item_drop INTO id_item_npc 
-	FROM instancia_npc 
-	INNER JOIN npc USING (id_npc) 
-	WHERE id_instancia_npc = NEW.id_instancia_npc;
-	
-	IF (interacao = false) THEN 
-		IF (NEW.decisao = 'Aceitar') THEN
-			-- Atualizando a tabela de instancia_npc, "Ele ja dropou o item" e/ou "ele ja dropou a missao"
-			UPDATE instancia_npc SET interagiu_jogador = true 
-			WHERE id_instancia_npc = NEW.id_instancia_npc;
-		
-			-- Atribuindo a missão ao jogador
-			IF (id_missao <> NULL) THEN
-				INSERT INTO jogador_missao (id_jogador, id_missao) VALUES (NEW.id_jogador, id_missao);
-			END IF;
-		
-			-- Atribuindo o item ao jogador
-			IF (id_item <> NULL) THEN
-				INSERT INTO inventario_item (id_inventario, id_item) VALUES (id_inventario_jogador, id_item_npc);
-			END IF;
-		END IF;
-	END IF;
+    -- Pegando o item do NPC
+    SELECT item_drop INTO id_item_npc 
+    FROM instancia_npc 
+    INNER JOIN npc USING (id_npc) 
+    WHERE id_instancia_npc = NEW.id_instancia_npc;
+       
+   	-- Se a decisão for aceitar
+    IF (NEW.decisao = 'Aceitar') THEN 
+    	-- Se não tiver interação
+        IF (NOT interacao) THEN
+            -- Atualizando a tabela de instancia_npc, "Ele já dropou o item" e/ou "ele já dropou a missão"
+            UPDATE instancia_npc SET interagiu_jogador = true 
+            WHERE id_instancia_npc = NEW.id_instancia_npc;
+        
+            -- Atribuindo a missão ao jogador
+            IF (id_missao IS NOT NULL) THEN
+                INSERT INTO jogador_missao (id_jogador, id_missao) VALUES (NEW.id_jogador, id_missao);
+            END IF;
+        
+            -- Atribuindo o item ao jogador
+            IF (id_item_npc IS NOT NULL) THEN
+                INSERT INTO inventario_item (id_inventario, id_item) VALUES (id_inventario_jogador, id_item_npc);
+            END IF;
+        END IF;
+    END IF;
 
-	RETURN NEW;
-
+    RETURN NEW;
 END;
 $$
 LANGUAGE plpgsql;
