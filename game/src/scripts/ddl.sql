@@ -94,9 +94,9 @@ CREATE TABLE Mob (
 CREATE TABLE Instancia_Inimigo (
     id_instancia SERIAL PRIMARY KEY,
     vida INTEGER NOT NULL,
-    sala_atual INTEGER NOT NULL,
+    instancia_sala INTEGER NOT NULL,
     id_inimigo INTEGER NOT NULL,
-    CONSTRAINT FK_Instancia_Inimigo_Sala FOREIGN KEY (sala_atual) REFERENCES Sala (id_sala),
+    CONSTRAINT FK_Instancia_Inimigo_Instancia_Sala FOREIGN KEY (instancia_sala) REFERENCES Instancia_Sala (id_instancia_sala),
     CONSTRAINT FK_Instancia_Inimigo_Inimigo FOREIGN KEY (id_inimigo) REFERENCES Inimigo (id_inimigo)
 );
 
@@ -113,9 +113,9 @@ CREATE TABLE NPC (
 
 CREATE TABLE Instancia_NPC (
     id_instancia_npc SERIAL PRIMARY KEY,
-    sala_atual INTEGER NOT NULL,
+    instancia_sala INTEGER NOT NULL,
     id_npc INTEGER NOT NULL,
-    CONSTRAINT FK_NPC_Sala FOREIGN KEY (sala_atual) REFERENCES Sala (id_sala),
+    CONSTRAINT FK_Instancia_NPC_Instancia_Sala FOREIGN KEY (instancia_sala) REFERENCES Instancia_Sala (id_instancia_sala),
     CONSTRAINT FK_Instancia_NPC_NPC FOREIGN KEY (id_npc) REFERENCES NPC (id_npc)
 );
 
@@ -139,12 +139,21 @@ CREATE TABLE Jogador (
     inventario INTEGER NOT NULL,
     item_atual INTEGER,
     classe INTEGER NOT NULL,
-    sala_atual INTEGER NOT NULL,
+    instancia_sala_atual INTEGER,
     CONSTRAINT FK_Jogador_Inventario FOREIGN KEY (inventario) REFERENCES Inventario (id_inventario),
     CONSTRAINT FK_Jogador_Item FOREIGN KEY (item_atual) REFERENCES Item (id_item),
     CONSTRAINT FK_Jogador_Classe FOREIGN KEY (classe) REFERENCES Classe (id_classe),
-    CONSTRAINT FK_Jogador_Sala FOREIGN KEY (sala_atual) REFERENCES Sala (id_sala)
+    CONSTRAINT FK_Jogador_Instancia_Sala FOREIGN KEY (instancia_sala_atual) REFERENCES Instancia_Sala (id_instancia_sala)
 );
+
+CREATE TABLE Instancia_Sala (
+    id_instancia_sala SERIAL PRIMARY KEY,
+    id_sala INTEGER NOT NULL,
+    id_jogador INTEGER NOT NULL,
+    CONSTRAINT FK_Instancia_Sala_Sala FOREIGN KEY (id_sala) REFERENCES Sala (id_sala),
+    CONSTRAINT FK_Instancia_Sala_Jogador FOREIGN KEY (id_jogador) REFERENCES Jogador (id_jogador)
+);
+
 
 CREATE TABLE Batalha (
     id_batalha SERIAL PRIMARY KEY,
