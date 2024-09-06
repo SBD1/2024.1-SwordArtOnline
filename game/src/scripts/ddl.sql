@@ -35,6 +35,12 @@ CREATE TABLE Sala (
     CONSTRAINT FK_Sala_Localizacao FOREIGN KEY (id_localizacao) REFERENCES Localizacao (id_localizacao)
 );
 
+CREATE TABLE Instancia_Sala (
+    id_instancia_sala SERIAL PRIMARY KEY,
+    id_sala INTEGER NOT NULL,
+    CONSTRAINT FK_Instancia_Sala_Sala FOREIGN KEY (id_sala) REFERENCES Sala (id_sala)
+);
+
 CREATE TABLE Item (
     id_item SERIAL PRIMARY KEY,
     nome VARCHAR NOT NULL,
@@ -145,15 +151,6 @@ CREATE TABLE Jogador (
     CONSTRAINT FK_Jogador_Classe FOREIGN KEY (classe) REFERENCES Classe (id_classe),
     CONSTRAINT FK_Jogador_Instancia_Sala FOREIGN KEY (instancia_sala_atual) REFERENCES Instancia_Sala (id_instancia_sala)
 );
-
-CREATE TABLE Instancia_Sala (
-    id_instancia_sala SERIAL PRIMARY KEY,
-    id_sala INTEGER NOT NULL,
-    id_jogador INTEGER NOT NULL,
-    CONSTRAINT FK_Instancia_Sala_Sala FOREIGN KEY (id_sala) REFERENCES Sala (id_sala),
-    CONSTRAINT FK_Instancia_Sala_Jogador FOREIGN KEY (id_jogador) REFERENCES Jogador (id_jogador)
-);
-
 
 CREATE TABLE Batalha (
     id_batalha SERIAL PRIMARY KEY,
