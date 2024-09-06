@@ -115,6 +115,7 @@ CREATE TABLE Instancia_NPC (
     id_instancia_npc SERIAL PRIMARY KEY,
     sala_atual INTEGER NOT NULL,
     id_npc INTEGER NOT NULL,
+    interagiu_jogador BOOLEAN NOT NULL,
     CONSTRAINT FK_NPC_Sala FOREIGN KEY (sala_atual) REFERENCES Sala (id_sala),
     CONSTRAINT FK_Instancia_NPC_NPC FOREIGN KEY (id_npc) REFERENCES NPC (id_npc)
 );
@@ -158,9 +159,9 @@ CREATE TABLE Batalha (
 CREATE TABLE Dialogo (
     id_dialogo SERIAL PRIMARY KEY,
     decisao tipo_decisao NOT NULL,
-    id_npc INTEGER NOT NULL,
+    id_instancia_npc INTEGER NOT NULL,
     id_jogador INTEGER NOT NULL,
-    CONSTRAINT FK_Dialogo_NPC FOREIGN KEY (id_npc) REFERENCES NPC (id_npc),
+    CONSTRAINT FK_Dialogo_Instancia_NPC FOREIGN KEY (id_instancia_npc) REFERENCES Instancia_NPC (id_instancia_npc),
     CONSTRAINT FK_Dialogo_Jogador FOREIGN KEY (id_jogador) REFERENCES Jogador (id_jogador)
 );
 
@@ -228,7 +229,7 @@ BEGIN
 	
 
 	-- Inserindo instância de NPC (Comentado na sua descrição, mas sem implementação)
-	INSERT INTO instancia_npc (sala_atual, id_npc) values (primeira_sala, 1);
+	INSERT INTO instancia_npc (sala_atual, id_npc, interagiu_jogador) values (primeira_sala, 1, false);
 END;
 $$
 LANGUAGE plpgsql;
@@ -284,3 +285,70 @@ BEGIN
 END;
 $$
 LANGUAGE plpgsql;
+
+-----------------------------------------------------------------------------------------
+-- Triggers e stored procedures:
+
+-- Stored Procedure responsável por fazer as devidas manipulações após a criação de um dialogo 
+CREATE OR REPLACE FUNCTION updateNpc()
+RETURNS TRIGGER AS
+$$
+DECLARE
+	interacao BOOLEAN;
+	id_missao INTEGER;
+	id_item_npc INTEGER;
+	id_inventario_jogador INTEGER;
+BEGIN 
+	-- Vendo se o jogador ja interagiu com o npc ou não
+	SELECT interagiu_jogador INTO interacao 
+	FROM instancia_npc 
+	INNER JOIN npc USING (id_npc) 
+	WHERE id_instancia_npc = NEW.id_instancia_npc;
+
+	-- Pegando o inventario do jogador
+	SELECT inventario INTO id_inventario_jogador 
+	FROM jogador 
+	WHERE id_jogador = NEW.id_jogador;
+	
+	-- Pegando a missão do NPC
+	SELECT missao INTO id_missao 
+	FROM instancia_npc 
+	INNER JOIN npc USING (id_npc) 
+	WHERE id_instancia_npc = NEW.id_instancia_npc;
+
+	-- Pegando o item do NPC
+	SELECT item_drop INTO id_item_npc 
+	FROM instancia_npc 
+	INNER JOIN npc USING (id_npc) 
+	WHERE id_instancia_npc = NEW.id_instancia_npc;
+	
+	IF (interacao = false) THEN 
+		IF (NEW.decisao = 'Aceitar') THEN
+			-- Atualizando a tabela de instancia_npc, "Ele ja dropou o item" e/ou "ele ja dropou a missao"
+			UPDATE instancia_npc SET interagiu_jogador = true 
+			WHERE id_instancia_npc = NEW.id_instancia_npc;
+		
+			-- Atribuindo a missão ao jogador
+			IF (id_missao <> NULL) THEN
+				INSERT INTO jogador_missao (id_jogador, id_missao) VALUES (NEW.id_jogador, id_missao);
+			END IF;
+		
+			-- Atribuindo o item ao jogador
+			IF (id_item <> NULL) THEN
+				INSERT INTO inventario_item (id_inventario, id_item) VALUES (id_inventario_jogador, id_item_npc);
+			END IF;
+		END IF;
+	END IF;
+
+	RETURN NEW;
+
+END;
+$$
+LANGUAGE plpgsql;
+
+-- Trigger responsável por fazer as devidas manipulações após a criação de um dialogo 
+CREATE TRIGGER updateNpc
+AFTER INSERT 
+ON dialogo
+FOR EACH ROW
+EXECUTE PROCEDURE updateNpc();
