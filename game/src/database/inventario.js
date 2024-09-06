@@ -1,4 +1,4 @@
-const { connection } = require('../config/connection');
+const { connection } = require('../utils/connection');
 
 const insert = async (qnt_max) => {
     let client;

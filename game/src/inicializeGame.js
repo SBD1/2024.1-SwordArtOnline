@@ -1,6 +1,6 @@
 const path = require('path');
-const { executeSQLFile } = require('./config/executeFile');
-const { rl } = require('./config/readlineConfig');
+const { executeSQLFile } = require('./utils/executeFile');
+const { rl } = require('./utils/readlineConfig');
 
 (async () => {
   const sqlDdlFilePath = path.join(__dirname, './scripts/ddl.sql');

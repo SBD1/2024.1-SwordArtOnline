@@ -1,20 +1,20 @@
-const { question } = require('../config/readlineConfig');
-const { clearTerminal, typeWriter } = require('../config/terminalUtils');
+const { question } = require('../utils/readlineConfig');
+const { clearTerminal } = require('../utils/terminalUtils');
 const classeDatabase = require('../database/classe');
 const inventarioDatabase = require('../database/inventario');
 const jogadorDatabase = require('../database/jogador');
 const interactions = require('./interactions');
-const { executeSQLFile } = require('../config/executeFile');
+const { greenBoldText } = require('../utils/colors');
 
 const selectClasse = async () => {
     clearTerminal();
     const classes = await classeDatabase.getAll();
 
-    await typeWriter('**Escolha uma classe** \n');
+    console.log(greenBoldText, '**Escolha uma classe** \n');
     for (const [index, classe] of classes.entries()) {
-        await typeWriter(` ${index + 1} - **${classe.nome}**\n`);
-        await typeWriter(`   Descrição: ${classe.descricao}\n`, 20);
-        await typeWriter(`   Aumenta **${classe.buff} pontos** de ${classe.atributo_melhorado}\n\n`);
+        console.log(` ${index + 1} - **${classe.nome}**\n`);
+        console.log(`   Descrição: ${classe.descricao}\n`);
+        console.log(`   Aumenta **${classe.buff} pontos** de ${classe.atributo_melhorado}\n\n`);
     }
 
     while (true) {
@@ -23,10 +23,10 @@ const selectClasse = async () => {
 
         if (selectedIndex >= 0 && selectedIndex < classes.length) {
             const selectedClasse = classes[selectedIndex];
-            await typeWriter(`\nVocê escolheu a classe **${selectedClasse.nome}**`);
+            console.log(`\nVocê escolheu a classe **${selectedClasse.nome}**`);
             return selectedClasse;
         } else {
-            await typeWriter('\nOpção inválida. Por favor, digite um número válido...\n');
+            console.log('\nOpção inválida. Por favor, digite um número válido...\n');
         }
     }
 };
@@ -62,7 +62,7 @@ const createPlayer = async () => {
     let vida = 100;
 
     setTimeout( async () => {
-        await typeWriter('\n***Criação de Personagem***\n');
+        console.log(greenBoldText, '***Criação de Personagem***\n');
         const nome = await question('Digite o nome do seu personagem: ');
 
         const classe = await selectClasse();
@@ -83,13 +83,13 @@ const createPlayer = async () => {
             classe.id_classe
         );
 
-        await typeWriter(`\n**Personagem Criado!**`);
-        await typeWriter(`  Nome: **${nome}**`);
-        await typeWriter(`  Classe: **${classe.nome}**`);
-        await typeWriter(`  Vida: **${atributosBuffados.vida}**`);
-        await typeWriter(`  Magia: **${atributosBuffados.magia}**`);
-        await typeWriter(`  Defesa: **${atributosBuffados.defesa}**`);
-        await typeWriter(`  Ataque: **${atributosBuffados.ataque}**\n`);
+        console.log(`\n**Personagem Criado!**`);
+        console.log(`  Nome: **${nome}**`);
+        console.log(`  Classe: **${classe.nome}**`);
+        console.log(`  Vida: **${atributosBuffados.vida}**`);
+        console.log(`  Magia: **${atributosBuffados.magia}**`);
+        console.log(`  Defesa: **${atributosBuffados.defesa}**`);
+        console.log(`  Ataque: **${atributosBuffados.ataque}**\n`);
 
         const jogador = await jogadorDatabase.getByNome(nome);
 

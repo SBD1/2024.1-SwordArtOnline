@@ -1,5 +1,9 @@
+const { clearTerminal } = require('./utils/terminalUtils');
 const { welcomeToGame } = require('./services/welcomeToGame');
 
-welcomeToGame();
+clearTerminal();
 
-// Documentar o passo a passo de como rodar o jogo...
+// Espera um milisegundo apos limpar o terminal para inicializar o jogo
+setTimeout(() => {
+    welcomeToGame();
+}, 1);

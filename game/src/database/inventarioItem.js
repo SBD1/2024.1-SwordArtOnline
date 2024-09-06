@@ -1,4 +1,4 @@
-const { connection } = require('../config/connection');
+const { connection } = require('../utils/connection');
 
 const getItensInInventory = async (id_inventario) => {
     let client, itens;
