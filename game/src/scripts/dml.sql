@@ -15,14 +15,14 @@ INSERT INTO item (id_item, nome, tipo, descricao, buff, efeito) VALUES
 
 -- Inserindo inimigos:
 -- Mob:
-INSERT INTO Inimigo (id_inimigo, nome, ataque, defesa, item_drop) VALUES
-(1, 'Orc', 45, 35, 4);
+INSERT INTO Inimigo (id_inimigo, nome, ataque, defesa, item_drop, xp) VALUES
+(1, 'Orc', 45, 35, 4, 40);
 INSERT INTO Mob (id_inimigo) VALUES
 (1);
 
 -- Boss:
-INSERT INTO Inimigo (id_inimigo, nome, ataque, defesa, item_drop) VALUES
-(2, 'Illfang the Kobold Lord', 100, 80, 5); 
+INSERT INTO Inimigo (id_inimigo, nome, ataque, defesa, item_drop, xp) VALUES
+(2, 'Illfang the Kobold Lord', 100, 80, 5, 100); 
 INSERT INTO Boss (id_inimigo, passiva, buff) VALUES
 (2, 'Defesa', 150);
 
