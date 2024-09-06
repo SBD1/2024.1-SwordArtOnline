@@ -1,4 +1,4 @@
-const { connection } = require('../config/connection');
+const { connection } = require('../utils/connection');
 
 const getSalaInformations = async (id_sala) => {
     let client, sala;
@@ -20,7 +20,7 @@ const getSalaInformations = async (id_sala) => {
 
 const getNpcsInRoom = async (id_sala) => {
     let client, npcs;
-    const sql = 'SELECT * FROM npc WHERE sala_atual = $1;';
+    const sql = 'SELECT * FROM instancia_npc INNER JOIN npc USING (id_npc) WHERE sala_atual = $1;';
     const values = [id_sala];
 
     try {

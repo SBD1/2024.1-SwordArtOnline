@@ -1,15 +1,18 @@
-const { question } = require('../config/readlineConfig');
-const { typeWriter, clearTerminal } = require('../config/terminalUtils');
+const { question } = require('../utils/readlineConfig');
+const { typeWriter, clearTerminal } = require('../utils/terminalUtils');
 const salaDatabase = require('../database/sala');
 const inventarioDatabase = require('../database/inventario');
 const inventarioItemDatabase = require('../database/inventarioItem');
+const { blueBoldText } = require('../utils/colors');
 
 // Exibe opções para o jogador e trata a escolha
 const getOptions = async (jogador, sala) => {
-    await typeWriter('**Opções** \n');
-    await typeWriter('\t1 - Olhar ao redor \n', 20);
-    await typeWriter('\t2 - Abrir inventário \n', 20);
-    await typeWriter('Escolha uma opção.. ');
+    const greenBoldText = '\x1b[32;1m%s\x1b[0m';  // Código ANSI para texto verde e em negrito
+
+    console.log(greenBoldText, '**Opções** \n');
+    console.log('\t1 - Olhar ao redor \n');
+    console.log('\t2 - Abrir inventário \n');
+    console.log('Escolha uma opção.. ');
 
     while (true) {
         const option = parseInt(await question('\n-> '), 10);
@@ -22,7 +25,7 @@ const getOptions = async (jogador, sala) => {
                 await openInventory(jogador); // Chama a função para abrir inventário
                 break;
             default:
-                await typeWriter('\nOpção inválida. Por favor, digite um número válido...');
+                console.log('\nOpção inválida. Por favor, digite um número válido...');
                 break;
         }
     }
@@ -39,42 +42,42 @@ const detailRoom = async (jogador, sala) => {
         boss = await salaDatabase.getBossInRoom(jogador.sala_atual);
     }
 
-    await typeWriter('\nVocê dá uma olhada ao redor da sala...\n', 40);
+    console.log('\nVocê dá uma olhada ao redor da sala...\n');
 
     // Vendo os NPCs da sala
     if (npcs.length > 0) {
-        await typeWriter(`\nHá ${npcs.length} NPC${npcs.length === 1 ? '' : 's'} aqui:\n`, 30);
+        console.log(`\nHá ${npcs.length} NPC${npcs.length === 1 ? '' : 's'} aqui:\n`);
         for (const npc of npcs) {
-            await typeWriter(`- ${npc.nome}\n`, 20);
+            console.log(`- ${npc.nome}\n`);
         }
     } else {
-        await typeWriter(`\nNão há NPCs na sala.\n`, 30);
+        console.log(`\nNão há NPCs na sala.\n`);
     }
 
     // Vendo os mobs da sala
     if (mobs.length > 0) {
-        await typeWriter(`\n${mobs.length === 1 ? 'Um mob está vagando pela sala:' : '${mobs.length} mobs estão vagando pela sala:'}\n`, 30);
+        console.log(`\n${mobs.length === 1 ? 'Um mob está vagando pela sala:' : '${mobs.length} mobs estão vagando pela sala:'}\n`);
         for (const mob of mobs) {
-            await typeWriter(`- ${mob.nome}\n`, 20);
+            console.log(`- ${mob.nome}\n`);
         }
     } else {
-        await typeWriter(`\nA sala parece estar livre de mobs.\n`, 30);
+        console.log(`\nA sala parece estar livre de mobs.\n`);
     }
 
     // Vendo o boss da sala
     if (boss.length > 0) {
-        await typeWriter(`\nUm Boss imponente está presente aqui!\n`, 40);
+        console.log(`\nUm Boss imponente está presente aqui!\n`);
         for (const b of boss) {
-            await typeWriter(`- ${b.nome}\n`, 20);
+            console.log(`- ${b.nome}\n`);
         }
     }
 
     // Caso a sala esteja vazia
     if (npcs.length === 0 && mobs.length === 0 && boss.length === 0) {
-        await typeWriter(`\nA sala está vazia e silenciosa. Nada de interessante por aqui.\n`, 30);
+        console.log(`\nA sala está vazia e silenciosa. Nada de interessante por aqui.\n`);
     }
 
-    await typeWriter(`\nO que você fará a seguir?\n`, 40);
+    console.log(`\nO que você fará a seguir?\n`);
 
     let options = [];
     let optionNumber = 1; // Começa a numeração em 1
@@ -109,7 +112,7 @@ const detailRoom = async (jogador, sala) => {
 
     // Exibe as opções numeradas
     for (const option of options) {
-        await typeWriter(`\n${option.number} - ${option.text}\n`, 20);
+        console.log(`\n${option.number} - ${option.text}\n`);
     }
 
     // Tratando a escolha do jogador
@@ -133,12 +136,12 @@ const detailRoom = async (jogador, sala) => {
                     break;
 
                 case 'Ir para a sala anterior':
-                    await typeWriter('\nVocê decide voltar para a sala anterior.\n', 30);
+                    console.log('\nVocê decide voltar para a sala anterior.\n');
                     // Implemente a lógica para ir para a sala anterior
                     break;
 
                 case 'Ir para a próxima sala':
-                    await typeWriter('\nVocê avança para a próxima sala.\n', 30);
+                    console.log('\nVocê avança para a próxima sala.\n');
                     // Implemente a lógica para ir para a próxima sala
                     break;
 
@@ -147,12 +150,12 @@ const detailRoom = async (jogador, sala) => {
                     break;
 
                 default:
-                    await typeWriter('\nOpção inválida. Por favor, escolha uma opção válida.', 30);
+                    console.log('\nOpção inválida. Por favor, escolha uma opção válida.');
                     break;
             }
             break;
         } else {
-            await typeWriter('\nOpção inválida. Por favor, escolha uma opção válida.', 30);
+            console.log('\nOpção inválida. Por favor, escolha uma opção válida.');
         }
     }
 };
@@ -161,19 +164,19 @@ const describeCurrentRoom = async (jogador) => {
     clearTerminal();
     const sala = await salaDatabase.getSalaInformations(jogador.sala_atual);
 
-    await typeWriter(`\nVocê está na sala: ${sala.nome} (Tipo: ${sala.tipo})`);
-    await typeWriter(`Localização:`);
-    await typeWriter(`  Andar: ${sala.andar}`);
-    await typeWriter(`  Descrição: ${sala.descricao}`);
+    console.log(blueBoldText, `\nVocê está na sala: ${sala.nome} (Tipo: ${sala.tipo})`);
+    console.log(blueBoldText, `Localização:`);
+    console.log(blueBoldText, `  Andar: ${sala.andar}`);
+    console.log(blueBoldText, `  Descrição: ${sala.descricao}`);
 
-    await typeWriter('\nDigite 1 para ver suas opções:');
+    console.log('\nDigite 1 para ver suas opções:');
     while (true) {
         const option = parseInt(await question('\n-> '), 10);
 
         if (option === 1) {
             await getOptions(jogador, sala);
         } else {
-            await typeWriter('\nOpção inválida. Por favor, digite um número válido...');
+            console.log('\nOpção inválida. Por favor, digite um número válido...');
         }
     }
 }
@@ -184,8 +187,13 @@ const openInventory = async (jogador) => {
 
     if (inventario) {
         // Lógica de abrir o inventário e mostrar as coisas
+        console.table([
+            { item: "Domain-Driven Design: Atacando as Complexidades no Coração do Software", nome: "Martin Fowler" }, 
+            { item: "Arquitetura Limpa: O guia do artesão para estrutura e design de software", nome: "Robert C. Martin" },
+            { item: "Por que os generalistas vencem em um mundo de especialistas", nome: "David Epstein" }
+        ]);
     } else {
-        await typeWriter('\n\tSeu inventário está vazio... ;-;\n');
+        console.log('\n\tSeu inventário está vazio... ;-;\n');
     }
 };
 
@@ -196,50 +204,50 @@ const detailCurrentItem = async () => {
 
 // Conversar com um NPC
 const talkWithNpc = async (npcs) => {
-    await typeWriter(`\nEscolha um NPC para conversar:\n`, 30);
+    console.log(`\nEscolha um NPC para conversar:\n`);
     for (let i = 0; i < npcs.length; i++) {
-        await typeWriter(`${i + 1} - ${npcs[i].nome}\n`, 20);
+        console.log(`${i + 1} - ${npcs[i].nome}\n`);
     }
     const npcChoice = parseInt(await question('\n-> '), 10);
     if (npcChoice > 0 && npcChoice <= npcs.length) {
         const currentNpc = npcs[npcChoice - 1];
 
-        await typeWriter(`\nVocê caminha até o ${currentNpc.nome}.\n`, 30);
-        await typeWriter(`\t"${currentNpc.nome}"\n`);
+        console.log(`\nVocê caminha até o ${currentNpc.nome}.\n`);
+        console.log(`\t"${currentNpc.nome}"\n`);
 
 
     } else {
-        await typeWriter('\nOpção inválida. Por favor, escolha um NPC válido.', 30);
+        console.log('\nOpção inválida. Por favor, escolha um NPC válido.');
     }
 }
 
 // Batalhar com um inimigo
 const battleWithMob = async (mobs) => {
-    await typeWriter(`\nEscolha um mob para batalhar:\n`, 30);
+    console.log(`\nEscolha um mob para batalhar:\n`);
     for (let i = 0; i < mobs.length; i++) {
-        await typeWriter(`${i + 1} - ${mobs[i].nome}\n`, 20);
+        console.log(`${i + 1} - ${mobs[i].nome}\n`);
     }
     const mobChoice = parseInt(await question('\n-> '), 10);
     if (mobChoice > 0 && mobChoice <= mobs.length) {
-        await typeWriter(`\nVocê se prepara para batalhar com ${mobs[mobChoice - 1].nome}.\n`, 30);
+        console.log(`\nVocê se prepara para batalhar com ${mobs[mobChoice - 1].nome}.\n`);
         // Implemente a lógica para batalhar com o mob
     } else {
-        await typeWriter('\nOpção inválida. Por favor, escolha um mob válido.', 30);
+        console.log('\nOpção inválida. Por favor, escolha um mob válido.');
     }
 }
 
 // Batalhar com um boss
 const battleWithBoss = async (boss) => {
-    await typeWriter(`\nEscolha o Boss para batalhar:\n`, 30);
+    console.log(`\nEscolha o Boss para batalhar:\n`);
     for (let i = 0; i < boss.length; i++) {
-        await typeWriter(`${i + 1} - ${boss[i].nome}\n`, 20);
+        console.log(`${i + 1} - ${boss[i].nome}\n`);
     }
     const bossChoice = parseInt(await question('\n-> '), 10);
     if (bossChoice > 0 && bossChoice <= boss.length) {
-        await typeWriter(`\nVocê enfrenta o Boss ${boss[bossChoice - 1].nome}!\n`, 30);
+        console.log(`\nVocê enfrenta o Boss ${boss[bossChoice - 1].nome}!\n`);
         // Implemente a lógica para batalhar com o Boss
     } else {
-        await typeWriter('\nOpção inválida. Por favor, escolha um Boss válido.', 30);
+        console.log('\nOpção inválida. Por favor, escolha um Boss válido.');
     }
 }
 

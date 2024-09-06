@@ -1,4 +1,4 @@
-const { connection } = require('../config/connection');
+const { connection } = require('../utils/connection');
 
 // Esse metodo chama a procedure responsável pela criação de todas as localizações, salas, instancias de npc e inimigo e o jogador
 const createNewGame = async (xp, nivel, defesa, magia, ataque, vida, nome, inventario, classe) => {
