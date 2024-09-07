@@ -11,235 +11,237 @@
     CREATE TYPE tipo_item AS ENUM ('Consumivel', 'Arma');
     CREATE TYPE tipo_efeito AS ENUM ('Ataque', 'Magia', 'Cura');
 
-    -- Tabelas:
-    CREATE TABLE Localizacao (
-        id_localizacao SERIAL PRIMARY KEY,
-        andar INTEGER NOT NULL,
-        descricao VARCHAR NOT NULL,
-        estacao tipo_estacao NOT NULL,
-        localizacao_anterior INTEGER,
-        localizacao_posterior INTEGER,
-        CONSTRAINT FK_Localizacao_Anterior FOREIGN KEY (localizacao_anterior) REFERENCES Localizacao (id_localizacao),
-        CONSTRAINT FK_Localizacao_Posterior FOREIGN KEY (localizacao_posterior) REFERENCES Localizacao (id_localizacao)
-    );
+-- Tabelas:
+CREATE TABLE Localizacao (
+    id_localizacao SERIAL PRIMARY KEY,
+    andar INTEGER NOT NULL,
+    descricao VARCHAR NOT NULL,
+    estacao tipo_estacao NOT NULL,
+    localizacao_anterior INTEGER,
+    localizacao_posterior INTEGER,
+    CONSTRAINT FK_Localizacao_Anterior FOREIGN KEY (localizacao_anterior) REFERENCES Localizacao (id_localizacao),
+    CONSTRAINT FK_Localizacao_Posterior FOREIGN KEY (localizacao_posterior) REFERENCES Localizacao (id_localizacao)
+);
 
-    CREATE TABLE Sala (
-        id_sala SERIAL PRIMARY KEY,
-        nome VARCHAR NOT NULL,
-        tipo tipo_sala NOT NULL,
-        sala_anterior INTEGER,
-        sala_posterior INTEGER,
-        id_localizacao INTEGER NOT NULL,
-        CONSTRAINT FK_Sala_Anterior FOREIGN KEY (sala_anterior) REFERENCES Sala (id_sala),
-        CONSTRAINT FK_Sala_Posterior FOREIGN KEY (sala_posterior) REFERENCES Sala (id_sala),
-        CONSTRAINT FK_Sala_Localizacao FOREIGN KEY (id_localizacao) REFERENCES Localizacao (id_localizacao)
-    );
+CREATE TABLE Sala (
+    id_sala SERIAL PRIMARY KEY,
+    nome VARCHAR NOT NULL,
+    tipo tipo_sala NOT NULL,
+    sala_anterior INTEGER,
+    sala_posterior INTEGER,
+    id_localizacao INTEGER NOT NULL,
+    CONSTRAINT FK_Sala_Anterior FOREIGN KEY (sala_anterior) REFERENCES Sala (id_sala),
+    CONSTRAINT FK_Sala_Posterior FOREIGN KEY (sala_posterior) REFERENCES Sala (id_sala),
+    CONSTRAINT FK_Sala_Localizacao FOREIGN KEY (id_localizacao) REFERENCES Localizacao (id_localizacao)
+);
 
-    CREATE TABLE Instancia_Sala (
-        id_instancia_sala SERIAL PRIMARY KEY,
-        id_sala INTEGER NOT NULL,
-        CONSTRAINT FK_Instancia_Sala_Sala FOREIGN KEY (id_sala) REFERENCES Sala (id_sala)
-    );
+CREATE TABLE Instancia_Sala (
+    id_instancia_sala SERIAL PRIMARY KEY,
+    id_sala INTEGER NOT NULL,
+    sala_anterior INTEGER,
+    sala_posterior INTEGER,
+    CONSTRAINT FK_Instancia_Sala_Sala FOREIGN KEY (id_sala) REFERENCES Sala (id_sala),
+    CONSTRAINT FK_Sala_Anterior FOREIGN KEY (sala_anterior) REFERENCES Instancia_Sala (id_instancia_sala),
+    CONSTRAINT FK_Sala_Posterior FOREIGN KEY (sala_posterior) REFERENCES Instancia_Sala (id_instancia_sala)
+);
 
-    CREATE TABLE Item (
-        id_item SERIAL PRIMARY KEY,
-        nome VARCHAR NOT NULL,
-        tipo tipo_item NOT NULL,
-        descricao VARCHAR NOT NULL,
-        buff INTEGER NOT NULL,
-        efeito tipo_efeito NOT NULL
-    );
+CREATE TABLE Item (
+    id_item SERIAL PRIMARY KEY,
+    nome VARCHAR NOT NULL,
+    tipo tipo_item NOT NULL,
+    descricao VARCHAR NOT NULL,
+    buff INTEGER NOT NULL,
+    efeito tipo_efeito NOT NULL
+);
 
-    CREATE TABLE Inventario (
-        id_inventario SERIAL PRIMARY KEY,
-        qnt_max INTEGER NOT NULL
-    );
+CREATE TABLE Inventario (
+    id_inventario SERIAL PRIMARY KEY,
+    qnt_max INTEGER NOT NULL
+);
 
-    CREATE TABLE Inventario_Item (
-        id_inventario INTEGER NOT NULL,
-        id_item INTEGER NOT NULL,
-        PRIMARY KEY (id_inventario, id_item),
-        CONSTRAINT FK_Inventario_Item_Inventario FOREIGN KEY (id_inventario) REFERENCES Inventario (id_inventario),
-        CONSTRAINT FK_Inventario_Item_Item FOREIGN KEY (id_item) REFERENCES Item (id_item)
-    );
+CREATE TABLE Inventario_Item (
+    id_inventario INTEGER NOT NULL,
+    id_item INTEGER NOT NULL,
+    PRIMARY KEY (id_inventario, id_item),
+    CONSTRAINT FK_Inventario_Item_Inventario FOREIGN KEY (id_inventario) REFERENCES Inventario (id_inventario),
+    CONSTRAINT FK_Inventario_Item_Item FOREIGN KEY (id_item) REFERENCES Item (id_item)
+);
 
-    CREATE TABLE Missao (
-        id_missao SERIAL PRIMARY KEY,
-        nome VARCHAR NOT NULL,
-        descricao VARCHAR NOT NULL,
-        recompensa_xp INTEGER NOT NULL,
-        status status_missao NOT NULL
-    );
+CREATE TABLE Missao (
+    id_missao SERIAL PRIMARY KEY,
+    nome VARCHAR NOT NULL,
+    descricao VARCHAR NOT NULL,
+    recompensa_xp INTEGER NOT NULL,
+    status status_missao NOT NULL
+);
 
-    CREATE TABLE Inimigo (
-        id_inimigo SERIAL PRIMARY KEY,
-        nome VARCHAR NOT NULL,
-        ataque INTEGER NOT NULL,
-        defesa INTEGER NOT NULL,
-        item_drop INTEGER NOT NULL,
-        xp INTEGER NOT NULL,
-        id_missao INTEGER,
-        CONSTRAINT FK_Inimigo_Drop FOREIGN KEY (item_drop) REFERENCES Item (id_item),
-        CONSTRAINT FK_Inimigo_Missao FOREIGN KEY (id_missao) REFERENCES Missao (id_missao)
-    );
+CREATE TABLE Inimigo (
+    id_inimigo SERIAL PRIMARY KEY,
+    nome VARCHAR NOT NULL,
+    ataque INTEGER NOT NULL,
+    defesa INTEGER NOT NULL,
+    item_drop INTEGER NOT NULL,
+    xp INTEGER NOT NULL,
+    id_missao INTEGER,
+    CONSTRAINT FK_Inimigo_Drop FOREIGN KEY (item_drop) REFERENCES Item (id_item),
+    CONSTRAINT FK_Inimigo_Missao FOREIGN KEY (id_missao) REFERENCES Missao (id_missao)
+);
 
-    CREATE TABLE Boss (
-        id_boss SERIAL PRIMARY KEY,
-        passiva passiva_boss NOT NULL,
-        id_inimigo INTEGER NOT NULL,
-        buff INTEGER NOT NULL,
-        CONSTRAINT FK_Boss_Inimigo FOREIGN KEY (id_inimigo) REFERENCES Inimigo (id_inimigo)
-    );
+CREATE TABLE Boss (
+    id_boss SERIAL PRIMARY KEY,
+    passiva passiva_boss NOT NULL,
+    id_inimigo INTEGER NOT NULL,
+    buff INTEGER NOT NULL,
+    CONSTRAINT FK_Boss_Inimigo FOREIGN KEY (id_inimigo) REFERENCES Inimigo (id_inimigo)
+);
 
-    CREATE TABLE Mob (
-        id_mob SERIAL PRIMARY KEY,
-        id_inimigo INTEGER NOT NULL,
-        CONSTRAINT FK_Mob_Inimigo FOREIGN KEY (id_inimigo) REFERENCES Inimigo (id_inimigo)
-    );
+CREATE TABLE Mob (
+    id_mob SERIAL PRIMARY KEY,
+    id_inimigo INTEGER NOT NULL,
+    CONSTRAINT FK_Mob_Inimigo FOREIGN KEY (id_inimigo) REFERENCES Inimigo (id_inimigo)
+);
 
-    CREATE TABLE Instancia_Inimigo (
-        id_instancia SERIAL PRIMARY KEY,
-        vida INTEGER NOT NULL,
-        instancia_sala INTEGER NOT NULL,
-        id_inimigo INTEGER NOT NULL,
-        CONSTRAINT FK_Instancia_Inimigo_Instancia_Sala FOREIGN KEY (instancia_sala) REFERENCES Instancia_Sala (id_instancia_sala),
-        CONSTRAINT FK_Instancia_Inimigo_Inimigo FOREIGN KEY (id_inimigo) REFERENCES Inimigo (id_inimigo)
-    );
+CREATE TABLE Instancia_Inimigo (
+    id_instancia SERIAL PRIMARY KEY,
+    vida INTEGER NOT NULL,
+    sala_atual INTEGER NOT NULL,
+    id_inimigo INTEGER NOT NULL,
+    CONSTRAINT FK_Instancia_Inimigo_Instancia_Sala FOREIGN KEY (sala_atual) REFERENCES Instancia_Sala (id_instancia_sala),
+    CONSTRAINT FK_Instancia_Inimigo_Inimigo FOREIGN KEY (id_inimigo) REFERENCES Inimigo (id_inimigo)
+);
 
-    CREATE TABLE NPC (
-        id_npc SERIAL PRIMARY KEY,
-        profissao VARCHAR NOT NULL,
-        nome VARCHAR NOT NULL,
-        fala VARCHAR NOT NULL,
-        item_drop INTEGER,
-        missao INTEGER,
-        CONSTRAINT FK_NPC_Drop FOREIGN KEY (item_drop) REFERENCES Item (id_item),
-        CONSTRAINT FK_NPC_Missao FOREIGN KEY (missao) REFERENCES Missao (id_missao)
-    );
+CREATE TABLE NPC (
+    id_npc SERIAL PRIMARY KEY,
+    profissao VARCHAR NOT NULL,
+    nome VARCHAR NOT NULL,
+    fala VARCHAR NOT NULL,
+    item_drop INTEGER,
+    missao INTEGER,
+    CONSTRAINT FK_NPC_Drop FOREIGN KEY (item_drop) REFERENCES Item (id_item),
+    CONSTRAINT FK_NPC_Missao FOREIGN KEY (missao) REFERENCES Missao (id_missao)
+);
 
-    CREATE TABLE Instancia_NPC (
-        id_instancia_npc SERIAL PRIMARY KEY,
-        instancia_sala INTEGER NOT NULL,
-        id_npc INTEGER NOT NULL,
-        CONSTRAINT FK_Instancia_NPC_Instancia_Sala FOREIGN KEY (instancia_sala) REFERENCES Instancia_Sala (id_instancia_sala),
-        CONSTRAINT FK_Instancia_NPC_NPC FOREIGN KEY (id_npc) REFERENCES NPC (id_npc)
-    );
+CREATE TABLE Instancia_NPC (
+    id_instancia_npc SERIAL PRIMARY KEY,
+    sala_atual INTEGER NOT NULL,
+    id_npc INTEGER NOT NULL,
+    CONSTRAINT FK_Instancia_NPC_Instancia_Sala FOREIGN KEY (sala_atual) REFERENCES Instancia_Sala (id_instancia_sala),
+    CONSTRAINT FK_Instancia_NPC_NPC FOREIGN KEY (id_npc) REFERENCES NPC (id_npc)
+);
 
-    CREATE TABLE Classe (
-        id_classe SERIAL PRIMARY KEY,
-        nome nome_classe NOT NULL,
-        descricao VARCHAR NOT NULL,
-        atributo_melhorado atributo NOT NULL,
-        buff INTEGER NOT NULL
-    );
+CREATE TABLE Classe (
+    id_classe SERIAL PRIMARY KEY,
+    nome nome_classe NOT NULL,
+    descricao VARCHAR NOT NULL,
+    atributo_melhorado atributo NOT NULL,
+    buff INTEGER NOT NULL
+);
 
-    CREATE TABLE Jogador (
-        id_jogador SERIAL PRIMARY KEY,
-        xp INTEGER NOT NULL,
-        nivel INTEGER NOT NULL,
-        defesa INTEGER NOT NULL,
-        magia INTEGER NOT NULL,
-        ataque INTEGER NOT NULL,
-        vida INTEGER NOT NULL,
-        nome VARCHAR NOT NULL,
-        inventario INTEGER NOT NULL,
-        item_atual INTEGER,
-        classe INTEGER NOT NULL,
-        instancia_sala_atual INTEGER,
-        CONSTRAINT FK_Jogador_Inventario FOREIGN KEY (inventario) REFERENCES Inventario (id_inventario),
-        CONSTRAINT FK_Jogador_Item FOREIGN KEY (item_atual) REFERENCES Item (id_item),
-        CONSTRAINT FK_Jogador_Classe FOREIGN KEY (classe) REFERENCES Classe (id_classe),
-        CONSTRAINT FK_Jogador_Instancia_Sala FOREIGN KEY (instancia_sala_atual) REFERENCES Instancia_Sala (id_instancia_sala)
-    );
+CREATE TABLE Jogador (
+    id_jogador SERIAL PRIMARY KEY,
+    xp INTEGER NOT NULL,
+    nivel INTEGER NOT NULL,
+    defesa INTEGER NOT NULL,
+    magia INTEGER NOT NULL,
+    ataque INTEGER NOT NULL,
+    vida INTEGER NOT NULL,
+    nome VARCHAR NOT NULL,
+    inventario INTEGER NOT NULL,
+    item_atual INTEGER,
+    classe INTEGER NOT NULL,
+    sala_atual INTEGER,
+    CONSTRAINT FK_Jogador_Inventario FOREIGN KEY (inventario) REFERENCES Inventario (id_inventario),
+    CONSTRAINT FK_Jogador_Item FOREIGN KEY (item_atual) REFERENCES Item (id_item),
+    CONSTRAINT FK_Jogador_Classe FOREIGN KEY (classe) REFERENCES Classe (id_classe),
+    CONSTRAINT FK_Jogador_Instancia_Sala FOREIGN KEY (sala_atual) REFERENCES Instancia_Sala (id_instancia_sala)
+);
 
-    CREATE TABLE Batalha (
-        id_batalha SERIAL PRIMARY KEY,
-        venceu BOOLEAN NOT NULL,
-        id_instancia INTEGER NOT NULL,
-        id_jogador INTEGER NOT NULL,
-        CONSTRAINT FK_Batalha_Instancia FOREIGN KEY (id_instancia) REFERENCES Instancia_Inimigo (id_instancia),
-        CONSTRAINT FK_Batalha_Jogador FOREIGN KEY (id_jogador) REFERENCES Jogador (id_jogador)
-    );
+CREATE TABLE Batalha (
+    id_batalha SERIAL PRIMARY KEY,
+    venceu BOOLEAN NOT NULL,
+    id_instancia INTEGER NOT NULL,
+    id_jogador INTEGER NOT NULL,
+    CONSTRAINT FK_Batalha_Instancia FOREIGN KEY (id_instancia) REFERENCES Instancia_Inimigo (id_instancia),
+    CONSTRAINT FK_Batalha_Jogador FOREIGN KEY (id_jogador) REFERENCES Jogador (id_jogador)
+);
 
-    CREATE TABLE Dialogo (
-        id_dialogo SERIAL PRIMARY KEY,
-        decisao tipo_decisao NOT NULL,
-        id_npc INTEGER NOT NULL,
-        id_jogador INTEGER NOT NULL,
-        CONSTRAINT FK_Dialogo_NPC FOREIGN KEY (id_npc) REFERENCES NPC (id_npc),
-        CONSTRAINT FK_Dialogo_Jogador FOREIGN KEY (id_jogador) REFERENCES Jogador (id_jogador)
-    );
+CREATE TABLE Dialogo (
+    id_dialogo SERIAL PRIMARY KEY,
+    decisao tipo_decisao NOT NULL,
+    id_npc INTEGER NOT NULL,
+    id_jogador INTEGER NOT NULL,
+    CONSTRAINT FK_Dialogo_NPC FOREIGN KEY (id_npc) REFERENCES NPC (id_npc),
+    CONSTRAINT FK_Dialogo_Jogador FOREIGN KEY (id_jogador) REFERENCES Jogador (id_jogador)
+);
 
-    CREATE TABLE Jogador_Missao (
-        id_jogador INTEGER NOT NULL,
-        id_missao INTEGER NOT NULL,
-        PRIMARY KEY (id_jogador, id_missao),
-        CONSTRAINT FK_Jogador_Missao_Jogador FOREIGN KEY (id_jogador) REFERENCES Jogador (id_jogador),
-        CONSTRAINT FK_Jogador_Missao_Missao FOREIGN KEY (id_missao) REFERENCES Missao (id_missao)
-    );
+CREATE TABLE Jogador_Missao (
+    id_jogador INTEGER NOT NULL,
+    id_missao INTEGER NOT NULL,
+    PRIMARY KEY (id_jogador, id_missao),
+    CONSTRAINT FK_Jogador_Missao_Jogador FOREIGN KEY (id_jogador) REFERENCES Jogador (id_jogador),
+    CONSTRAINT FK_Jogador_Missao_Missao FOREIGN KEY (id_missao) REFERENCES Missao (id_missao)
+);
 
 -----------------------------------------------------------------------------------------
 -- Procedures:
 
--- Procedure que inicializa as salas do primeiro andar e cria o jogador
+-- Procedure que instancia salas do primeiro andar e cria o jogador
 CREATE OR REPLACE FUNCTION inicializarSalasPrimeiroAndar(
-	localizacao_sala INTEGER,
-	xp_jogador INTEGER, 
-	nivel_jogador INTEGER, 
-	defesa_jogador INTEGER, 
-	magia_jogador INTEGER, 
-	ataque_jogador INTEGER, 
-	vida_jogador INTEGER, 
-	nome_jogador VARCHAR, 
-	inventario_jogador INTEGER, 
-	classe_jogador INTEGER)
+    xp_jogador INTEGER, 
+    nivel_jogador INTEGER, 
+    defesa_jogador INTEGER, 
+    magia_jogador INTEGER, 
+    ataque_jogador INTEGER, 
+    vida_jogador INTEGER, 
+    nome_jogador VARCHAR, 
+    inventario_jogador INTEGER, 
+    classe_jogador INTEGER)
 RETURNS VOID AS
 $$
 DECLARE 
-	primeira_sala INTEGER;
-	segunda_sala INTEGER;
-	terceira_sala INTEGER;
-BEGIN
-	INSERT INTO sala (nome, tipo, sala_anterior, sala_posterior, id_localizacao) VALUES
-	('Hall de Entrada', 'Comum', NULL, NULL, localizacao_sala)
-	RETURNING id_sala INTO primeira_sala;
+    primeira_sala INTEGER;
+    segunda_sala INTEGER;
+    terceira_sala INTEGER;
+BEGIN    
+    -- Inserindo as instâncias das salas do primeiro andar
+    INSERT INTO instancia_sala (id_sala, sala_anterior, sala_posterior) 
+    VALUES (1, NULL, NULL) 
+   	RETURNING id_instancia_sala INTO primeira_sala;
 
-	-- Criando o Jogador
-	INSERT INTO jogador (xp, nivel, defesa, magia, ataque, vida, nome, inventario, classe, sala_atual) 
-    VALUES (xp_jogador,  nivel_jogador, defesa_jogador, magia_jogador, ataque_jogador, vida_jogador, nome_jogador, inventario_jogador, classe_jogador, primeira_sala)
-   	RETURNING nome INTO nome_jogador;
-	
-	INSERT INTO sala (nome, tipo, sala_anterior, sala_posterior, id_localizacao) VALUES
-	('Planícies', 'Comum', primeira_sala, NULL, localizacao_sala)
-	RETURNING id_sala INTO segunda_sala;
-	
-	INSERT INTO sala (nome, tipo, sala_anterior, sala_posterior, id_localizacao) VALUES
-	('Sala do Guardião', 'Boss', segunda_sala, NULL, localizacao_sala)
-	RETURNING id_sala INTO terceira_sala;
+    INSERT INTO instancia_sala (id_sala, sala_anterior, sala_posterior) 
+    VALUES (2, primeira_sala, NULL) 
+   	RETURNING id_instancia_sala INTO segunda_sala;
 
-	-- Construindo os relacionamentos entre as salas:
-	UPDATE sala SET sala_posterior = segunda_sala
-	WHERE id_sala = primeira_sala;
-	
-	UPDATE sala SET sala_posterior = terceira_sala
-	WHERE id_sala = segunda_sala;
+    INSERT INTO instancia_sala (id_sala, sala_anterior, sala_posterior) 
+    VALUES (3, segunda_sala, NULL) 
+   	RETURNING id_instancia_sala INTO terceira_sala;
 
-	-- Populando as salas do primeiro andar:
-	-- Inserindo instâncias de mob e dragão
-	INSERT INTO instancia_inimigo (vida, sala_atual, id_inimigo) values
-	(60, primeira_sala, 1),
-	(60, segunda_sala, 2),
-	(60, segunda_sala, 2),
-	(150, terceira_sala, 2);
-	
+    -- Construindo os relacionamentos entre as instâncias de sala:
+    UPDATE instancia_sala SET sala_posterior = segunda_sala
+    WHERE id_instancia_sala = primeira_sala;
+    
+    UPDATE instancia_sala SET sala_posterior = terceira_sala
+    WHERE id_instancia_sala = segunda_sala;
 
-	-- Inserindo instância de NPC (Comentado na sua descrição, mas sem implementação)
-	INSERT INTO instancia_npc (sala_atual, id_npc, interagiu_jogador) values (primeira_sala, 1, false);
+    -- Criando o Jogador
+    INSERT INTO jogador (xp, nivel, defesa, magia, ataque, vida, nome, inventario, classe, sala_atual) 
+    VALUES (xp_jogador, nivel_jogador, defesa_jogador, magia_jogador, ataque_jogador, vida_jogador, nome_jogador, inventario_jogador, classe_jogador, primeira_sala);
+
+    -- Populando as salas do primeiro andar:
+    -- Inserindo instâncias de mob e dragão
+    INSERT INTO instancia_inimigo (vida, sala_atual, id_inimigo) values
+    (60, primeira_sala, 1),
+    (60, segunda_sala, 2),
+    (60, segunda_sala, 2),
+    (150, terceira_sala, 2);
+
+    -- Inserindo instância de NPC
+    INSERT INTO instancia_npc (sala_atual, id_npc) values (primeira_sala, 1);
+    
 END;
-$$
-LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
 
--- Procedure de criação das localizações
+-- Procedure de criação do mapa (Cria todas as instâncias de sala e popula elas)
 CREATE OR REPLACE FUNCTION inicializarJogo(
 	xp_jogador INTEGER, 
 	nivel_jogador INTEGER, 
@@ -252,41 +254,9 @@ CREATE OR REPLACE FUNCTION inicializarJogo(
 	classe_jogador INTEGER)
 RETURNS VOID AS
 $$
-DECLARE
-	primeiro_andar INTEGER;
-	segundo_andar INTEGER;
-	terceiro_andar INTEGER;
 BEGIN
-	-- Primeiro andar
-	INSERT INTO localizacao (andar, descricao, estacao, localizacao_anterior, localizacao_posterior) 
-    VALUES 
-    (1, 'Entrada da cidade dos inícios com uma arquitetura medieval europeia, um ponto de partida comum para aventuras.', 'Primavera', NULL, NULL)
-    RETURNING id_localizacao INTO primeiro_andar;
-	
    	-- Salas do primeiro andar e criação do jogador:
-   	SELECT inicializarSalasPrimeiroAndar(primeiro_andar, xp_jogador, nivel_jogador, defesa_jogador, magia_jogador, ataque_jogador, vida_jogador, nome_jogador, inventario_jogador, classe_jogador)
-  	INTO nome_jogador;
-   
-   	-- Segundo andar
-   	INSERT INTO localizacao (andar, descricao, estacao, localizacao_anterior, localizacao_posterior) 
-    VALUES 
-    (2, 'Um Vale de Montanhas com paisagens rochosas e uma série de cavernas e desfiladeiros', 'Primavera', primeiro_andar, NULL)
-    RETURNING id_localizacao INTO segundo_andar;
-    
-    -- Terceiro andar
-    INSERT INTO localizacao (andar, descricao, estacao, localizacao_anterior, localizacao_posterior) 
-    VALUES 
-    (3, 'Uma Floresta de Névoa o terceiro andar é caracterizado por uma floresta densa e misteriosa, coberta por uma névoa constante', 'Outono', segundo_andar, NULL)
-    RETURNING id_localizacao INTO terceiro_andar;
-   
-   -- Construindo os relacionamentos entre as localizações
-	UPDATE localizacao 
-	SET localizacao_posterior = segundo_andar
-	WHERE id_localizacao = primeiro_andar;
-
-	UPDATE localizacao 
-	SET localizacao_posterior = terceiro_andar
-	WHERE id_localizacao = segundo_andar;
+   	SELECT inicializarSalasPrimeiroAndar(xp_jogador, nivel_jogador, defesa_jogador, magia_jogador, ataque_jogador, vida_jogador, nome_jogador, inventario_jogador, classe_jogador);
 END;
 $$
 LANGUAGE plpgsql;
@@ -294,7 +264,7 @@ LANGUAGE plpgsql;
 -----------------------------------------------------------------------------------------
 -- Triggers e stored procedures:
 
--- Stored Procedure responsável por fazer as devidas manipulações após a criação de um dialogo 
+-- Stored Procedure responsável por fazer as devidas manipulações após a criação de um dialogo
 CREATE OR REPLACE FUNCTION updateNpc()
 RETURNS TRIGGER AS
 $$
@@ -352,9 +322,8 @@ END;
 $$
 LANGUAGE plpgsql;
 
--- Trigger responsável por fazer as devidas manipulações após a criação de um dialogo 
-CREATE TRIGGER updateNpc
-AFTER INSERT 
-ON dialogo
-FOR EACH ROW
-EXECUTE PROCEDURE updateNpc();
+-- Trigger responsável por fazer as devidas manipulações após a criação de um dialogo
+CREATE TRIGGER updateNpc AFTER
+INSERT
+    ON dialogo FOR EACH ROW
+EXECUTE PROCEDURE updateNpc ();
