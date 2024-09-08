@@ -751,16 +751,32 @@ const talkWithNpc = async (npcs, jogador) => {
 
 // Batalhar com um inimigo
 const battleWithMob = async (mobs, jogador) => {
-    console.log(`\nEscolha um mob para batalhar:\n`);
+    console.log(redBoldText, `\nEscolha com que inimigo quer batalhar:\n`);
+
+    const options = [];
     for (let i = 0; i < mobs.length; i++) {
-        console.log(`${i + 1} - ${mobs[i].nome}\n`);
+        options.push({
+            Nome: mobs[i].nome,
+            Ataque: mobs[i].ataque,
+            Defesa: mobs[i].defesa,
+            Vida: mobs[i].vida
+        });
     }
-    const mobChoice = parseInt(await question('\n-> '), 10);
-    if (mobChoice > 0 && mobChoice <= mobs.length) {
-        console.log(`\nVocê se prepara para batalhar com ${mobs[mobChoice - 1].nome}.\n`);
-        // Implemente a lógica para batalhar com o mob
-    } else {
-        console.log('\nOpção inválida. Por favor, escolha um mob válido.');
+
+    console.table(options);
+
+    let keepRunning = true;
+    while (keepRunning) {
+        const enemyChoice = parseInt(await question('\n-> '), 10);
+
+        if (enemyChoice >= 0 && enemyChoice < mobs.length) {
+            const currentEnemy = mobs[enemyChoice];
+
+            keepRunning = false;
+            battle(jogador, currentEnemy);
+        } else {
+            console.log(redBoldText, '\nOpção inválida. Por favor, escolha um NPC válido.');
+        }
     }
 }
 
@@ -778,6 +794,99 @@ const battleWithBoss = async (boss, jogador) => {
         console.log('\nOpção inválida. Por favor, escolha um Boss válido.');
     }
 }
+
+const battle = (jogador, inimigo) => {
+    clearTerminal();
+
+    setTimeout(() => {
+        console.log(redBoldText, `\n\tVocê corre para atacar o ${inimigo.nome}...`);
+    }, 1);
+
+    clearTerminal(2000);
+
+    setTimeout(async () => {
+        console.log(redBoldText, `**Batalha iniciada contra ${inimigo.nome}!**\n`);
+
+        // Definir dano mínimo
+        const danoMinimo = 1;
+
+        // Atributos do jogador
+        const { ataque: ataqueJogador, defesa: defesaJogador, magia: magiaJogador, vida: vidaJogador } = jogador;
+
+        // Atributos do inimigo
+        const { ataque: ataqueInimigo, defesa: defesaInimigo, vida: vidaInimigo } = inimigo;
+
+        // Iniciar o loop de batalha
+        while (vidaJogador > 0 && vidaInimigo > 0) {
+            console.log(cyanBoldText, `\nSua Vida: ${vidaJogador} | Vida do Inimigo: ${vidaInimigo}`);
+
+            // Jogador realiza uma ação
+            let keepRunning = true;
+            while (keepRunning) {
+                console.log('\nEscolha sua ação:');
+                console.table([
+                    { Opções: 'Ataque Físico' },
+                    { Opções: 'Ataque Mágico' }
+                ]);
+
+                let acaoJogador = parseInt(await question('\n-> '), 10);
+
+                switch (acaoJogador) {
+                    case 0:
+                        console.log(blueBoldText, '\nVocê escolheu Ataque Físico!');
+                        // Calcular dano do ataque físico
+                        let danoBase = ataqueJogador - defesaInimigo;
+                        let danoJogador = danoBase < danoMinimo ? danoMinimo : danoBase;
+
+                        // Atualizar vida do inimigo
+                        vidaInimigo -= danoJogador;
+                        console.log(greenBoldText, `\nVocê causou ${danoJogador} de dano físico! Vida restante do inimigo: ${vidaInimigo}\n`);
+                        keepRunning = false;
+                        break;
+
+                    case 1:
+                        console.log(magentaBoldText, '\nVocê escolheu Ataque Mágico!');
+                        // Calcular dano da magia
+                        let danoMagico = magiaJogador < danoMinimo ? danoMinimo : magiaJogador;
+
+                        // Atualizar vida do inimigo
+                        vidaInimigo -= danoMagico;
+                        console.log(greenBoldText, `\nVocê causou ${danoMagico} de dano mágico! Vida restante do inimigo: ${vidaInimigo}\n`);
+                        keepRunning = false;
+                        break;
+
+                    default:
+                        console.log(redBoldText, '\nAção inválida. Por favor, escolha 0 para Ataque Físico ou 1 para Ataque Mágico.\n');
+                }
+            }
+
+            // Verificar se o inimigo foi derrotado
+            if (vidaInimigo <= 0) {
+                console.log(greenBoldText, `Você derrotou ${inimigo.nome}!`);
+                // Criar método que cria uma batalha e um trigger pra deletar uma instancia caso você tenha vencido... 
+                RegistrarResultadoBatalha(true, jogador.id_jogador, inimigo.id_instancia_inimigo); // Supondo que essas propriedades existem
+                return;
+            }
+
+            // Inimigo realiza uma ação
+            console.log(redBoldText, `\n${inimigo.nome} está atacando...`);
+            // Calcular dano do inimigo
+            let danoBaseInimigo = ataqueInimigo - defesaJogador;
+            let danoInimigo = danoBaseInimigo < danoMinimo ? danoMinimo : danoBaseInimigo;
+
+            // Atualizar vida do jogador
+            vidaJogador -= danoInimigo;
+            console.log(redBoldText, `O inimigo causou ${danoInimigo} de dano! Sua vida restante: ${vidaJogador}`);
+
+            // Verificar se o jogador foi derrotado
+            if (vidaJogador <= 0) {
+                console.log(redBoldText, 'Você foi derrotado!');
+                RegistrarResultadoBatalha(false, jogador.id_jogador, inimigo.id_instancia_inimigo); // Supondo que essas propriedades existem
+                return;
+            }
+        }
+    }, 2000)
+};
 
 module.exports = {
     getOptions,

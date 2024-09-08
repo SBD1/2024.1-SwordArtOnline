@@ -730,7 +730,7 @@ BEGIN
     SELECT inicializarSalasSegundoAndar(ultima_sala_primeiro_andar) INTO ultima_sala_segundo_andar;
     SELECT inicializarSalasTerceiroAndar(ultima_sala_segundo_andar) INTO ultima_sala_terceiro_andar;
     SELECT inicializarSalasQuartoAndar(ultima_sala_terceiro_andar) INTO ultima_sala_quarto_andar;
-    SELECT iultima_sala_quarto_andarnicializarSalasQuintoAndar(ultima_sala_quarto_andar) INTO ultima_sala_quinto_andar;
+    SELECT inicializarSalasQuintoAndar(ultima_sala_quarto_andar) INTO ultima_sala_quinto_andar;
     SELECT inicializarSalasSextoAndar(ultima_sala_quinto_andar) INTO ultima_sala_sexto_andar;
     SELECT inicializarSalasSetimoAndar(ultima_sala_sexto_andar) INTO ultima_sala_setimo_andar;
     SELECT inicializarSalasOitavoAndar(ultima_sala_setimo_andar) INTO ultima_sala_oitavo_andar;
