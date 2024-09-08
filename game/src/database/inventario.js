@@ -95,11 +95,32 @@ const getConsumableItens = async (id_inventario) => {
     }
 }
 
+const consumeItem = async (idInventario, idItem) => {
+    let client;
+    const sql = `
+        DELETE FROM inventario_item 
+        WHERE id_inventario = $1
+        AND id_item = $2;
+    `;
+    const values = [idInventario, idItem];
+
+    try {
+        client = await connection();
+
+        await client.query(sql, values);
+    } catch (err) {
+        console.error('\nErro ao consumir item:', err);
+    } finally {
+        if (client) client.release();
+    }
+}
+
 
 module.exports = {
     insert,
     getLastInserted,
     getInventory,
     getWeapons,
-    getConsumableItens
+    getConsumableItens,
+    consumeItem
 }

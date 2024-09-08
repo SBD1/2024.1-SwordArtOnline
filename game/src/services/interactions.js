@@ -455,6 +455,85 @@ const detailCurrentItem = async (jogador) => {
 const detailConsumableItens = async (jogador) => {
     const itens = await inventarioDatabase.getConsumableItens(jogador.inventario);
     console.log(itens);
+
+    console.log(greenBoldText, '**Itens consumíveis do seu Inventário**\n');
+
+    for (item of itens) {
+        itensOptions.push({
+            Nome: item.nome,
+            Descrição: item.descricao,
+            Buff: `Buff de ${item.buff} pontos em ${item.efeito}`
+        });
+    }
+
+    console.table(itensOptions);
+
+    console.log(cyanBoldText, '\nSuas opções são:');
+
+    let options = [];
+    let optionNumber = 0;
+    const optionsTable = [];
+
+    options.push({ number: optionNumber++, text: 'Fechar inventário' });
+    optionsTable.push({ Opções: 'Fechar inventário' });
+
+    options.push({ number: optionNumber++, text: 'Consumir um item' });
+    optionsTable.push({ Opções: 'Consumir um item' });
+
+    console.table(optionsTable);
+
+    // Tratando a escolha do jogador
+    let keepRunning = true;
+    while (keepRunning) {
+        const choice = parseInt(await question('\n-> '), 10);
+
+        const selectedOption = options.find(option => option.number === choice);
+
+        if (selectedOption) {
+            switch (selectedOption.text) {
+                case 'Fechar inventário':
+                    clearTerminal();
+                    setTimeout(() => {
+                        describeCurrentRoom(jogador);
+                    }, 1);
+
+                    keepRunning = false;
+                    break;
+                case 'Consumir um item':
+                    console.log(blueBoldText, '\nInforme o item que quer consumir: \n')
+
+                    let keepRunning2 = true;
+                    while (keepRunning2) {
+                        const option = parseInt(await question('-> '), 10);
+
+                        if (option >= 0 && option < itens.length) {
+                            keepRunning2 = false
+                            const currentItem = itens[option];
+
+                            console.log(greenBoldText, `\nVocê consumiu: ${currentItem.nome}\n`);
+
+                            // consumir o item
+                            await inventarioDatabase.consumeItem(jogador.inventario, currentItem.id_item);
+
+                            // Fecho o inventário
+                            setTimeout(() => {
+                                describeCurrentRoom(jogador);
+                            }, 3000)
+                        } else {
+                            console.log(redBoldText, '\nOpção inválida. Por favor, escolha uma opção válida.');
+                        }
+                    }
+
+                    keepRunning = false;
+                    break;
+                default:
+                    console.log(redBoldText, '\nOpção inválida. Por favor, escolha uma opção válida.');
+                    continue;
+            }
+        } else {
+            console.log(redBoldText, '\nOpção inválida. Por favor, escolha uma opção válida.');
+        }
+    }
 }
 
 // Conversar com um NPC
