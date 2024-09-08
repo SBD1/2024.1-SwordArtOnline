@@ -16,7 +16,7 @@ const selectClasse = async () => {
             {
                 Nome: classe.nome,
                 Descrição: classe.descricao,
-                Buff: `Aumenta **${classe.buff} pontos** de ${classe.atributo_melhorado}`
+                Buff: `Aumenta ${classe.buff} pontos de ${classe.atributo_melhorado}`
             }
         );
     }
@@ -24,7 +24,7 @@ const selectClasse = async () => {
     console.table(classesLog);
 
     while (true) {
-        console.log(cyanBoldText, '\nDigite o nome do seu personagem: \n');
+        console.log(cyanBoldText, '\nInforme uma classe: \n');
         const input = await question(' -> ');
         const selectedIndex = parseInt(input);
 
