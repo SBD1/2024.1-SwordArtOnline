@@ -37,7 +37,7 @@ const getLastInserted = async () => {
 const getInventory = async (idInventario) => {
     let client, inventario;
     const sql = `
-        SELECT inventario_jogador WHERE id_inventario = $1;
+        SELECT * FROM inventario_jogador WHERE id_inventario = $1;
     `;
     const values = [idInventario];
     
