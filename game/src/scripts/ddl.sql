@@ -334,7 +334,77 @@ LANGUAGE plpgsql;
 CREATE TRIGGER updateNpc AFTER
 INSERT
     ON dialogo FOR EACH ROW
-EXECUTE PROCEDURE updateNpc ();
+EXECUTE PROCEDURE updateNpc();
+
+-- Stored Procedure responsável pela logica de consumir item
+CREATE OR REPLACE FUNCTION consumirItem()
+RETURNS TRIGGER AS
+$$
+DECLARE
+    id_jogador_consumiu INTEGER;
+    tipo_item_consumido TIPO_ITEM;
+    buff_item_consumido INTEGER;
+    efeito_item_consumido TIPO_EFEITO;
+BEGIN
+    -- Seleciona o jogador que consumiu o item
+    SELECT id_jogador INTO id_jogador_consumiu
+    FROM jogador 
+    WHERE inventario = OLD.id_inventario;
+
+    -- Seleciona o tipo do item
+    SELECT tipo INTO tipo_item_consumido
+    FROM item 
+    WHERE id_item = OLD.id_item;
+
+    -- Se o item for uma arma, não faz nada
+    IF (tipo_item_consumido = 'Arma') THEN 
+        RETURN NULL;
+    ELSE
+        -- Seleciona o buff do item
+        SELECT buff INTO buff_item_consumido
+        FROM item 
+        WHERE id_item = OLD.id_item;
+        
+        -- Seleciona o efeito do item
+        SELECT efeito INTO efeito_item_consumido
+        FROM item 
+        WHERE id_item = OLD.id_item;
+
+        -- Aplica o efeito do item ao jogador
+        IF (efeito_item_consumido = 'Ataque') THEN
+            -- Aumenta o ataque do jogador
+            UPDATE jogador 
+            SET ataque = ataque + buff_item_consumido 
+            WHERE id_jogador = id_jogador_consumiu;
+        
+        ELSIF (efeito_item_consumido = 'Magia') THEN
+            -- Aumenta a magia do jogador
+            UPDATE jogador 
+            SET magia = magia + buff_item_consumido 
+            WHERE id_jogador = id_jogador_consumiu;
+        
+        ELSIF (efeito_item_consumido = 'Cura') THEN
+            -- Aumenta a cura do jogador
+            UPDATE jogador 
+            SET cura = cura + buff_item_consumido 
+            WHERE id_jogador = id_jogador_consumiu;
+        
+        END IF;
+
+        -- Retorna NULL, pois o item foi consumido com sucesso
+        RETURN NULL;
+    END IF;
+
+END;
+$$
+LANGUAGE plpgsql;
+
+-- Trigger responsável pela lógica de consumir item
+CREATE TRIGGER consumirItem
+AFTER DELETE 
+ON inventario_item
+FOR EACH ROW 
+EXECUTE PROCEDURE consumirItem();
 
 -----------------------------------------------------------------------------------------
 -- Views:
