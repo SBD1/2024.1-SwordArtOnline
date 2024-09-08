@@ -14,7 +14,8 @@ const getOptions = async (jogador, sala) => {
     console.log('\n');
     console.table([
         { Opções: 'Olhar ao redor' },
-        { Opções: 'Abrir inventário' }
+        { Opções: 'Abrir inventário' },
+        { Opções: 'Ver suas estatísticas' }
     ]);
     console.log('\n');
 
@@ -34,14 +35,20 @@ const getOptions = async (jogador, sala) => {
 
                 keepRunning = false;
                 break;
+
+            case 2:
+                await yourInformations(jogador); // Chama a função para ver suas estatisticas
+
+                keepRunning = false;
+                break;
             default:
-                console.log('\nOpção inválida. Por favor, digite um número válido...');
+                console.log(redBoldText, '\nOpção inválida. Por favor, digite um número válido...\n');
                 break;
         }
     }
 };
 
-// Detalha a sala
+// Olhar ao redor da sala
 const detailRoom = async (jogador, sala) => {
     clearTerminal();
 
@@ -214,6 +221,7 @@ const detailRoom = async (jogador, sala) => {
     }, 1000);
 };
 
+// Carregar a sala
 const describeCurrentRoom = async (jogador) => {
     clearTerminal();
 
@@ -333,6 +341,52 @@ const openInventory = async (jogador) => {
 
     }, 1000);
 };
+
+// Informações sobre o jogador
+const yourInformations = async (jogador) => {
+    clearTerminal();
+
+    setTimeout(() => {
+        console.log(greenBoldText, `\n\tCarregando informações de ${jogador.nome}...`)
+    }, 1);
+
+    clearTerminal(1000);
+
+    setTimeout(async () => {
+        const currentPlayer = await jogadorDatabase.getOne(jogador.id_jogador);
+
+        console.log(greenBoldText, '**Suas Estatísticas**\n');
+        console.table([
+            {
+                Nome: currentPlayer.nome,
+                Classe: currentPlayer.nome_classe,
+                Vida: currentPlayer.vida,
+                Magia: currentPlayer.magia,
+                Defesa: currentPlayer.defesa,
+                Ataque: currentPlayer.ataque,
+            }
+        ]);
+
+        console.log(yellowBoldText, '\nDigite 1 para fechar suas estatísticas!');
+
+        let keepRunning = true;
+        while (keepRunning) {
+            const choice = parseInt(await question('\n-> '), 10);
+
+            if (choice != 1) {
+                console.log(redBoldText, '\nOpção inválida...');
+            } else {
+                keepRunning = false;
+
+                // Fecho o inventário
+                setTimeout(() => {
+                    describeCurrentRoom(jogador);
+                }, 1500)
+            }
+        }
+
+    }, 1000);
+}
 
 // Ver as armas do inventario
 const detailWeapons = async (jogador) => {

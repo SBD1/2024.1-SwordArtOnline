@@ -12,7 +12,7 @@ const createNewGame = async (xp, nivel, defesa, magia, ataque, vida, nome, inven
         client = await connection();
         await client.query(sql, values);
     } catch (err) {
-        console.error('\nErro ao criar jogador:', err);
+        console.error('\nErro ao inicializar o jogo:', err);
     } finally {
         if (client) client.release();
     }
@@ -46,7 +46,7 @@ const getByNome = async (nome) => {
         const response = await client.query(sql, values);
         jogador = response.rows[0];
     } catch (err) {
-        console.error('\nErro ao criar jogador:', err);
+        console.error('\nErro ao buscar jogador:', err);
     } finally {
         if (client) client.release();
         return jogador;
@@ -55,17 +55,34 @@ const getByNome = async (nome) => {
 
 const getAll = async () => {
     let client, jogadores;
-    const sql = 'SELECT id_jogador, xp, nivel, defesa, magia, ataque, vida, j.nome, inventario, item_atual, classe, sala_atual, c.nome as nome_classe FROM jogador AS j INNER JOIN classe AS c ON j.classe = c.id_classe;';
+    const sql = 'SELECT * FROM informacao_jogadores';
 
     try {
         client = await connection();
         const response = await client.query(sql);
         jogadores = response.rows;
     } catch (err) {
-        console.error('\nErro ao criar jogador:', err);
+        console.error('\nErro ao buscar jogadores:', err);
     } finally {
         if (client) client.release();
         return jogadores;
+    }
+}
+
+const getOne = async (idJogador) => {
+    let client, jogador;
+    const sql = 'SELECT * FROM informacao_jogadores WHERE id_jogador = $1';
+    const values = [idJogador];
+
+    try {
+        client = await connection();
+        const response = await client.query(sql, values);
+        jogador = response.rows[0];
+    } catch (err) {
+        console.error('\nErro ao buscar jogador:', err);
+    } finally {
+        if (client) client.release();
+        return jogador;
     }
 }
 
@@ -107,5 +124,6 @@ module.exports = {
     getByNome,
     getAll,
     updateCurrentWeapon,
-    getCurrentItem
+    getCurrentItem,
+    getOne
 };
