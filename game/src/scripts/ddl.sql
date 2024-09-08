@@ -360,3 +360,14 @@ CREATE OR REPLACE VIEW item_instancia_npc AS
 	SELECT ins.id_instancia_npc, i.nome, i.descricao, i.tipo, i.buff, i.efeito FROM item i
 	INNER JOIN npc n ON i.id_item = n.item_drop
 	INNER JOIN instancia_npc ins ON n.id_npc = ins.id_npc;
+
+-- View que lista os itens do jogador
+CREATE OR REPLACE VIEW itens_jogador AS
+	SELECT * FROM inventario_item ii
+	INNER JOIN item i USING (id_item);
+
+-- View que mostra o inventario do jogador
+CREATE OR REPLACE VIEW inventario_jogador AS
+		SELECT id_inventario, qnt_max, COUNT(id_item) AS qnt_itens FROM inventario
+        INNER JOIN inventario_item USING (id_inventario)
+        GROUP BY id_inventario;
