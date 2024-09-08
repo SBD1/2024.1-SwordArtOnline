@@ -5,30 +5,163 @@ INSERT INTO classe (nome, descricao, atributo_melhorado, buff) VALUES
 ('Tanque', 'Defensor robusto que absorve dano e protege seus aliados com alta resistência e defesa.', 'Defesa', 80),
 ('Espadachim', 'Hábil com espadas, combina velocidade e força para desferir ataques poderosos em combate corpo a corpo.', 'Ataque', 60);
 
--- Inserindo itens iniciais do jogo:
-INSERT INTO item (id_item, nome, tipo, descricao, buff, efeito) VALUES
-(1, 'Espada de simples', 'Arma', 'Espada para iniciantes, causando 30 pontos de dano adicional.', 30, 'Ataque'),
-(2, 'Machado de Guerra', 'Arma', 'Machado pesado bom para tankers que aumenta o ataque em 50 pontos.', 50, 'Ataque'),
-(3, 'Arco Longo', 'Arma', 'Arco que permite ataques de longo alcance e aumenta a precisão em 25 pontos.', 25, 'Ataque'),
-(4, 'Adaga de Aço', 'Arma', 'Adaga com lâmina afiada que causa 35 pontos de dano adicional.', 35, 'Ataque'),
-(5, 'Cajado de Orc', 'Arma', 'Cajado simples que aumenta a magia em 60 pontos.', 60, 'Magia');
+-- Inserindo itens:
+-- Andar 1
+INSERT INTO Item (id_item, nome, tipo, descricao, buff, efeito) VALUES
+(1, 'Espada de Simples', 'Arma', 'Espada para iniciantes, causando 30 pontos de dano adicional.', 10, 'Ataque'), -- Andar 1
+(2, 'Couro de Lobo', 'Consumivel', 'Couro obtido de lobos, útil para várias receitas.', 5, 'Defesa'); -- Andar 1
+
+-- Andar 2
+INSERT INTO Item (id_item, nome, tipo, descricao, buff, efeito) VALUES
+(3, 'Amuleto das Ruínas', 'Consumivel', 'Amuleto perdido nas Ruínas do Norte.', 10, 'Magia'), -- Andar 2
+(4, 'Escudo de Gelidus', 'Arma', 'Escudo poderoso que aumenta a defesa em 50 pontos.', 20, 'Defesa'); -- Andar 2
+
+-- Andar 3
+INSERT INTO Item (id_item, nome, tipo, descricao, buff, efeito) VALUES
+(5, 'Minério Raro', 'Consumivel', 'Minério encontrado nas Cavernas dos Anões, utilizado em forjas.', 15, 'Ataque'), -- Andar 3
+(6, 'Espada de Aço', 'Arma', 'Espada forte para o combate, aumentando o ataque em 40 pontos.', 25, 'Ataque'),
+(7, 'Sword of Darkness', 'Arma', 'Espada lendária que causa 60 pontos de dano adicional. Referência à Sword of Darkness.', 28, 'Ataque'); -- Andar 3
+
+-- Andar 4
+INSERT INTO Item (id_item, nome, tipo, descricao, buff, efeito) VALUES
+(8, 'Pétala Encantada', 'Consumivel', 'Pétala mágica encontrada na Floresta das Fadas.', 15, 'Magia'), -- Andar 4
+(9, 'Escudo de Elfo', 'Arma', 'Escudo leve que aumenta a defesa em 50 pontos.', 25, 'Defesa'),
+(10, 'Elven Sword', 'Arma', 'Espada ágil que aumenta o ataque em 50 pontos. Referência à Elven Sword.', 29, 'Magia'); -- Andar 4
+
+-- Andar 5
+INSERT INTO Item (id_item, nome, tipo, descricao, buff, efeito) VALUES
+(11, 'Escama de Dragão', 'Consumivel', 'Escama resistente encontrada no Deserto das Ilusões.', 20, 'Defesa'), -- Andar 5
+(12, 'Lança de Areia', 'Arma', 'Lança que causa 55 pontos de dano adicional.', 35, 'Ataque'),
+(13, 'Dragon Slayer', 'Arma', 'Lança lendária que causa 70 pontos de dano adicional. Referência ao Dragon Slayer.', 40, 'Ataque'); -- Andar 5
+
+-- Andar 6
+INSERT INTO Item (id_item, nome, tipo, descricao, buff, efeito) VALUES
+(14, 'Cristal Mágico', 'Consumivel', 'Cristal que aumenta a magia em 60 pontos.', 40, 'Magia'), -- Andar 6
+(15, 'Espada de Cristal', 'Arma', 'Espada feita de cristal que causa 60 pontos de dano adicional.', 35, 'Ataque'),
+(16, 'Holy Sword', 'Arma', 'Espada mágica que tem 70 pontos de efeitos de cura. Referência à Holy Sword.', 50, 'Cura'); -- Andar 6
+
+-- Andar 7
+INSERT INTO Item (id_item, nome, tipo, descricao, buff, efeito) VALUES
+(17, 'Pedra de Lava', 'Consumivel', 'Pedra quente encontrada no Vulcão Infernal.', 30, 'Ataque'), -- Andar 7
+(18, 'Espada Flamejante', 'Arma', 'Espada que causa 70 pontos de dano adicional e queimaduras.', 40, 'Ataque'),
+(19, 'Inferno Blade', 'Arma', 'Espada de fogo que causa 80 pontos de dano adicional. Referência à Inferno Blade.', 55, 'Ataque'); -- Andar 7
+
+-- Andar 8
+INSERT INTO Item (id_item, nome, tipo, descricao, buff, efeito) VALUES
+(20, 'Dente de Gigante', 'Consumivel', 'Dente grande encontrado nas Planícies dos Gigantes.', 50, 'Defesa'), -- Andar 8
+(21, 'Clava Gigante', 'Arma', 'Clava pesada que aumenta o ataque em 80 pontos.', 50, 'Ataque'),
+(22, 'Giants Sword', 'Arma', 'Espada colossal que causa 90 pontos de dano adicional. Referência à Giants Sword.', 60, 'Ataque'); -- Andar 8
+
+-- Andar 9
+INSERT INTO Item (id_item, nome, tipo, descricao, buff, efeito) VALUES
+(23, 'Espada das Sombras', 'Arma', 'Espada que causa 75 pontos de dano adicional e reduz a visibilidade do inimigo.', 45, 'Ataque'), -- Andar 9
+(24, 'Escudo das Sombras', 'Arma', 'Escudo que aumenta a defesa em 90 pontos e absorve parte do dano.', 60, 'Defesa'),
+(25, 'Darkness Blade', 'Arma', 'Espada das Trevas que causa 100 pontos de dano adicional. Referência à Darkness Blade.', 70, 'Ataque'); -- Andar 9
+
+-- Andar 10
+INSERT INTO Item (id_item, nome, tipo, descricao, buff, efeito) VALUES
+(26, 'Medalhão do Deus', 'Arma', 'Medalhão lendário que aumenta todos os atributos em 100 pontos.', 100, 'Ataque'),
+(27, 'Excalibur', 'Arma', 'Espada lendária que causa 120 pontos de dano adicional. Referência à Excalibur, a arma mais poderosa.', 120, 'Ataque'); -- Andar 10
 
 -- Inserindo inimigos:
--- Mob:
 INSERT INTO Inimigo (id_inimigo, nome, ataque, defesa, item_drop, xp) VALUES
-(1, 'Orc', 45, 35, 4, 40);
-INSERT INTO Mob (id_inimigo) VALUES
-(1);
+(1, 'Lobo', 20, 15, 2, 30), 
+(2, 'Orc', 45, 35, 6, 40);  
 
--- Boss:
-INSERT INTO Inimigo (id_inimigo, nome, ataque, defesa, item_drop, xp) VALUES
-(2, 'Illfang the Kobold Lord', 100, 80, 5, 100); 
+INSERT INTO Mob (id_inimigo) VALUES (1);
+
 INSERT INTO Boss (id_inimigo, passiva, buff) VALUES
-(2, 'Defesa', 150);
+(2, 'Defesa', 50);
 
--- Inserindo NPC:
-INSERT INTO NPC (id_npc, profissao, nome, fala, item_drop, missao)
-VALUES (1, 'Guardião da Aldeia', 'Eldor, o Protetor', 'Bem-vindo, aventureiro! Pegue esta arma para começar sua jornada.', 1, NULL);
+-- Inimigos e Bosses do Andar 2
+INSERT INTO Inimigo (id_inimigo, nome, ataque, defesa, item_drop, xp) VALUES
+(3, 'Gelidus', 60, 50, 4, 80),  -- O item_drop deve ser ajustado para 4 (Escudo de Gelidus)
+(4, 'Arqueiro das Ruínas', 50, 45, 3, 60);  -- O item_drop deve ser ajustado para 4 (Escudo de Gelidus)
+
+INSERT INTO Mob (id_inimigo) VALUES (4);
+
+INSERT INTO Boss (id_inimigo, passiva, buff) VALUES
+(3, 'Defesa', 50);
+
+-- Inimigos e Bosses do Andar 3
+INSERT INTO Inimigo (id_inimigo, nome, ataque, defesa, item_drop, xp) VALUES
+(5, 'Minotauro', 70, 60, 7, 100),  -- O item_drop deve ser ajustado para 7 (Sword of Darkness)
+(6, 'Guerreiro Anão', 55, 50, 5, 80);  -- O item_drop deve ser ajustado para 7 (Sword of Darkness)
+
+INSERT INTO Mob (id_inimigo) VALUES (6);
+
+INSERT INTO Boss (id_inimigo, passiva, buff) VALUES
+(5, 'Defesa', 50);
+
+-- Inimigos e Bosses do Andar 4
+INSERT INTO Inimigo (id_inimigo, nome, ataque, defesa, item_drop, xp) VALUES
+(7, 'Rainha das Fadas', 80, 70, 9, 120),  -- O item_drop deve ser ajustado para 10 (Elven Sword)
+(8, 'Guardiã das Fadas', 65, 60, 8, 90);  -- O item_drop deve ser ajustado para 10 (Elven Sword)
+
+INSERT INTO Mob (id_inimigo) VALUES (8);
+
+INSERT INTO Boss (id_inimigo, passiva, buff) VALUES
+(7, 'Defesa', 50);
+
+-- Inimigos e Bosses do Andar 5
+INSERT INTO Inimigo (id_inimigo, nome, ataque, defesa, item_drop, xp) VALUES
+(9, 'Dragão de Areia', 90, 80, 13, 150),  -- O item_drop deve ser ajustado para 13 (Dragon Slayer)
+(10, 'Escorpião de Areia', 75, 70, 12, 110);  -- O item_drop deve ser ajustado para 13 (Dragon Slayer)
+
+INSERT INTO Mob (id_inimigo) VALUES (10);
+
+INSERT INTO Boss (id_inimigo, passiva, buff) VALUES
+(9, 'Defesa', 50);
+
+-- Inimigos e Bosses do Andar 6
+INSERT INTO Inimigo (id_inimigo, nome, ataque, defesa, item_drop, xp) VALUES
+(11, 'Senhor das Torres', 100, 90, 16, 180),  -- O item_drop deve ser ajustado para 16 (Holy Sword)
+(12, 'Guardião dos Cristais', 85, 80, 14, 140);  -- O item_drop deve ser ajustado para 16 (Holy Sword)
+
+INSERT INTO Mob (id_inimigo) VALUES (12);
+
+INSERT INTO Boss (id_inimigo, passiva, buff) VALUES
+(11, 'Defesa', 50);
+
+-- Inimigos e Bosses do Andar 7
+INSERT INTO Inimigo (id_inimigo, nome, ataque, defesa, item_drop, xp) VALUES
+(13, 'Inferno', 110, 100, 19, 200),  -- O item_drop deve ser ajustado para 18 (Inferno Blade)
+(14, 'Demônio de Lava', 95, 85, 17, 160);  -- O item_drop deve ser ajustado para 18 (Inferno Blade)
+
+INSERT INTO Mob (id_inimigo) VALUES (14);
+
+INSERT INTO Boss (id_inimigo, passiva, buff) VALUES
+(13, 'Defesa', 50);
+
+-- Inimigos e Bosses do Andar 8
+INSERT INTO Inimigo (id_inimigo, nome, ataque, defesa, item_drop, xp) VALUES
+(15, 'Gigante Colossal', 120, 110, 21, 220),  -- O item_drop deve ser ajustado para 20 (Giant\'s Sword)
+(16, 'Golem de Pedra', 105, 100, 20, 180);  -- O item_drop deve ser ajustado para 20 (Giant\'s Sword)
+
+INSERT INTO Mob (id_inimigo) VALUES (16);
+
+INSERT INTO Boss (id_inimigo, passiva, buff) VALUES
+(15, 'Defesa', 50);
+
+-- Inimigos e Bosses do Andar 9
+INSERT INTO Inimigo (id_inimigo, nome, ataque, defesa, item_drop, xp) VALUES
+(17, 'Asuna', 130, 120, 25, 240),  -- O item_drop deve ser ajustado para 23 (Darkness Blade)
+(18, 'Sombra Assassina', 115, 105, 23, 200);  -- O item_drop deve ser ajustado para 23 (Darkness Blade)
+
+INSERT INTO Mob (id_inimigo) VALUES (18);
+
+INSERT INTO Boss (id_inimigo, passiva, buff) VALUES
+(17, 'Defesa', 50);
+
+-- Inimigos e Bosses do Andar 10
+INSERT INTO Inimigo (id_inimigo, nome, ataque, defesa, item_drop, xp) VALUES
+(19, 'Kirito', 150, 140, 26, 300),  -- O item_drop deve ser ajustado para 25 (Excalibur)
+(20, 'Guardião Celestial', 135, 125, 24, 260);  -- O item_drop deve ser ajustado para 25 (Excalibur)
+
+INSERT INTO Mob (id_inimigo) VALUES (20);
+
+INSERT INTO Boss (id_inimigo, passiva, buff) VALUES
+(19, 'Defesa', 50);
 
 -- Inserir Localizações (andares)
 INSERT INTO Localizacao (id_localizacao, andar, descricao, estacao, localizacao_anterior, localizacao_posterior) VALUES
@@ -105,3 +238,90 @@ INSERT INTO Sala (id_sala, nome, tipo, sala_anterior, sala_posterior, id_localiz
 (38, 'Sala com Deus dos Céus. Ele é um adversário poderoso.', 'Comum', 37, 39, 10),
 (39, 'Sala com Guardião Celestial. Ele é imponente e forte.', 'Comum', 38, 40, 10),
 (40, 'Sala do Boss: Deus dos Céus. Derrote-o para completar o andar.', 'Boss', 39, NULL, 10);
+
+-- Inserindo missões
+INSERT INTO Missao (id_missao, nome, descricao, recompensa_xp) VALUES
+(1, 'Derrote Lobos', 'Derrote 3 Lobos e obtenha o Couro de Lobo.', 30),
+(2, 'Derrote os Arqueiros das Ruínas', 'Derrote 2 Arqueiro das Ruínas e obtenha o Escudo de Gelidus.', 60),
+(3, 'Derrote o Guerreiro Anão', 'Derrote 2 Guerreiros Anão e se prepare para o boss.', 80),
+(4, 'Derrote a Rainha das Fadas', 'Derrote a Rainha das Fadas e salve o andar.', 90),
+(5, 'Derrote o Escorpião de Areia', 'Derrote 3 Escorpião de Areia e tire o andar da infestação.', 110),
+(6, 'Derrote o Guardião dos Cristais', 'Derrote 2 Guardião dos Cristais e loot a caverna.', 140),
+(7, 'Derrote o Demônio de Lava', 'Derrote 2 Demônios de Lava e se prepare para o Inferno.', 160),
+(8, 'Derrote o Golem de Pedra', 'Derrote 2 Golem de Pedra e se prepare para o Gigante.', 180),
+(9, 'Derrote a Asuna', 'Derrote a Asuna e obtenha a Darkness Blade.', 200),
+(10, 'Derrote o Kirito', 'VENÇA O DEUS DE SWORD ART ONLINE', 220);
+
+-- Relacionando as missões com os inimigos
+INSERT INTO Missao_Inimigo (id_missao, id_inimigo, quantidade) VALUES
+(1, 1, 3),  -- Derrote 3 Lobo
+(2, 4, 2),  -- Derrote 2 Arqueiro das Ruínas
+(3, 6, 2),  -- Derrote 2 Guerreiro Anão
+(4, 7, 1),  -- Derrote a Rainha das Fadas
+(5, 10, 3), -- Derrote 3 Escorpião de Areia
+(6, 12, 2), -- Derrote 2 Guardião dos Cristais
+(7, 14, 2), -- Derrote 2 Demônio de Lava
+(8, 16, 2), -- Derrote 2 Golem de Pedra
+(9, 17, 1), -- Derrote a Asuna
+(10, 19, 1);-- Derrote o Kirito
+
+-- Inserindo NPC:
+-- NPCs do Andar 1
+INSERT INTO NPC (id_npc, profissao, nome, fala, item_drop, missao)
+VALUES 
+(1, 'Guardião da Aldeia', 'Kirito', 'Bem-vindo, aventureiro! Pegue esta espada para começar sua jornada.', NULL, 1),
+(2, 'Ferreiro', 'Heathcliff', 'Procure por materiais para forjar suas armas.', 2, NULL);
+
+-- NPCs do Andar 2
+INSERT INTO NPC (id_npc, profissao, nome, fala, item_drop, missao)
+VALUES 
+(3, 'Mago das Ruínas', 'Kibaou', 'Encontre os artefatos mágicos nas ruínas.', NULL, 2),
+(4, 'Arqueiro das Ruínas', 'Sachi', 'Precisa de mais precisão? Pegue esta arma.', 4, NULL);
+
+-- NPCs do Andar 3
+INSERT INTO NPC (id_npc, profissao, nome, fala, item_drop, missao)
+VALUES 
+(5, 'Ancião Anão', 'Biscuit', 'Traga os minérios raros e eu farei uma arma poderosa.', NULL, 3),
+(6, 'Ferreiro Anão', 'Gnome', 'Armas poderosas podem ser forjadas com estes materiais.', 6, NULL);
+
+-- NPCs do Andar 4
+INSERT INTO NPC (id_npc, profissao, nome, fala, item_drop, missao)
+VALUES 
+(7, 'Guardião das Fadas', 'Yui', 'Pegue estas pétalas e as use sabiamente.', NULL, 4),
+(8, 'Herbalista', 'Argo', 'Precisa de poções? Tenho algumas para você.', 8, NULL);
+
+-- NPCs do Andar 5
+INSERT INTO NPC (id_npc, profissao, nome, fala, item_drop, missao)
+VALUES 
+(9, 'Desertor', 'Sinon', 'Traga escamas de dragão e obtenha uma recompensa.', NULL, 5),
+(10, 'Explorador do Deserto', 'Kibaou', 'Recompensas esperam por aqueles que enfrentam os perigos.', 10, NULL);
+
+-- NPCs do Andar 6
+INSERT INTO NPC (id_npc, profissao, nome, fala, item_drop, missao)
+VALUES 
+(11, 'Guardião das Torres', 'Asuna', 'Cristais mágicos são poderosos; use-os bem.', NULL, 6),
+(12, 'Mestre dos Cristais', 'Kibaou', 'Cristais mágicos são essenciais para a magia.', 12, NULL);
+
+-- NPCs do Andar 7
+INSERT INTO NPC (id_npc, profissao, nome, fala, item_drop, missao)
+VALUES 
+(13, 'Alquimista do Vulcão', 'Leafa', 'Traga pedras de lava para criar poções.', NULL, 7),
+(14, 'Explorador Vulcânico', 'Sinon', 'Prepare-se para os desafios à frente.', 14, NULL);
+
+-- NPCs do Andar 8
+INSERT INTO NPC (id_npc, profissao, nome, fala, item_drop, missao)
+VALUES 
+(15, 'Guerreiro das Planícies', 'Kirito', 'Prepare-se para enfrentar os gigantes.', NULL, 8),
+(16, 'Forjador dos Gigantes', 'Leafa', 'Forje armas poderosas com estes materiais.', 16, NULL);
+
+-- NPCs do Andar 9
+INSERT INTO NPC (id_npc, profissao, nome, fala, item_drop, missao)
+VALUES 
+(17, 'Feiticeira das Sombras', 'Morgiana', 'Itens de sombra poderosos para enfrentar os espectros.', NULL, 9),
+(18, 'Artesã das Sombras', 'Argo', 'Armas e itens de sombra são essenciais para enfrentar os desafios.', 18, NULL);
+
+-- NPCs do Andar 10
+INSERT INTO NPC (id_npc, profissao, nome, fala, item_drop, missao)
+VALUES 
+(19, 'Guia dos Deuses', 'Asuna', 'Você conseguiu chegar até aqui. Pegue estas recompensas finais.', NULL, 10),
+(20, 'Guardião Celestial', 'Kirito', 'Recompensas aguardam aqueles que conseguem vencer os desafios.', 20, NULL);
