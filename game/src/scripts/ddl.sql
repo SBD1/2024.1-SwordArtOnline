@@ -71,8 +71,7 @@ CREATE TABLE Missao (
     id_missao SERIAL PRIMARY KEY,
     nome VARCHAR NOT NULL,
     descricao VARCHAR NOT NULL,
-    recompensa_xp INTEGER NOT NULL,
-    status status_missao NOT NULL
+    recompensa_xp INTEGER NOT NULL
 );
 
 CREATE TABLE Inimigo (
@@ -178,6 +177,7 @@ CREATE TABLE Dialogo (
 CREATE TABLE Jogador_Missao (
     id_jogador INTEGER NOT NULL,
     id_missao INTEGER NOT NULL,
+    status status_missao NOT NULL,
     PRIMARY KEY (id_jogador, id_missao),
     CONSTRAINT FK_Jogador_Missao_Jogador FOREIGN KEY (id_jogador) REFERENCES Jogador (id_jogador),
     CONSTRAINT FK_Jogador_Missao_Missao FOREIGN KEY (id_missao) REFERENCES Missao (id_missao)
@@ -384,3 +384,16 @@ CREATE OR REPLACE VIEW itens_consumiveis_jogador AS
 	SELECT * FROM inventario_item ii
 	INNER JOIN item i USING (id_item)
     WHERE i.tipo = 'Consumivel';
+
+-- View usada para mostrar o item atual do jogador
+CREATE OR REPLACE VIEW item_atual AS
+	SELECT 
+		id_jogador,
+		i.nome,
+		i.descricao,
+		i.buff,
+		i.efeito
+	FROM item i
+	INNER JOIN jogador j 
+	ON i.id_item = j.item_atual 
+	WHERE i.tipo = 'Arma';
