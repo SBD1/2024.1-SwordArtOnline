@@ -55,10 +55,10 @@ const getInventory = async (idInventario) => {
     }
 }
 
-const openInventory = async (id_inventario) => {
+const getWeapons = async (id_inventario) => {
     let client, itens;
     const sql = `
-        SELECT * FROM itens_jogador WHERE id_inventario = $1;
+        SELECT * FROM armas_jogador WHERE id_inventario = $1;
     `;
     const values = [id_inventario];
     
@@ -68,16 +68,37 @@ const openInventory = async (id_inventario) => {
         const response = await client.query(sql, values);
         itens = response.rows;
     } catch (err) {
-        console.error('\nErro ao listar os itens do inventário:', err);
+        console.error('\nErro ao listar as armas do inventário:', err);
     } finally {
         if (client) client.release();
         return itens;
     }
 }
 
+const getConsumableItens = async (id_inventario) => {
+    let client, itens;
+    const sql = `
+        SELECT * FROM itens_consumiveis_jogador WHERE id_inventario = $1;
+    `;
+    const values = [id_inventario];
+    
+    try {
+        client = await connection();
+
+        const response = await client.query(sql, values);
+        itens = response.rows;
+    } catch (err) {
+        console.error('\nErro ao listar os itens consumíveis do inventário:', err);
+    } finally {
+        if (client) client.release();
+        return itens;
+    }
+}
+
+
 module.exports = {
     insert,
     getLastInserted,
     getInventory,
-    openInventory
+    getWeapons
 }
