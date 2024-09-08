@@ -404,3 +404,23 @@ CREATE OR REPLACE VIEW item_atual AS
 	INNER JOIN jogador j 
 	ON i.id_item = j.item_atual 
 	WHERE i.tipo = 'Arma';
+
+-- View responsável pelas informações dos jogadores
+CREATE OR REPLACE VIEW informacao_jogadores AS
+	SELECT 
+		id_jogador, 
+		xp, 
+		nivel, 
+		defesa, 
+		magia, 
+		ataque, 
+		vida, 
+		j.nome, 
+		inventario, 
+		item_atual, 
+		classe, 
+		sala_atual, 
+		c.nome as nome_classe 
+	FROM jogador AS j 
+	INNER JOIN classe AS c 
+	ON j.classe = c.id_classe;
