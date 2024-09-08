@@ -34,13 +34,12 @@ const getLastInserted = async () => {
     }
 }
 
-const openInventory = async (id_inventario) => {
+const getInventory = async (idInventario) => {
     let client, inventario;
-    const sql = 'SELECT id_inventario, qnt_max, COUNT(id_item) AS qnt_itens FROM inventario\n'
-                + 'INNER JOIN inventario_item USING (id_inventario)\n'
-                + 'WHERE id_inventario = $1\n'
-                + 'GROUP BY id_inventario;';
-    const values = [id_inventario];
+    const sql = `
+        SELECT inventario_jogador WHERE id_inventario = $1;
+    `;
+    const values = [idInventario];
     
 
     try {
@@ -56,8 +55,29 @@ const openInventory = async (id_inventario) => {
     }
 }
 
+const openInventory = async (id_inventario) => {
+    let client, itens;
+    const sql = `
+        SELECT * FROM itens_jogador WHERE id_inventario = $1;
+    `;
+    const values = [id_inventario];
+    
+    try {
+        client = await connection();
+
+        const response = await client.query(sql, values);
+        itens = response.rows[0];
+    } catch (err) {
+        console.error('\nErro ao listar os itens do inventário:', err);
+    } finally {
+        if (client) client.release();
+        return itens;
+    }
+}
+
 module.exports = {
     insert,
     getLastInserted,
+    getInventory,
     openInventory
 }

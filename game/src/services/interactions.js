@@ -2,7 +2,6 @@ const { question } = require('../utils/readlineConfig');
 const { clearTerminal } = require('../utils/terminalUtils');
 const salaDatabase = require('../database/sala');
 const inventarioDatabase = require('../database/inventario');
-const inventarioItemDatabase = require('../database/inventarioItem');
 const enumDatabase = require('../database/enum');
 const npcDatabase = require('../database/npc');
 const dialogoDatabase = require('../database/dialogo');
@@ -10,6 +9,7 @@ const { blueBoldText, cyanBoldText, yellowBoldText, redBoldText, magentaBoldText
 
 // Exibe opções para o jogador e trata a escolha
 const getOptions = async (jogador, sala) => {
+    console.log(cyanBoldText, '\nSuas opções são:');
     console.log('\n');
     console.table([
         { Opções: 'Olhar ao redor' },
@@ -229,30 +229,106 @@ const describeCurrentRoom = async (jogador) => {
         console.log(blueBoldText, `  Andar: ${sala.andar}`);
         console.log(blueBoldText, `  Descrição: ${sala.descricao}`);
 
-        console.log(cyanBoldText, '\nSuas opções são:');
-
         await getOptions(jogador, sala);
     }, 2000);
 }
 
 // Abre o inventário
 const openInventory = async (jogador) => {
-    const inventario = await inventarioDatabase.openInventory(jogador.id_inventario);
+    clearTerminal();
 
-    if (inventario) {
-        // Lógica de abrir o inventário e mostrar as coisas
+    setTimeout(() => {
+        console.log(greenBoldText, '\n\tAbrindo o inventário...')
+    }, 1);
+
+    clearTerminal(1000);
+
+    setTimeout(async () => {
+        const inventario = await inventarioDatabase.getInventory(jogador.inventario);
+
+        console.log(greenBoldText, '**Inventário**\n');
         console.table([
-            { item: "Domain-Driven Design: Atacando as Complexidades no Coração do Software", nome: "Martin Fowler" },
-            { item: "Arquitetura Limpa: O guia do artesão para estrutura e design de software", nome: "Robert C. Martin" },
-            { item: "Por que os generalistas vencem em um mundo de especialistas", nome: "David Epstein" }
+            {
+                Quantidade_Máxima: inventario.qnt_max,
+                Quantidade_de_Itens: Number(inventario.qnt_itens)
+            }
         ]);
-    } else {
-        console.log('\n\tSeu inventário está vazio... ;-;\n');
-    }
+
+        // Inventário Options:
+        console.log(cyanBoldText, `\nO que deseja fazer?\n`);
+
+        let options = [];
+        let optionNumber = 0;
+        const optionsTable = [];
+
+        // Adiciona a opção de detalhar a sala novamente
+        options.push({ number: optionNumber++, text: 'Fechar inventário' });
+        optionsTable.push({ Opções: 'Fechar inventário' });
+
+        if (Number(inventario.qnt_itens) > 0) {
+            options.push({ number: optionNumber++, text: 'Listar itens' });
+            optionsTable.push({ Opções: 'Listar itens' });
+
+            options.push({ number: optionNumber++, text: 'Ver seu item atual' });
+            optionsTable.push({ Opções: 'Ver seu item atual' });
+        }
+
+        console.table(optionsTable);
+
+        // Tratando a escolha do jogador
+        let keepRunning = true;
+        while (keepRunning) {
+            const choice = parseInt(await question('\n-> '), 10);
+
+            const selectedOption = options.find(option => option.number === choice);
+
+            if (selectedOption) {
+                switch (selectedOption.text) {
+                    case 'Fechar inventário':
+                        clearTerminal();
+                        setTimeout(() => {
+                            describeCurrentRoom(jogador);
+                        }, 1);
+
+                        keepRunning = false;
+                        break;
+
+                    case 'Listar itens':
+                        clearTerminal();
+                        setTimeout(() => {
+                            // Listar itens...
+                        }, 1);
+
+                        keepRunning = false;
+                        break;
+                    case 'Ver seu item atual':
+                        clearTerminal();
+                        setTimeout(() => {
+                            detailCurrentItem(jogador);
+                        }, 1);
+
+                        keepRunning = false;
+                        break;
+                    default:
+                        console.log('\nOpção inválida. Por favor, escolha uma opção válida.');
+                        break;
+                }
+                break;
+            } else {
+                console.log('\nOpção inválida. Por favor, escolha uma opção válida.');
+            }
+        }
+
+    }, 1000);
 };
 
+// Ver os itens do inventario
+const detailItens = async (jogador) => {
+
+} 
+
 // Ver arma atual
-const detailCurrentItem = async () => {
+const detailCurrentItem = async (jogador) => {
     // detalhar 
 }
 
@@ -281,13 +357,13 @@ const talkWithNpc = async (npcs, jogador) => {
                 console.log(yellowBoldText, `\nVocê já interagiu com ${currentNpc.nome}.\n`);
 
                 if (npcs.length == 1) {
-                    keepRunning = false;  
+                    keepRunning = false;
                     setTimeout(() => {
                         describeCurrentRoom(jogador);
                     }, 1000);
                 }
             } else {
-                keepRunning = false;  
+                keepRunning = false;
                 clearTerminal();
 
                 setTimeout(() => {
