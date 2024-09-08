@@ -81,9 +81,7 @@ CREATE TABLE Inimigo (
     defesa INTEGER NOT NULL,
     item_drop INTEGER NOT NULL,
     xp INTEGER NOT NULL,
-    id_missao INTEGER,
-    CONSTRAINT FK_Inimigo_Drop FOREIGN KEY (item_drop) REFERENCES Item (id_item),
-    CONSTRAINT FK_Inimigo_Missao FOREIGN KEY (id_missao) REFERENCES Missao (id_missao)
+    CONSTRAINT FK_Inimigo_Drop FOREIGN KEY (item_drop) REFERENCES Item (id_item)
 );
 
 CREATE TABLE Boss (
@@ -107,6 +105,15 @@ CREATE TABLE Instancia_Inimigo (
     id_inimigo INTEGER NOT NULL,
     CONSTRAINT FK_Instancia_Inimigo_Instancia_Sala FOREIGN KEY (sala_atual) REFERENCES Instancia_Sala (id_instancia_sala),
     CONSTRAINT FK_Instancia_Inimigo_Inimigo FOREIGN KEY (id_inimigo) REFERENCES Inimigo (id_inimigo)
+);
+
+CREATE TABLE Missao_Inimigo (
+    id_missao INTEGER NOT NULL,
+    id_inimigo INTEGER NOT NULL,
+    quantidade INTEGER NOT NULL,
+    PRIMARY KEY (id_missao, id_inimigo),
+    CONSTRAINT FK_Missao_Inimigo_Missao FOREIGN KEY (id_missao) REFERENCES Missao (id_missao),
+    CONSTRAINT FK_Missao_Inimigo_Inimigo FOREIGN KEY (id_inimigo) REFERENCES Inimigo (id_inimigo)
 );
 
 CREATE TABLE NPC (
