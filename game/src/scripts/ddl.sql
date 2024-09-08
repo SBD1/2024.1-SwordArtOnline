@@ -361,13 +361,26 @@ CREATE OR REPLACE VIEW item_instancia_npc AS
 	INNER JOIN npc n ON i.id_item = n.item_drop
 	INNER JOIN instancia_npc ins ON n.id_npc = ins.id_npc;
 
--- View que lista os itens do jogador
-CREATE OR REPLACE VIEW itens_jogador AS
-	SELECT * FROM inventario_item ii
-	INNER JOIN item i USING (id_item);
-
 -- View que mostra o inventario do jogador
 CREATE OR REPLACE VIEW inventario_jogador AS
-		SELECT id_inventario, qnt_max, COUNT(id_item) AS qnt_itens FROM inventario
-        INNER JOIN inventario_item USING (id_inventario)
-        GROUP BY id_inventario;
+	SELECT 
+		id_inventario, 
+		qnt_max, 
+		COUNT(CASE WHEN i.tipo = 'Arma' THEN 1 END) AS qnt_armas, 
+		COUNT(CASE WHEN i.tipo = 'Consumivel' THEN 1 END) AS qnt_itens_consumiveis
+	FROM inventario
+	INNER JOIN inventario_item USING (id_inventario)
+	INNER JOIN item i USING (id_item)
+	GROUP BY id_inventario;
+
+-- View que lista os itens do tipo arma do jogador
+CREATE OR REPLACE VIEW armas_jogador AS
+	SELECT * FROM inventario_item ii
+	INNER JOIN item i USING (id_item)
+    WHERE i.tipo = 'Arma';
+
+-- View que lista os itens consumiveis do jogador
+CREATE OR REPLACE VIEW itens_consumiveis_jogador AS
+	SELECT * FROM inventario_item ii
+	INNER JOIN item i USING (id_item)
+    WHERE i.tipo = 'Consumivel';
