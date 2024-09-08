@@ -4,22 +4,29 @@ const classeDatabase = require('../database/classe');
 const inventarioDatabase = require('../database/inventario');
 const jogadorDatabase = require('../database/jogador');
 const interactions = require('./interactions');
-const { greenBoldText } = require('../utils/colors');
+const { greenBoldText, cyanBoldText } = require('../utils/colors');
 
 const selectClasse = async () => {
-    clearTerminal();
     const classes = await classeDatabase.getAll();
+    const classesLog = [];
 
-    console.log(greenBoldText, '**Escolha uma classe** \n');
-    for (const [index, classe] of classes.entries()) {
-        console.log(` ${index + 1} - **${classe.nome}**\n`);
-        console.log(`   Descrição: ${classe.descricao}\n`);
-        console.log(`   Aumenta **${classe.buff} pontos** de ${classe.atributo_melhorado}\n\n`);
+    console.log(greenBoldText, '\n**Escolha uma classe** \n');
+    for (const classe of classes) {
+        classesLog.push(
+            {
+                Nome: classe.nome,
+                Descrição: classe.descricao,
+                Buff: `Aumenta **${classe.buff} pontos** de ${classe.atributo_melhorado}`
+            }
+        );
     }
 
+    console.table(classesLog);
+
     while (true) {
-        const input = await question('Digite o número da classe desejada: ');
-        const selectedIndex = parseInt(input) - 1;
+        console.log(cyanBoldText, '\nDigite o nome do seu personagem: \n');
+        const input = await question(' -> ');
+        const selectedIndex = parseInt(input);
 
         if (selectedIndex >= 0 && selectedIndex < classes.length) {
             const selectedClasse = classes[selectedIndex];
@@ -52,7 +59,7 @@ const applyClassBuff = (classe, defesa, magia, ataque, vida) => {
 };
 
 const createPlayer = async () => {
-    clearTerminal(500);
+    clearTerminal();
 
     const xp = 0;
     const nivel = 1;
@@ -61,9 +68,10 @@ const createPlayer = async () => {
     let ataque = 50;
     let vida = 100;
 
-    setTimeout( async () => {
+    setTimeout(async () => {
         console.log(greenBoldText, '***Criação de Personagem***\n');
-        const nome = await question('Digite o nome do seu personagem: ');
+        console.log(cyanBoldText, 'Digite o nome do seu personagem: \n');
+        const nome = await question(' -> ');
 
         const classe = await selectClasse();
         const atributosBuffados = applyClassBuff(classe, defesa, magia, ataque, vida);
@@ -83,18 +91,21 @@ const createPlayer = async () => {
             classe.id_classe
         );
 
-        console.log(`\n**Personagem Criado!**`);
-        console.log(`  Nome: **${nome}**`);
-        console.log(`  Classe: **${classe.nome}**`);
-        console.log(`  Vida: **${atributosBuffados.vida}**`);
-        console.log(`  Magia: **${atributosBuffados.magia}**`);
-        console.log(`  Defesa: **${atributosBuffados.defesa}**`);
-        console.log(`  Ataque: **${atributosBuffados.ataque}**\n`);
+        console.log(greenBoldText, `\n**Personagem Criado!**\n`);
+        console.table([
+            {
+                Nome: nome,
+                Classe: classe.nome,
+                Vida: atributosBuffados.vida,
+                Magia: atributosBuffados.magia,
+                Defesa: atributosBuffados.defesa,
+                Ataque: atributosBuffados.ataque,
+            }
+        ]);
 
         const jogador = await jogadorDatabase.getByNome(nome);
-
         await interactions.describeCurrentRoom(jogador);
-    }, 500);
+    }, 1);
 };
 
 module.exports = {

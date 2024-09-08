@@ -3,13 +3,13 @@ const jogadorDatabase = require('../database/jogador');
 const { question } = require('../utils/readlineConfig');
 const { createPlayer } = require('./createPlayer');
 const interactions = require('./interactions');
-const { greenBoldText } = require('../utils/colors');
+const { greenBoldText, magentaBoldText, redBoldText, yellowBoldText, blueBoldText } = require('../utils/colors');
 
 const continueGame = async () => {
     clearTerminal();
 
     setTimeout(async () => {
-        console.log(greenBoldText, '\n***Seleção de Personagem***\n');
+        console.log(greenBoldText, '***Seleção de Personagem***\n');
         await getOldGames();
     }, 1);
 }
@@ -18,44 +18,56 @@ const getOldGames = async () => {
     const jogadores = await jogadorDatabase.getAll();
 
     if (jogadores.length == 0) {
-        console.log('\tNão foi encontrado nenhum personagem ;-;\n');
-        console.log('\n\nAperte 1 para voltar pra tela anterior...\n');
+        console.log(redBoldText, '\tNão foi encontrado nenhum personagem ;-;');
+        console.log(yellowBoldText, '\nAperte 1 para voltar pra tela anterior...\n');
 
         while (true) {
             const input = await question(' -> ');
 
             if (input == 1) {
-                console.log('\nVoltando pra tela de boas vindas..')
+                console.log(blueBoldText, '\nVoltando pra tela de boas vindas..')
                 welcomeToGame();
                 break;
             } else {
-                console.log('\nOpção inválida. Por favor, digite um número válido...\n');
+                console.log(redBoldText, '\nOpção inválida. Por favor, digite um número válido...\n');
             }
         }
     } else {
-        for (const [index, jogador] of jogadores.entries()) {
-            console.log(`\t${index + 1} - ** ${jogador.nome} -- ${jogador.nome_classe} **\n`);
+        const options = [];
+
+        for (const jogador of jogadores) {
+            options.push({
+                Nome: jogador.nome,
+                Classe: jogador.nome_classe
+            });
         }
+
+        console.table(options);
+        console.log('\n');
 
         while (true) {
             const input = await question(' -> ');
-            const selectedIndex = parseInt(input) - 1;
+            const selectedIndex = parseInt(input);
 
             if (selectedIndex >= 0 && selectedIndex < jogadores.length) {
                 const selectedPlayer = jogadores[selectedIndex];
-                console.log(`\n--Jogador selecionado--`);
-                console.log(`  Nome: **${selectedPlayer.nome}**`);
-                console.log(`  Classe: **${selectedPlayer.nome_classe}**`);
-                console.log(`  Vida: **${selectedPlayer.vida}**`);
-                console.log(`  Magia: **${selectedPlayer.magia}**`);
-                console.log(`  Defesa: **${selectedPlayer.defesa}**`);
-                console.log(`  Ataque: **${selectedPlayer.ataque}**\n`);
-                console.log(`\n`);
+
+                console.log(greenBoldText, `\n--Jogador selecionado--\n`);
+                console.table([
+                    {
+                        Nome: selectedPlayer.nome,
+                        Classe: selectedPlayer.nome_classe,
+                        Vida: selectedPlayer.vida,
+                        Magia: selectedPlayer.magia,
+                        Defesa: selectedPlayer.defesa,
+                        Ataque: selectedPlayer.ataque,
+                    }
+                ]);
 
                 await interactions.describeCurrentRoom(selectedPlayer);
                 break;
             } else {
-                console.log('\nOpção inválida. Por favor, digite um número válido...\n');
+                console.log(redBoldText, '\nOpção inválida. Por favor, digite um número válido...\n');
             }
         }
     }
@@ -63,11 +75,11 @@ const getOldGames = async () => {
 
 const askQuestion = async () => {
     const input = await question(' -> ');
-    if (input === '1') {
-        console.log('Você escolheu começar um novo jogo.');
+    if (input === '0') {
+        console.log(blueBoldText, '\nVocê escolheu começar um novo jogo.\n');
         await createPlayer();
     } else {
-        console.log('Opção inválida...');
+        console.log(redBoldText, '\nOpção inválida...\n');
         askQuestion();
     }
 };
@@ -77,8 +89,14 @@ const welcomeToGame = async () => {
 
     setTimeout(() => {
         console.log(greenBoldText, 'Bem vindo ao Sword Art Online!\n');
-        console.log('O que você deseja fazer?\n');
-        console.log('\t1 - Começar um novo jogo\n');
+        console.log(magentaBoldText, 'O que você deseja fazer?\n');
+        console.table([
+            {
+                Opções: 'Começar um novo jogo'
+            }
+        ]);
+
+        console.log('\n');
 
         askQuestion();
     }, 1)

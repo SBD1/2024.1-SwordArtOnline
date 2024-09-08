@@ -1,27 +1,33 @@
 const { question } = require('../utils/readlineConfig');
-const { typeWriter, clearTerminal } = require('../utils/terminalUtils');
+const { clearTerminal } = require('../utils/terminalUtils');
 const salaDatabase = require('../database/sala');
 const inventarioDatabase = require('../database/inventario');
 const inventarioItemDatabase = require('../database/inventarioItem');
-const { blueBoldText } = require('../utils/colors');
+const { blueBoldText, cyanBoldText, yellowBoldText, redBoldText, magentaBoldText } = require('../utils/colors');
 
 // Exibe opções para o jogador e trata a escolha
 const getOptions = async (jogador, sala) => {
-    const greenBoldText = '\x1b[32;1m%s\x1b[0m';  // Código ANSI para texto verde e em negrito
+    console.log('\n');
 
-    console.log(greenBoldText, '**Opções** \n');
-    console.log('\t1 - Olhar ao redor \n');
-    console.log('\t2 - Abrir inventário \n');
-    console.log('Escolha uma opção.. ');
+    console.table([
+        {
+            Opções: 'Olhar ao redor'
+        },
+        {
+            Opções: 'Abrir inventário'
+        }
+    ]);
+
+    console.log('\n');
 
     while (true) {
-        const option = parseInt(await question('\n-> '), 10);
+        const option = parseInt(await question('-> '), 10);
 
         switch (option) {
-            case 1:
+            case 0:
                 await detailRoom(jogador, sala); // Chama a função para detalhar a sala
                 break;
-            case 2:
+            case 1:
                 await openInventory(jogador); // Chama a função para abrir inventário
                 break;
             default:
@@ -42,78 +48,82 @@ const detailRoom = async (jogador, sala) => {
         boss = await salaDatabase.getBossInRoom(jogador.sala_atual);
     }
 
-    console.log('\nVocê dá uma olhada ao redor da sala...\n');
+    console.log(blueBoldText, 'Você dá uma olhada ao redor da sala...\n');
 
     // Vendo os NPCs da sala
     if (npcs.length > 0) {
-        console.log(`\nHá ${npcs.length} NPC${npcs.length === 1 ? '' : 's'} aqui:\n`);
+        console.log(yellowBoldText, `\nHá ${npcs.length} NPC${npcs.length === 1 ? '' : 's'} aqui:\n`);
         for (const npc of npcs) {
-            console.log(`- ${npc.nome}\n`);
+            console.log(yellowBoldText, `- ${npc.nome}\n`);
         }
     } else {
-        console.log(`\nNão há NPCs na sala.\n`);
+        console.log(yellowBoldText, `\nNão há NPCs na sala.\n`);
     }
 
     // Vendo os mobs da sala
     if (mobs.length > 0) {
-        console.log(`\n${mobs.length === 1 ? 'Um mob está vagando pela sala:' : '${mobs.length} mobs estão vagando pela sala:'}\n`);
+        console.log(redBoldText, `\n${mobs.length === 1 ? 'Um mob está vagando pela sala:' : `${mobs.length} mobs estão vagando pela sala:`}\n`);
         for (const mob of mobs) {
-            console.log(`- ${mob.nome}\n`);
+            console.log(redBoldText, `- ${mob.nome}\n`);
         }
     } else {
-        console.log(`\nA sala parece estar livre de mobs.\n`);
+        console.log(yellowBoldText, `\nA sala parece estar livre de mobs.\n`);
     }
 
     // Vendo o boss da sala
     if (boss.length > 0) {
-        console.log(`\nUm Boss imponente está presente aqui!\n`);
+        console.log(redBoldText, `\nUm Boss imponente está presente aqui!\n`);
         for (const b of boss) {
-            console.log(`- ${b.nome}\n`);
+            console.log(redBoldText, `- ${b.nome}\n`);
         }
     }
 
     // Caso a sala esteja vazia
     if (npcs.length === 0 && mobs.length === 0 && boss.length === 0) {
-        console.log(`\nA sala está vazia e silenciosa. Nada de interessante por aqui.\n`);
+        console.log(magentaBoldText, `\nA sala está vazia e silenciosa. Nada de interessante por aqui.\n`);
     }
 
-    console.log(`\nO que você fará a seguir?\n`);
+    console.log(cyanBoldText,`\nO que você fará a seguir?\n`);
 
     let options = [];
-    let optionNumber = 1; // Começa a numeração em 1
+    let optionNumber = 0;
+    const optionsTable = [];
 
     // Adiciona a opção de detalhar a sala novamente
     options.push({ number: optionNumber++, text: 'Detalhar a sala atual novamente' });
+    optionsTable.push({Opções: 'Detalhar a sala atual novamente' });
 
     // Adiciona as opções de interação com NPCs, se houver algum
     if (npcs.length > 0) {
         options.push({ number: optionNumber++, text: 'Conversar com um NPC' });
+        optionsTable.push({Opções: 'Conversar com um NPC' });
     }
 
     // Adiciona as opções de combate com mobs, se houver algum
     if (mobs.length > 0) {
         options.push({ number: optionNumber++, text: 'Batalhar com um mob' });
+        optionsTable.push({Opções: 'Batalhar com um mob' });
     }
 
     // Adiciona a opção de enfrentar o Boss, se houver um
     if (boss.length > 0) {
         options.push({ number: optionNumber++, text: 'Batalhar com o Boss' });
+        optionsTable.push({Opções: 'Batalhar com o Boss' });
     }
 
     // Adiciona a opção de voltar para a sala anterior, se possível
     if (sala.sala_anterior !== null) {
         options.push({ number: optionNumber++, text: 'Ir para a sala anterior' });
+        optionsTable.push({Opções: 'Ir para a sala anterior' });
     }
 
     // Adiciona a opção de avançar para a próxima sala, se não houver mobs ou Boss na sala atual
     if (mobs.length === 0 && boss.length === 0 && sala.sala_posterior !== null) {
         options.push({ number: optionNumber++, text: 'Ir para a próxima sala' });
+        optionsTable.push({Opções: 'Ir para a próxima sala' });
     }
 
-    // Exibe as opções numeradas
-    for (const option of options) {
-        console.log(`\n${option.number} - ${option.text}\n`);
-    }
+    console.table(optionsTable);
 
     // Tratando a escolha do jogador
     while (true) {
@@ -161,24 +171,19 @@ const detailRoom = async (jogador, sala) => {
 };
 
 const describeCurrentRoom = async (jogador) => {
-    clearTerminal();
-    const sala = await salaDatabase.getSalaInformations(jogador.sala_atual);
+    clearTerminal(2000);
+    
+    setTimeout(async () => {
+        const sala = await salaDatabase.getSalaInformations(jogador.sala_atual);
 
-    console.log(blueBoldText, `\nVocê está na sala: ${sala.nome} (Tipo: ${sala.tipo})`);
-    console.log(blueBoldText, `Localização:`);
-    console.log(blueBoldText, `  Andar: ${sala.andar}`);
-    console.log(blueBoldText, `  Descrição: ${sala.descricao}`);
+        console.log(blueBoldText, `${sala.nome} (Tipo: ${sala.tipo})`);
+        console.log(blueBoldText, `  Andar: ${sala.andar}`);
+        console.log(blueBoldText, `  Descrição: ${sala.descricao}`);
 
-    console.log('\nDigite 1 para ver suas opções:');
-    while (true) {
-        const option = parseInt(await question('\n-> '), 10);
-
-        if (option === 1) {
-            await getOptions(jogador, sala);
-        } else {
-            console.log('\nOpção inválida. Por favor, digite um número válido...');
-        }
-    }
+        console.log(cyanBoldText, '\nSuas opções são:');
+        
+        await getOptions(jogador, sala);
+    }, 2000);
 }
 
 // Abre o inventário

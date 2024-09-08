@@ -1,8 +1,9 @@
 const { connection } = require('../utils/connection');
 
+// Usa a view "sala_atual"
 const getSalaInformations = async (id_sala) => {
     let client, sala;
-    const sql = 'SELECT * FROM sala INNER JOIN localizacao using (id_localizacao) WHERE id_sala = $1;';
+    const sql = 'SELECT * FROM sala_atual WHERE id_instancia_sala = $1;';
     const values = [id_sala];
 
     try {
