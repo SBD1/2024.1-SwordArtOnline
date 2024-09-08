@@ -204,7 +204,7 @@ CREATE OR REPLACE FUNCTION inicializarSalasPrimeiroAndar(
     nome_jogador VARCHAR, 
     inventario_jogador INTEGER, 
     classe_jogador INTEGER)
-RETURNS VOID AS
+RETURNS INTEGER AS
 $$
 DECLARE 
     primeira_sala INTEGER;
@@ -254,11 +254,13 @@ BEGIN
     -- Inserindo instância de NPC
     INSERT INTO instancia_npc (sala_atual, id_npc, interagiu_jogador) values (primeira_sala, 1, FALSE);
     INSERT INTO instancia_npc (sala_atual, id_npc, interagiu_jogador) values (primeira_sala, 2, FALSE);
+   
+   	RETURN quarta_sala;
 END;
 $$ LANGUAGE plpgsql;
 ---------------------------------------------------------------------------------------------------------------------
-CREATE OR REPLACE FUNCTION inicializarSalasSegundoAndar()
-RETURNS VOID AS
+CREATE OR REPLACE FUNCTION inicializarSalasSegundoAndar(quarta_sala INTEGER)
+RETURNS INTEGER AS
 $$
 DECLARE 
     quinta_sala INTEGER;
@@ -268,7 +270,7 @@ DECLARE
 BEGIN    
     -- Inserindo as instâncias das salas do segundo andar
     INSERT INTO instancia_sala (id_sala, sala_anterior, sala_posterior) 
-    VALUES (5, NULL, NULL) 
+    VALUES (5, quarta_sala, NULL) 
    	RETURNING id_instancia_sala INTO quinta_sala;
 
     INSERT INTO instancia_sala (id_sala, sala_anterior, sala_posterior) 
@@ -304,11 +306,13 @@ BEGIN
     -- Inserindo instância de NPC
     INSERT INTO instancia_npc (sala_atual, id_npc, interagiu_jogador) values (sexta_sala, 3, FALSE);
     INSERT INTO instancia_npc (sala_atual, id_npc, interagiu_jogador) values (quinta_sala, 4, FALSE);
+   
+   RETURN oitava_sala;
 END;
 $$ LANGUAGE plpgsql;
 ----------------------------------------------------------------------------------------------------------------------------
-CREATE OR REPLACE FUNCTION inicializarSalasTerceiroAndar()
-RETURNS VOID AS
+CREATE OR REPLACE FUNCTION inicializarSalasTerceiroAndar(oitava_sala INTEGER)
+RETURNS INTEGER AS
 $$
 DECLARE 
     nona_sala INTEGER;
@@ -317,7 +321,7 @@ DECLARE
     decima_segunda_sala INTEGER;
 BEGIN    
     INSERT INTO instancia_sala (id_sala, sala_anterior, sala_posterior) 
-    VALUES (9, NULL, NULL) 
+    VALUES (9, oitava_sala, NULL) 
     RETURNING id_instancia_sala INTO nona_sala;
 
     INSERT INTO instancia_sala (id_sala, sala_anterior, sala_posterior) 
@@ -351,11 +355,13 @@ BEGIN
     -- Inserindo instância de NPC
     INSERT INTO instancia_npc (sala_atual, id_npc, interagiu_jogador) values (nona_sala, 5, FALSE);
     INSERT INTO instancia_npc (sala_atual, id_npc, interagiu_jogador) values (nona_sala, 6, FALSE);
+   
+   	RETURN decima_segunda_sala INTEGER;
 END;
 $$ LANGUAGE plpgsql;
 ----------------------------------------------------------------------------------------------------------------------------
-CREATE OR REPLACE FUNCTION inicializarSalasQuartoAndar()
-RETURNS VOID AS
+CREATE OR REPLACE FUNCTION inicializarSalasQuartoAndar(decima_segunda_sala INTEGER)
+RETURNS INTEGER AS
 $$
 DECLARE 
     decima_terceira_sala INTEGER;
@@ -364,7 +370,7 @@ DECLARE
     decima_sexta_sala INTEGER;
 BEGIN    
     INSERT INTO instancia_sala (id_sala, sala_anterior, sala_posterior) 
-    VALUES (13, NULL, NULL) 
+    VALUES (13, decima_segunda_sala, NULL) 
     RETURNING id_instancia_sala INTO decima_terceira_sala;
 
     INSERT INTO instancia_sala (id_sala, sala_anterior, sala_posterior) 
@@ -397,11 +403,13 @@ BEGIN
     -- Inserindo instância de NPC
     INSERT INTO instancia_npc (sala_atual, id_npc, interagiu_jogador) values (decima_terceira_sala, 7, FALSE);
     INSERT INTO instancia_npc (sala_atual, id_npc, interagiu_jogador) values (decima_terceira_sala, 8, FALSE);
+   
+   	RETURN decima_sexta_sala;
 END;
 $$ LANGUAGE plpgsql;
 ----------------------------------------------------------------------------------------------------------------------------
-CREATE OR REPLACE FUNCTION inicializarSalasQuintoAndar()
-RETURNS VOID AS
+CREATE OR REPLACE FUNCTION inicializarSalasQuintoAndar(decima_sexta_sala INTEGER)
+RETURNS INTEGER AS
 $$
 DECLARE 
     decima_setima_sala INTEGER;
@@ -410,7 +418,7 @@ DECLARE
     vigesima_sala INTEGER;
 BEGIN    
     INSERT INTO instancia_sala (id_sala, sala_anterior, sala_posterior) 
-    VALUES (17, NULL, NULL) 
+    VALUES (17, decima_sexta_sala, NULL) 
     RETURNING id_instancia_sala INTO decima_setima_sala;
 
     INSERT INTO instancia_sala (id_sala, sala_anterior, sala_posterior) 
@@ -445,11 +453,13 @@ BEGIN
     -- Inserindo instância de NPC
     INSERT INTO instancia_npc (sala_atual, id_npc, interagiu_jogador) values (decima_setima_sala, 9, FALSE);
     INSERT INTO instancia_npc (sala_atual, id_npc, interagiu_jogador) values (decima_nona_sala, 10, FALSE);
+   
+   	RETURN vigesima_sala;
 END;
 $$ LANGUAGE plpgsql;
 ----------------------------------------------------------------------------------------------------------------------------
-CREATE OR REPLACE FUNCTION inicializarSalasSextoAndar()
-RETURNS VOID AS
+CREATE OR REPLACE FUNCTION inicializarSalasSextoAndar(vigesima_sala INTEGER)
+RETURNS INTEGER AS
 $$
 DECLARE 
     vigesima_primeira_sala INTEGER;
@@ -458,7 +468,7 @@ DECLARE
     vigesima_quarta_sala INTEGER;
 BEGIN    
     INSERT INTO instancia_sala (id_sala, sala_anterior, sala_posterior) 
-    VALUES (21, NULL, NULL) 
+    VALUES (21, vigesima_sala, NULL) 
     RETURNING id_instancia_sala INTO vigesima_primeira_sala;
 
     INSERT INTO instancia_sala (id_sala, sala_anterior, sala_posterior) 
@@ -492,11 +502,13 @@ BEGIN
     -- Inserindo instância de NPC
     INSERT INTO instancia_npc (sala_atual, id_npc, interagiu_jogador) values (vigesima_primeira_sala, 11, FALSE);
     INSERT INTO instancia_npc (sala_atual, id_npc, interagiu_jogador) values (vigesima_primeira_sala, 12, FALSE);
+   
+   	RETURN vigesima_quarta_sala;
 END;
 $$ LANGUAGE plpgsql;
 ----------------------------------------------------------------------------------------------------------------------------
-CREATE OR REPLACE FUNCTION inicializarSalasSetimoAndar()
-RETURNS VOID AS
+CREATE OR REPLACE FUNCTION inicializarSalasSetimoAndar(vigesima_quarta_sala INTEGER)
+RETURNS INTEGER AS
 $$
 DECLARE 
     vigesima_quinta_sala INTEGER;
@@ -505,7 +517,7 @@ DECLARE
     vigesima_oitava_sala INTEGER;
 BEGIN    
     INSERT INTO instancia_sala (id_sala, sala_anterior, sala_posterior) 
-    VALUES (25, NULL, NULL) 
+    VALUES (25, vigesima_quarta_sala, NULL) 
     RETURNING id_instancia_sala INTO vigesima_quinta_sala;
 
     INSERT INTO instancia_sala (id_sala, sala_anterior, sala_posterior) 
@@ -540,11 +552,13 @@ BEGIN
     -- Inserindo instância de NPC
     INSERT INTO instancia_npc (sala_atual, id_npc, interagiu_jogador) values (vigesima_quinta_sala, 13, FALSE);
     INSERT INTO instancia_npc (sala_atual, id_npc, interagiu_jogador) values (vigesima_setima_sala, 14, FALSE);
+   
+   	RETURN vigesima_oitava_sala;
 END;
 $$ LANGUAGE plpgsql;
 ----------------------------------------------------------------------------------------------------------------------------
-CREATE OR REPLACE FUNCTION inicializarSalasOitavoAndar()
-RETURNS VOID AS
+CREATE OR REPLACE FUNCTION inicializarSalasOitavoAndar(vigesima_oitava_sala INTEGER)
+RETURNS INTEGER AS
 $$
 DECLARE 
     vigesima_nona_sala INTEGER;
@@ -553,7 +567,7 @@ DECLARE
     trigessima_segunda_sala INTEGER;
 BEGIN    
     INSERT INTO instancia_sala (id_sala, sala_anterior, sala_posterior) 
-    VALUES (29, NULL, NULL) 
+    VALUES (29, vigesima_oitava_sala, NULL) 
     RETURNING id_instancia_sala INTO vigesima_nona_sala;
 
     INSERT INTO instancia_sala (id_sala, sala_anterior, sala_posterior) 
@@ -588,11 +602,13 @@ BEGIN
     -- Inserindo instância de NPC
     INSERT INTO instancia_npc (sala_atual, id_npc, interagiu_jogador) values (vigesima_nona_sala, 15, FALSE);
     INSERT INTO instancia_npc (sala_atual, id_npc, interagiu_jogador) values (trigessima_sala, 16, FALSE);
+   
+   	RETURN trigessima_segunda_sala;
 END;
 $$ LANGUAGE plpgsql;
 ----------------------------------------------------------------------------------------------------------------------------
-CREATE OR REPLACE FUNCTION inicializarSalasNonoAndar()
-RETURNS VOID AS
+CREATE OR REPLACE FUNCTION inicializarSalasNonoAndar(trigessima_segunda_sala INTEGER)
+RETURNS INTEGER AS
 $$
 DECLARE 
     trigessima_terceira_sala INTEGER;
@@ -601,7 +617,7 @@ DECLARE
     trigessima_sexta_sala INTEGER;
 BEGIN    
     INSERT INTO instancia_sala (id_sala, sala_anterior, sala_posterior) 
-    VALUES (33, NULL, NULL) 
+    VALUES (33, trigessima_segunda_sala, NULL) 
     RETURNING id_instancia_sala INTO trigessima_terceira_sala;
 
     INSERT INTO instancia_sala (id_sala, sala_anterior, sala_posterior) 
@@ -634,10 +650,12 @@ BEGIN
     -- Inserindo instância de NPC
     INSERT INTO instancia_npc (sala_atual, id_npc, interagiu_jogador) values (trigessima_terceira_sala, 17, FALSE);
     INSERT INTO instancia_npc (sala_atual, id_npc, interagiu_jogador) values (trigessima_quinta_sala, 18, FALSE);
+   
+   	RETURN trigessima_sexta_sala;
 END;
 $$ LANGUAGE plpgsql;
 ----------------------------------------------------------------------------------------------------------------------------
-CREATE OR REPLACE FUNCTION inicializarSalasDecimoAndar()
+CREATE OR REPLACE FUNCTION inicializarSalasDecimoAndar(trigessima_sexta_sala INTEGER)
 RETURNS VOID AS
 $$
 DECLARE 
@@ -647,7 +665,7 @@ DECLARE
     quadragesima_sala INTEGER;
 BEGIN    
     INSERT INTO instancia_sala (id_sala, sala_anterior, sala_posterior) 
-    VALUES (37, NULL, NULL) 
+    VALUES (37, trigessima_sexta_sala, NULL) 
     RETURNING id_instancia_sala INTO trigessima_setima_sala;
 
     INSERT INTO instancia_sala (id_sala, sala_anterior, sala_posterior) 
@@ -696,18 +714,28 @@ CREATE OR REPLACE FUNCTION inicializarJogo(
 	classe_jogador INTEGER)
 RETURNS VOID AS
 $$
+DECLARE
+	ultima_sala_primeiro_andar INTEGER;
+	ultima_sala_segundo_andar INTEGER;
+	ultima_sala_terceiro_andar INTEGER;
+	ultima_sala_quarto_andar INTEGER;
+	ultima_sala_quinto_andar INTEGER;
+	ultima_sala_sexto_andar INTEGER;
+	ultima_sala_setimo_andar INTEGER;
+	ultima_sala_oitavo_andar INTEGER;
+	ultima_sala_nono_andar INTEGER;
 BEGIN
    	-- Instancia todas as salas de todos os andares
-   	PERFORM inicializarSalasPrimeiroAndar(xp_jogador, nivel_jogador, defesa_jogador, magia_jogador, ataque_jogador, vida_jogador, nome_jogador, inventario_jogador, classe_jogador);
-    PERFORM inicializarSalasSegundoAndar();
-    PERFORM inicializarSalasTerceiroAndar();
-    PERFORM inicializarSalasQuartoAndar();
-    PERFORM inicializarSalasQuintoAndar();
-    PERFORM inicializarSalasSextoAndar();
-    PERFORM inicializarSalasSetimoAndar();
-    PERFORM inicializarSalasOitavoAndar();
-    PERFORM inicializarSalasNonoAndar();
-    PERFORM inicializarSalasDecimoAndar();
+   	SELECT inicializarSalasPrimeiroAndar(xp_jogador, nivel_jogador, defesa_jogador, magia_jogador, ataque_jogador, vida_jogador, nome_jogador, inventario_jogador, classe_jogador) INTO ultima_sala_primeiro_andar;
+    SELECT inicializarSalasSegundoAndar(ultima_sala_primeiro_andar) INTO ultima_sala_segundo_andar;
+    SELECT inicializarSalasTerceiroAndar(ultima_sala_segundo_andar) INTO ultima_sala_terceiro_andar;
+    SELECT inicializarSalasQuartoAndar(ultima_sala_terceiro_andar) INTO ultima_sala_quarto_andar;
+    SELECT iultima_sala_quarto_andarnicializarSalasQuintoAndar(ultima_sala_quarto_andar) INTO ultima_sala_quinto_andar;
+    SELECT inicializarSalasSextoAndar(ultima_sala_quinto_andar) INTO ultima_sala_sexto_andar;
+    SELECT inicializarSalasSetimoAndar(ultima_sala_sexto_andar) INTO ultima_sala_setimo_andar;
+    SELECT inicializarSalasOitavoAndar(ultima_sala_setimo_andar) INTO ultima_sala_oitavo_andar;
+    SELECT inicializarSalasNonoAndar(ultima_sala_oitavo_andar) INTO ultima_sala_nono_andar;
+    PERFORM inicializarSalasDecimoAndar(ultima_sala_nono_andar);
 END;
 $$
 LANGUAGE plpgsql;
