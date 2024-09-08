@@ -76,7 +76,7 @@ const createPlayer = async () => {
         const classe = await selectClasse();
         const atributosBuffados = applyClassBuff(classe, defesa, magia, ataque, vida);
 
-        await inventarioDatabase.insert(50);
+        await inventarioDatabase.insert(20);
         const id_inventario = await inventarioDatabase.getLastInserted();
 
         await jogadorDatabase.createNewGame(

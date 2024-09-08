@@ -184,7 +184,7 @@ CREATE TABLE Dialogo (
 CREATE TABLE Jogador_Missao (
     id_jogador INTEGER NOT NULL,
     id_missao INTEGER NOT NULL,
-    status status_missao NOT NULL,
+    status STATUS_MISSAO NOT NULL,
     PRIMARY KEY (id_jogador, id_missao),
     CONSTRAINT FK_Jogador_Missao_Jogador FOREIGN KEY (id_jogador) REFERENCES Jogador (id_jogador),
     CONSTRAINT FK_Jogador_Missao_Missao FOREIGN KEY (id_missao) REFERENCES Missao (id_missao)
@@ -758,7 +758,7 @@ BEGIN
         
             -- Atribuindo a missão ao jogador
             IF (id_missao IS NOT NULL) THEN
-                INSERT INTO jogador_missao (id_jogador, id_missao) VALUES (NEW.id_jogador, id_missao);
+                INSERT INTO jogador_missao (id_jogador, id_missao, status) VALUES (NEW.id_jogador, id_missao, 'Em andamento');
             END IF;
         
             -- Atribuindo o item ao jogador
@@ -831,8 +831,14 @@ BEGIN
             UPDATE jogador 
             SET cura = cura + buff_item_consumido 
             WHERE id_jogador = id_jogador_consumiu;
-        
-        END IF;
+           
+       	ELSIF (efeito_item_consumido = 'Defesa') THEN
+	        -- Aumenta a defesa do jogador
+	        UPDATE jogador 
+	        SET defesa = defesa + buff_item_consumido 
+	        WHERE id_jogador = id_jogador_consumiu;
+	        
+	        END IF;
 
         -- Retorna NULL, pois o item foi consumido com sucesso
         RETURN NULL;

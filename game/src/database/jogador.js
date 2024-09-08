@@ -118,6 +118,21 @@ const getCurrentItem = async (idJogador) => {
     }
 }
 
+const goToAnotherRoom = async (idAnotherRoom, idJogador) => {
+    let client;
+    const sql = 'UPDATE jogador SET sala_atual = $1 WHERE id_jogador = $2';
+    const values = [idAnotherRoom, idJogador]
+
+    try {
+        client = await connection();
+        await client.query(sql, values);
+    } catch (err) {
+        console.error('\nErro ao atualizar arma atual do jogador:', err);
+    } finally {
+        if (client) client.release();
+    }
+}
+
 module.exports = {
     createNewGame,
     insert,
@@ -125,5 +140,6 @@ module.exports = {
     getAll,
     updateCurrentWeapon,
     getCurrentItem,
-    getOne
+    getOne,
+    goToAnotherRoom
 };

@@ -12,11 +12,19 @@ const { blueBoldText, cyanBoldText, yellowBoldText, redBoldText, magentaBoldText
 const getOptions = async (jogador, sala) => {
     console.log(cyanBoldText, '\nSuas opções são:');
     console.log('\n');
-    console.table([
+
+    // Adicionar a lógica para ver missões
+    const options = [
         { Opções: 'Olhar ao redor' },
         { Opções: 'Abrir inventário' },
         { Opções: 'Ver suas estatísticas' }
-    ]);
+    ];
+
+    if (jogador.item_atual) {
+        options.push({ Opções: 'Ver seu item atual' });
+    }
+
+    console.table(options);
     console.log('\n');
 
     let keepRunning = true;
@@ -38,6 +46,14 @@ const getOptions = async (jogador, sala) => {
 
             case 2:
                 await yourInformations(jogador); // Chama a função para ver suas estatisticas
+
+                keepRunning = false;
+                break;
+            case 3:
+                clearTerminal();
+                setTimeout(async () => {
+                    await detailCurrentItem(jogador);
+                }, 1);
 
                 keepRunning = false;
                 break;
@@ -69,7 +85,7 @@ const detailRoom = async (jogador, sala) => {
 
         // Vendo os NPCs da sala
         if (npcs.length > 0) {
-            console.log(yellowBoldText, `\nHá ${npcs.length} NPC${npcs.length === 1 ? '' : 's'} aqui:\n`);
+            console.log(yellowBoldText, `\nHá ${npcs.length} pessoa${npcs.length === 1 ? '' : 's'} aqui:\n`);
             for (const npc of npcs) {
                 console.table([
                     {
@@ -79,7 +95,7 @@ const detailRoom = async (jogador, sala) => {
                 ]);
             }
         } else {
-            console.log(yellowBoldText, `\nNão há NPCs na sala.\n`);
+            console.log(yellowBoldText, `\nNão tem nenhuma pessoa na sala...\n`);
         }
 
         // Vendo os mobs da sala
@@ -132,8 +148,8 @@ const detailRoom = async (jogador, sala) => {
 
         // Adiciona as opções de interação com NPCs, se houver algum
         if (npcs.length > 0) {
-            options.push({ number: optionNumber++, text: 'Conversar com um NPC' });
-            optionsTable.push({ Opções: 'Conversar com um NPC' });
+            options.push({ number: optionNumber++, text: 'Conversar com uma pessoa' });
+            optionsTable.push({ Opções: 'Conversar com uma pessoa' });
         }
 
         // Adiciona as opções de combate com mobs, se houver algum
@@ -171,7 +187,7 @@ const detailRoom = async (jogador, sala) => {
 
             if (selectedOption) {
                 switch (selectedOption.text) {
-                    case 'Conversar com um NPC':
+                    case 'Conversar com uma pessoa':
                         talkWithNpc(npcs, jogador);
 
                         keepRunning = false;
@@ -190,15 +206,31 @@ const detailRoom = async (jogador, sala) => {
                         break;
 
                     case 'Ir para a sala anterior':
-                        console.log('\nVocê decide voltar para a sala anterior.\n');
-                        // Implemente a lógica para ir para a sala anterior
+                        clearTerminal();
+                        setTimeout(async () => {
+                            await jogadorDatabase.goToAnotherRoom(sala.sala_anterior, jogador.id_jogador);
+                            console.log(blueBoldText, '\n\tCaminhando até a sala anterior...\n');
+                        }, 1);
+                        clearTerminal(1000);
+                        setTimeout(() => {
+                            jogador.sala_atual = sala.sala_anterior;
+                            describeCurrentRoom(jogador);
+                        }, 1000);
 
                         keepRunning = false;
                         break;
 
                     case 'Ir para a próxima sala':
-                        console.log('\nVocê avança para a próxima sala.\n');
-                        // Implemente a lógica para ir para a próxima sala
+                        clearTerminal();
+                        setTimeout(async () => {
+                            await jogadorDatabase.goToAnotherRoom(sala.sala_posterior, jogador.id_jogador);
+                            console.log(blueBoldText, '\n\tCaminhando até a próxima sala...\n');
+                        }, 1);
+                        clearTerminal(1000);
+                        setTimeout(() => {
+                            jogador.sala_atual = sala.sala_posterior;
+                            describeCurrentRoom(jogador);
+                        }, 1000);
 
                         keepRunning = false;
                         break;
@@ -229,7 +261,7 @@ const describeCurrentRoom = async (jogador) => {
         console.log(greenBoldText, '\n\tCarregando informações sobre a sala...')
     }, 1);
 
-    clearTerminal(2000);
+    clearTerminal(1000);
 
     setTimeout(async () => {
         const sala = await salaDatabase.getSalaInformations(jogador.sala_atual);
@@ -239,7 +271,7 @@ const describeCurrentRoom = async (jogador) => {
         console.log(blueBoldText, `  Descrição: ${sala.descricao}`);
 
         await getOptions(jogador, sala);
-    }, 2000);
+    }, 1000);
 }
 
 // Abre o inventário
@@ -277,9 +309,6 @@ const openInventory = async (jogador) => {
         if (Number(inventario.qnt_armas) > 0) {
             options.push({ number: optionNumber++, text: 'Listar armas' });
             optionsTable.push({ Opções: 'Listar armas' });
-
-            options.push({ number: optionNumber++, text: 'Ver seu item atual' });
-            optionsTable.push({ Opções: 'Ver sua arma atual' });
         }
 
         if (Number(inventario.qnt_itens_consumiveis) > 0) {
@@ -310,14 +339,6 @@ const openInventory = async (jogador) => {
                         clearTerminal();
                         setTimeout(async () => {
                             await detailWeapons(jogador);
-                        }, 1);
-
-                        keepRunning = false;
-                        break;
-                    case 'Ver seu item atual':
-                        clearTerminal();
-                        setTimeout(async () => {
-                            await detailCurrentItem(jogador);
                         }, 1);
 
                         keepRunning = false;
@@ -592,7 +613,7 @@ const detailConsumableItens = async (jogador) => {
 
 // Conversar com um NPC
 const talkWithNpc = async (npcs, jogador) => {
-    console.log(cyanBoldText, `\nEscolha um NPC para conversar:\n`);
+    console.log(cyanBoldText, `\nEscolha com quem quer conversar:\n`);
 
     const options = [];
     for (let i = 0; i < npcs.length; i++) {
@@ -639,10 +660,10 @@ const talkWithNpc = async (npcs, jogador) => {
                     // opção do usuário...
                     const typeDecision = await enumDatabase.getTypeDecision();
                     const options = [];
-                    for (d of typeDecision) {
+                    for (const d of typeDecision) {
                         options.push({
                             Decisão: d.decisao
-                        })
+                        });
                     }
                     console.table(options);
 
@@ -659,70 +680,73 @@ const talkWithNpc = async (npcs, jogador) => {
                             // Crio o diálogo
                             dialogoDatabase.createDialogue(currentDecision, jogador.id_jogador, currentNpc.id_instancia_npc);
 
-                            if (currentDecision == 'Aceitar') {
+                            if (currentDecision === 'Aceitar') {
                                 clearTerminal();
 
-                                setTimeout(async () => {
-                                    // Mostro a nova missão passada pelo npc, se existir...
-                                    const mission = await npcDatabase.getMission(currentNpc.id_instancia_npc);
-                                    if (mission) {
-                                        console.log(greenBoldText, `${currentNpc.nome} te passou uma nova missão!\n`);
+                                // Mostrar a missão e o item imediatamente sem delay
+                                const mission = await npcDatabase.getMission(currentNpc.id_instancia_npc);
+                                if (mission) {
+                                    console.log(greenBoldText, `${currentNpc.nome} te passou uma nova missão!\n`);
 
-                                        console.table([
-                                            {
-                                                Nome: mission.nome,
-                                                Descrição: mission.descricao,
-                                                Recompensa: `${mission.recompensa_xp} pontos de XP`
-                                            }
-                                        ]);
+                                    console.table([
+                                        {
+                                            Nome: mission.nome,
+                                            Descrição: mission.descricao,
+                                            Recompensa: `${mission.recompensa_xp} pontos de XP`
+                                        }
+                                    ]);
 
-                                        console.log('\n');
+                                    console.log('\n');
+                                }
+
+                                const item = await npcDatabase.getDropItem(currentNpc.id_instancia_npc);
+                                if (item) {
+                                    console.log(greenBoldText, `${currentNpc.nome} te dropou um novo item!\n`);
+
+                                    console.table([
+                                        {
+                                            Nome: item.nome,
+                                            Descrição: item.descricao,
+                                            Tipo: item.tipo,
+                                            Buff: `Tem um buff de ${item.buff} em ${item.efeito}`
+                                        }
+                                    ]);
+
+                                    console.log('\n');
+                                }
+
+                                // Mostrar mensagem "Digite 1 para fechar" aqui, sem delay
+                                console.log(yellowBoldText, 'Digite 1 para fechar!');
+
+                                let keepRunning3 = true;
+                                while (keepRunning3) {
+                                    const choice = parseInt(await question('\n-> '), 10);
+
+                                    if (choice !== 1) {
+                                        console.log(redBoldText, '\nOpção inválida...');
+                                    } else {
+                                        keepRunning3 = false;
+
+                                        // Fecho a tela
+                                        describeCurrentRoom(jogador);
                                     }
-
-                                    // Mostro o item dropado pelo npc, se existir...
-                                    const item = await npcDatabase.getDropItem(currentNpc.id_instancia_npc);
-                                    if (item) {
-                                        console.log(greenBoldText, `${currentNpc.nome} te dropou um novo item!\n`);
-
-                                        console.table([
-                                            {
-                                                Nome: item.nome,
-                                                Descrição: item.descricao,
-                                                Tipo: item.tipo,
-                                                Buff: `Tem um buff de ${item.buff} em ${item.efeito}`
-                                            }
-                                        ]);
-
-                                        console.log('\n');
-                                    }
-                                }, 1);
-
-                                clearTerminal(10000);
-
-                                // Retorno pra sala...
-                                setTimeout(() => {
-                                    describeCurrentRoom(jogador);
-                                }, 10000);
+                                }
                             } else {
                                 // Retorno pra sala...
-                                setTimeout(() => {
-                                    describeCurrentRoom(jogador);
-                                }, 500);
+                                describeCurrentRoom(jogador);
                             }
-
                         } else {
                             console.log(redBoldText, '\nOpção inválida. Por favor, escolha uma decisão válida.');
                         }
                     }
-
                 }, 1000);
             }
-
         } else {
             console.log(redBoldText, '\nOpção inválida. Por favor, escolha um NPC válido.');
         }
     }
 };
+
 
 
 // Batalhar com um inimigo
