@@ -376,8 +376,8 @@ CREATE OR REPLACE VIEW inventario_jogador AS
 		COUNT(CASE WHEN i.tipo = 'Arma' THEN 1 END) AS qnt_armas, 
 		COUNT(CASE WHEN i.tipo = 'Consumivel' THEN 1 END) AS qnt_itens_consumiveis
 	FROM inventario
-	INNER JOIN inventario_item USING (id_inventario)
-	INNER JOIN item i USING (id_item)
+	LEFT JOIN inventario_item USING (id_inventario)
+	LEFT JOIN item i USING (id_item)
 	GROUP BY id_inventario;
 
 -- View que lista os itens do tipo arma do jogador
