@@ -69,9 +69,43 @@ const getAll = async () => {
     }
 }
 
+const updateCurrentWeapon = async (idItem, idJogador) => {
+    let client;
+    const sql = 'UPDATE jogador SET item_atual = $1 WHERE id_jogador = $2;';
+    const values = [idItem, idJogador]
+
+    try {
+        client = await connection();
+        await client.query(sql, values);
+    } catch (err) {
+        console.error('\nErro ao atualizar arma atual do jogador:', err);
+    } finally {
+        if (client) client.release();
+    }
+}
+
+const getCurrentItem = async (idJogador) => {
+    let client, currentItem;
+    const sql = 'SELECT * FROM item_atual WHERE id_jogador = $1;';
+    const values = [idJogador]
+
+    try {
+        client = await connection();
+        const response = await client.query(sql, values);
+        currentItem = response.rows[0];
+    } catch (err) {
+        console.error('\nErro ao atualizar arma atual do jogador:', err);
+    } finally {
+        if (client) client.release();
+        return currentItem;
+    }
+}
+
 module.exports = {
     createNewGame,
     insert,
     getByNome,
-    getAll
+    getAll,
+    updateCurrentWeapon,
+    getCurrentItem
 };

@@ -5,6 +5,7 @@ const inventarioDatabase = require('../database/inventario');
 const enumDatabase = require('../database/enum');
 const npcDatabase = require('../database/npc');
 const dialogoDatabase = require('../database/dialogo');
+const jogadorDatabase = require('../database/jogador');
 const { blueBoldText, cyanBoldText, yellowBoldText, redBoldText, magentaBoldText, greenBoldText } = require('../utils/colors');
 
 // Exibe opções para o jogador e trata a escolha
@@ -217,7 +218,7 @@ const describeCurrentRoom = async (jogador) => {
     clearTerminal();
 
     setTimeout(() => {
-        console.log(greenBoldText, '\n\tCarregando...')
+        console.log(greenBoldText, '\n\tCarregando informações sobre a sala...')
     }, 1);
 
     clearTerminal(2000);
@@ -250,7 +251,8 @@ const openInventory = async (jogador) => {
         console.table([
             {
                 Quantidade_Máxima: inventario.qnt_max,
-                Quantidade_de_Itens: Number(inventario.qnt_itens)
+                Quantidade_de_Armas: Number(inventario.qnt_armas),
+                Quantidade_de_Itens_Consumiveis: Number(inventario.qnt_itens_consumiveis),
             }
         ]);
 
@@ -261,16 +263,20 @@ const openInventory = async (jogador) => {
         let optionNumber = 0;
         const optionsTable = [];
 
-        // Adiciona a opção de detalhar a sala novamente
         options.push({ number: optionNumber++, text: 'Fechar inventário' });
         optionsTable.push({ Opções: 'Fechar inventário' });
 
-        if (Number(inventario.qnt_itens) > 0) {
-            options.push({ number: optionNumber++, text: 'Listar itens' });
-            optionsTable.push({ Opções: 'Listar itens' });
+        if (Number(inventario.qnt_armas) > 0) {
+            options.push({ number: optionNumber++, text: 'Listar armas' });
+            optionsTable.push({ Opções: 'Listar armas' });
 
             options.push({ number: optionNumber++, text: 'Ver seu item atual' });
-            optionsTable.push({ Opções: 'Ver seu item atual' });
+            optionsTable.push({ Opções: 'Ver sua arma atual' });
+        }
+
+        if (Number(inventario.qnt_itens_consumiveis) > 0) {
+            options.push({ number: optionNumber++, text: 'Listar itens consumíveis' });
+            optionsTable.push({ Opções: 'Listar itens consumíveis' });
         }
 
         console.table(optionsTable);
@@ -292,44 +298,163 @@ const openInventory = async (jogador) => {
 
                         keepRunning = false;
                         break;
-
-                    case 'Listar itens':
+                    case 'Listar armas':
                         clearTerminal();
-                        setTimeout(() => {
-                            // Listar itens...
+                        setTimeout(async () => {
+                            await detailWeapons(jogador);
                         }, 1);
 
                         keepRunning = false;
                         break;
                     case 'Ver seu item atual':
                         clearTerminal();
-                        setTimeout(() => {
-                            detailCurrentItem(jogador);
+                        setTimeout(async () => {
+                            await detailCurrentItem(jogador);
+                        }, 1);
+
+                        keepRunning = false;
+                        break;
+                    case 'Listar itens consumíveis':
+                        clearTerminal();
+                        setTimeout(async () => {
+                            await detailConsumableItens(jogador);
                         }, 1);
 
                         keepRunning = false;
                         break;
                     default:
-                        console.log('\nOpção inválida. Por favor, escolha uma opção válida.');
-                        break;
+                        console.log(redBoldText, '\nOpção inválida. Por favor, escolha uma opção válida.');
+                        continue;
                 }
-                break;
             } else {
-                console.log('\nOpção inválida. Por favor, escolha uma opção válida.');
+                console.log(redBoldText, '\nOpção inválida. Por favor, escolha uma opção válida.');
             }
         }
 
     }, 1000);
 };
 
-// Ver os itens do inventario
-const detailItens = async (jogador) => {
+// Ver as armas do inventario
+const detailWeapons = async (jogador) => {
+    const itens = await inventarioDatabase.getWeapons(jogador.inventario);
+    const itensOptions = [];
 
-} 
+    console.log(greenBoldText, '**Armas do seu Inventário**\n');
+
+    for (item of itens) {
+        itensOptions.push({
+            Nome: item.nome,
+            Descrição: item.descricao,
+            Buff: `Buff de ${item.buff} pontos em ${item.efeito}`
+        });
+    }
+
+    console.table(itensOptions);
+
+    console.log(cyanBoldText, '\nSuas opções são:');
+
+    let options = [];
+    let optionNumber = 0;
+    const optionsTable = [];
+
+    options.push({ number: optionNumber++, text: 'Fechar inventário' });
+    optionsTable.push({ Opções: 'Fechar inventário' });
+
+    options.push({ number: optionNumber++, text: 'Escolher uma arma' });
+    optionsTable.push({ Opções: 'Escolher uma arma' });
+
+    console.table(optionsTable);
+
+    // Tratando a escolha do jogador
+    let keepRunning = true;
+    while (keepRunning) {
+        const choice = parseInt(await question('\n-> '), 10);
+
+        const selectedOption = options.find(option => option.number === choice);
+
+        if (selectedOption) {
+            switch (selectedOption.text) {
+                case 'Fechar inventário':
+                    clearTerminal();
+                    setTimeout(() => {
+                        describeCurrentRoom(jogador);
+                    }, 1);
+
+                    keepRunning = false;
+                    break;
+                case 'Escolher uma arma':
+                    console.log(blueBoldText, '\nInforme a arma que quer usar: \n')
+
+                    let keepRunning2 = true;
+                    while (keepRunning2) {
+                        const option = parseInt(await question('-> '), 10);
+
+                        if (option >= 0 && option < itens.length) {
+                            keepRunning2 = false
+                            const currentItem = itens[option];
+
+                            console.log(greenBoldText, `\nAgora você está usando: ${currentItem.nome}\n`);
+
+                            // atualizo o item atual
+                            await jogadorDatabase.updateCurrentWeapon(currentItem.id_item, jogador.id_jogador);
+
+                            // Fecho o inventário
+                            setTimeout(() => {
+                                describeCurrentRoom(jogador);
+                            }, 3000)
+                        } else {
+                            console.log(redBoldText, '\nOpção inválida. Por favor, escolha uma opção válida.');
+                        }
+                    }
+
+                    keepRunning = false;
+                    break;
+                default:
+                    console.log(redBoldText, '\nOpção inválida. Por favor, escolha uma opção válida.');
+                    continue;
+            }
+        } else {
+            console.log(redBoldText, '\nOpção inválida. Por favor, escolha uma opção válida.');
+        }
+    }
+}
 
 // Ver arma atual
 const detailCurrentItem = async (jogador) => {
-    // detalhar 
+    const currentItem = await jogadorDatabase.getCurrentItem(jogador.id_jogador);
+
+    console.log(greenBoldText, '**Item Atual**\n');
+    console.table([
+        {
+            Nome: currentItem.nome,
+            Descrição: currentItem.descricao,
+            Buff: `Buff de ${currentItem.buff} pontos em ${currentItem.efeito}`
+        }
+    ]);
+
+    console.log(yellowBoldText, '\nDigite 1 para fechar o inventário!');
+
+    let keepRunning = true;
+    while (keepRunning) {
+        const choice = parseInt(await question('\n-> '), 10);
+
+        if (choice != 1) {
+            console.log(redBoldText, '\nOpção inválida...');
+        } else {
+            keepRunning = false;
+
+            // Fecho o inventário
+            setTimeout(() => {
+                describeCurrentRoom(jogador);
+            }, 1500)
+        }
+    }
+}
+
+// Ver os itens consumíveis do inventário
+const detailConsumableItens = async (jogador) => {
+    const itens = await inventarioDatabase.getConsumableItens(jogador.inventario);
+    console.log(itens);
 }
 
 // Conversar com um NPC
