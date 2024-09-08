@@ -100,5 +100,6 @@ module.exports = {
     insert,
     getLastInserted,
     getInventory,
-    getWeapons
+    getWeapons,
+    getConsumableItens
 }
