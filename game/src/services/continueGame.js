@@ -52,19 +52,27 @@ const getOldGames = async () => {
             if (selectedIndex >= 0 && selectedIndex < jogadores.length) {
                 const selectedPlayer = jogadores[selectedIndex];
 
-                console.log(greenBoldText, `\n--Jogador selecionado--\n`);
-                console.table([
-                    {
-                        Nome: selectedPlayer.nome,
-                        Classe: selectedPlayer.nome_classe,
-                        Vida: selectedPlayer.vida,
-                        Magia: selectedPlayer.magia,
-                        Defesa: selectedPlayer.defesa,
-                        Ataque: selectedPlayer.ataque,
-                    }
-                ]);
+                clearTerminal();
 
-                await interactions.describeCurrentRoom(selectedPlayer);
+                setTimeout(() => {
+                    console.log(greenBoldText, `**Jogador selecionado**\n`);
+                    console.table([
+                        {
+                            Nome: selectedPlayer.nome,
+                            Classe: selectedPlayer.nome_classe,
+                            Vida: selectedPlayer.vida,
+                            Magia: selectedPlayer.magia,
+                            Defesa: selectedPlayer.defesa,
+                            Ataque: selectedPlayer.ataque,
+                        }
+                    ]);
+                }, 1)
+
+                
+                setTimeout(async () => {
+                    await interactions.describeCurrentRoom(selectedPlayer);
+                }, 2000);
+
                 break;
             } else {
                 console.log(redBoldText, '\nOpção inválida. Por favor, digite um número válido...\n');

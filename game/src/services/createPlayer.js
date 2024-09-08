@@ -91,20 +91,27 @@ const createPlayer = async () => {
             classe.id_classe
         );
 
-        console.log(greenBoldText, `\n**Personagem Criado!**\n`);
-        console.table([
-            {
-                Nome: nome,
-                Classe: classe.nome,
-                Vida: atributosBuffados.vida,
-                Magia: atributosBuffados.magia,
-                Defesa: atributosBuffados.defesa,
-                Ataque: atributosBuffados.ataque,
-            }
-        ]);
+        clearTerminal();
 
-        const jogador = await jogadorDatabase.getByNome(nome);
-        await interactions.describeCurrentRoom(jogador);
+        setTimeout(() => {
+            console.log(greenBoldText, `**Personagem Criado!**\n`);
+            console.table([
+                {
+                    Nome: nome,
+                    Classe: classe.nome,
+                    Vida: atributosBuffados.vida,
+                    Magia: atributosBuffados.magia,
+                    Defesa: atributosBuffados.defesa,
+                    Ataque: atributosBuffados.ataque,
+                }
+            ]);
+        }, 1);
+
+        setTimeout(async () => {
+            const jogador = await jogadorDatabase.getByNome(nome);
+            await interactions.describeCurrentRoom(jogador);
+        }, 2000);
+        
     }, 1);
 };
 
