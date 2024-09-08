@@ -125,6 +125,7 @@ CREATE TABLE Instancia_NPC (
     id_instancia_npc SERIAL PRIMARY KEY,
     sala_atual INTEGER NOT NULL,
     id_npc INTEGER NOT NULL,
+    interagiu_jogador BOOLEAN NOT NULL,
     CONSTRAINT FK_Instancia_NPC_Instancia_Sala FOREIGN KEY (sala_atual) REFERENCES Instancia_Sala (id_instancia_sala),
     CONSTRAINT FK_Instancia_NPC_NPC FOREIGN KEY (id_npc) REFERENCES NPC (id_npc)
 );
@@ -168,9 +169,9 @@ CREATE TABLE Batalha (
 CREATE TABLE Dialogo (
     id_dialogo SERIAL PRIMARY KEY,
     decisao tipo_decisao NOT NULL,
-    id_npc INTEGER NOT NULL,
+    id_instancia_npc INTEGER NOT NULL,
     id_jogador INTEGER NOT NULL,
-    CONSTRAINT FK_Dialogo_NPC FOREIGN KEY (id_npc) REFERENCES NPC (id_npc),
+    CONSTRAINT FK_Dialogo_Instancia_NPC FOREIGN KEY (id_instancia_npc) REFERENCES Instancia_NPC (id_instancia_npc),
     CONSTRAINT FK_Dialogo_Jogador FOREIGN KEY (id_jogador) REFERENCES Jogador (id_jogador)
 );
 
@@ -236,7 +237,7 @@ BEGIN
     (150, terceira_sala, 2);
 
     -- Inserindo instância de NPC
-    INSERT INTO instancia_npc (sala_atual, id_npc) values (primeira_sala, 1);
+    INSERT INTO instancia_npc (sala_atual, id_npc, interagiu_jogador) values (primeira_sala, 1, FALSE);
     
 END;
 $$ LANGUAGE plpgsql;
@@ -347,3 +348,15 @@ CREATE OR REPLACE VIEW sala_atual AS
 	FROM instancia_sala AS i 
 	INNER JOIN sala AS s USING (id_sala) 
 	INNER JOIN localizacao AS l using (id_localizacao);
+
+-- View que mostra a missao de uma instancia de npc
+CREATE OR REPLACE VIEW missao_instancia_npc AS
+	SELECT i.id_instancia_npc, m.nome, m.descricao, m.recompensa_xp FROM missao m 
+	INNER JOIN npc n ON m.id_missao = n.missao
+	INNER JOIN instancia_npc i ON n.id_npc = i.id_npc;
+
+-- View que mostra o item dropado por uma instancia de npc
+CREATE OR REPLACE VIEW item_instancia_npc AS
+	SELECT ins.id_instancia_npc, i.nome, i.descricao, i.tipo, i.buff, i.efeito FROM item i
+	INNER JOIN npc n ON i.id_item = n.item_drop
+	INNER JOIN instancia_npc ins ON n.id_npc = ins.id_npc;
