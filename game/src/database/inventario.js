@@ -66,7 +66,7 @@ const openInventory = async (id_inventario) => {
         client = await connection();
 
         const response = await client.query(sql, values);
-        itens = response.rows[0];
+        itens = response.rows;
     } catch (err) {
         console.error('\nErro ao listar os itens do inventário:', err);
     } finally {
