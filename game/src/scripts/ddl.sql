@@ -231,8 +231,8 @@ BEGIN
     -- Inserindo instâncias de mob e dragão
     INSERT INTO instancia_inimigo (vida, sala_atual, id_inimigo) values
     (60, primeira_sala, 1),
-    (60, segunda_sala, 2),
-    (60, segunda_sala, 2),
+    (60, segunda_sala, 1),
+    (60, segunda_sala, 1),
     (150, terceira_sala, 2);
 
     -- Inserindo instância de NPC
@@ -256,7 +256,7 @@ RETURNS VOID AS
 $$
 BEGIN
    	-- Salas do primeiro andar e criação do jogador:
-   	SELECT inicializarSalasPrimeiroAndar(xp_jogador, nivel_jogador, defesa_jogador, magia_jogador, ataque_jogador, vida_jogador, nome_jogador, inventario_jogador, classe_jogador);
+   	PERFORM inicializarSalasPrimeiroAndar(xp_jogador, nivel_jogador, defesa_jogador, magia_jogador, ataque_jogador, vida_jogador, nome_jogador, inventario_jogador, classe_jogador);
 END;
 $$
 LANGUAGE plpgsql;
@@ -327,3 +327,23 @@ CREATE TRIGGER updateNpc AFTER
 INSERT
     ON dialogo FOR EACH ROW
 EXECUTE PROCEDURE updateNpc ();
+
+-----------------------------------------------------------------------------------------
+-- Views:
+
+-- View responsável por descrever as informações da sala atual do jogador
+CREATE OR REPLACE VIEW sala_atual AS
+	SELECT 
+		i.id_instancia_sala,
+		i.id_sala,
+		l.id_localizacao,
+		i.sala_anterior,
+		i.sala_posterior,
+		l.andar,
+		l.descricao,
+		l.estacao,
+		s.nome,
+		s.tipo
+	FROM instancia_sala AS i 
+	INNER JOIN sala AS s USING (id_sala) 
+	INNER JOIN localizacao AS l using (id_localizacao);
