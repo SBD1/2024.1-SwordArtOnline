@@ -95,14 +95,13 @@ const getConsumableItens = async (id_inventario) => {
     }
 }
 
-const consumeItem = async (idInventario, idItem) => {
+const consumeItem = async (idInventarioItem) => {
     let client;
     const sql = `
         DELETE FROM inventario_item 
-        WHERE id_inventario = $1
-        AND id_item = $2;
+        WHERE id_inventario_item = $1;
     `;
-    const values = [idInventario, idItem];
+    const values = [idInventarioItem];
 
     try {
         client = await connection();

@@ -421,6 +421,8 @@ const yourInformations = async (jogador) => {
                 Magia: currentPlayer.magia,
                 Defesa: currentPlayer.defesa,
                 Ataque: currentPlayer.ataque,
+                Nivel: currentPlayer.nivel,
+                XP: currentPlayer.xp
             }
         ]);
 
@@ -611,14 +613,14 @@ const detailConsumableItens = async (jogador) => {
                             console.log(greenBoldText, `\nVocê consumiu: ${currentItem.nome}\n`);
 
                             // consumir o item
-                            await inventarioDatabase.consumeItem(jogador.inventario, currentItem.id_item);
+                            await inventarioDatabase.consumeItem(currentItem.id_inventario_item);
 
                             // Fecho o inventário
                             setTimeout(() => {
                                 describeCurrentRoom(jogador);
                             }, 3000)
                         } else {
-                            console.log(redBoldText, '\nOpção inválida. Por favor, escolha uma opção válida.');
+                            console.log(redBoldText, '\nOpção inválida. Por favor, escolha uma opção válida.\n');
                         }
                     }
 
