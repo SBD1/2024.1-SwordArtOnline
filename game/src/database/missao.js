@@ -41,7 +41,26 @@ const getCompletedMission = async (idJogador, idInimigo) => {
     }
 }
 
+const updateStatusMission = async (idJogador, idInstanciaInimigo) => {
+    let client;
+    // Chama a procedure que atualiza o status da missão
+    const sql = `
+        SELECT atualizarStatusMissao($1, $2);
+    `;
+    const values = [idJogador, idInstanciaInimigo];
+
+    try {
+        client = await connection();
+        await client.query(sql, values);
+    } catch (err) {
+        console.error('\nErro ao inicializar o jogo:', err);
+    } finally {
+        if (client) client.release();
+    }
+}
+
 module.exports = {
     getMissionsInProgress,
-    getCompletedMission
+    getCompletedMission,
+    updateStatusMission
 };

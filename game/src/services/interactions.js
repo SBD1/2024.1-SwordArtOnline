@@ -933,7 +933,7 @@ const battle = async (jogador, inimigo) => {
                     case 0:
                         console.log(blueBoldText, '\nVocê escolheu Ataque Físico!');
 
-                        console.log(magentaBoldText, '\n\tAtacando o inimigo...');
+                        console.log(magentaBoldText, 'Atacando o inimigo...');
 
                         // Calcular dano do ataque físico
                         let danoBase = ataqueJogador - defesaInimigo;
@@ -943,7 +943,7 @@ const battle = async (jogador, inimigo) => {
                         vidaInimigo = vidaInimigo - danoJogador;
                         await inimigoDatabase.updateLifeEnemy(vidaInimigo, inimigo.id_instancia);
 
-                        console.log(greenBoldText, `\nVocê causou ${danoJogador} de dano físico! Vida restante do inimigo: ${vidaInimigo}\n`);
+                        console.log(greenBoldText, `\nVocê causou ${danoJogador} de dano físico! Vida restante do inimigo: ${vidaInimigo}`);
 
                         keepRunning = false;
                         break;
@@ -972,11 +972,11 @@ const battle = async (jogador, inimigo) => {
             // Verificar se o inimigo foi derrotado
             if (vidaInimigo <= 0) {
                 console.log(cyanBoldText, `Parabens você derrotou ${inimigo.nome}!`);
-                // Criar método que cria uma batalha e um trigger pra deletar uma instancia caso você tenha vencido... 
                 await batalhaDatabase.createBatalha(true, inimigo.id_instancia, jogador.id_jogador);
+                await missaoDatabase.updateStatusMission(jogador.id_jogador, inimigo.id_instancia); // Atualiza o status da missão, caso ela tenha sido finalizada
                 const newItem = await inventarioDatabase.getItemById(inimigo.item_drop);
 
-                console.log(cyanBoldText, '**Recompensas**\n')
+                console.log(cyanBoldText, '**Recompensas**')
                 console.table([
                     {
                         Item: newItem.nome,
@@ -988,7 +988,7 @@ const battle = async (jogador, inimigo) => {
 
                 if (completedMission) {
                     console.log(cyanBoldText, '\n**Parabéns você completou uma missão**')
-                    console.log(cyanBoldText, '**Informações**\n')
+                    console.log(cyanBoldText, '**Informações**')
                     console.table([
                         {
                             Nome: completedMission.nome,
