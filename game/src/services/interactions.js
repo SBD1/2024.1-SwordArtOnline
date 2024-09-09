@@ -544,8 +544,7 @@ const detailCurrentItem = async (jogador) => {
 // Ver os itens consumíveis do inventário
 const detailConsumableItens = async (jogador) => {
     const itens = await inventarioDatabase.getConsumableItens(jogador.inventario);
-    console.log(itens);
-
+    const itensOptions = [];
     console.log(greenBoldText, '**Itens consumíveis do seu Inventário**\n');
 
     for (item of itens) {
@@ -661,7 +660,7 @@ const talkWithNpc = async (npcs, jogador) => {
                 clearTerminal();
 
                 setTimeout(() => {
-                    console.log(blueBoldText, `\n\tCaminhando até ${currentNpc.nome}.\n`);
+                    console.log(blueBoldText, `\n\tCaminhando até ${currentNpc.nome}...\n`);
                 }, 1);
 
                 clearTerminal(1000);
@@ -826,6 +825,8 @@ const battleWithBoss = async (boss, jogador) => {
 }
 
 const battle = async (jogador, inimigo) => {
+    const currentItem = await jogadorDatabase.getCurrentItem(jogador.id_jogador);
+
     clearTerminal();
 
     setTimeout(() => {
@@ -843,8 +844,40 @@ const battle = async (jogador, inimigo) => {
         // Atributos do jogador
         let { ataque: ataqueJogador, defesa: defesaJogador, magia: magiaJogador, vida: vidaJogador } = jogador;
 
+        if (currentItem) {
+            switch (currentItem.efeito) {
+                case 'Ataque':
+                    ataqueJogador += currentItem.buff;
+                    break;
+
+                case 'Magia':
+                    magiaJogador += currentItem.buff;
+                    break;
+
+                case 'Defesa':
+                    defesaJogador += currentItem.buff;
+                    break;
+            }
+        }
+
         // Atributos do inimigo
         let { ataque: ataqueInimigo, defesa: defesaInimigo, vida: vidaInimigo } = inimigo;
+
+        if (inimigo.passiva) {
+            switch (inimigo.passiva) {
+                case 'Ataque':
+                    ataqueInimigo += inimigo.buff;
+                    break;
+
+                case 'Defesa':
+                    defesaInimigo += inimigo.buff;
+                    break;
+
+                case 'Vida':
+                    vidaInimigo += inimigo.buff;
+                    break;
+            }
+        }
 
         // Iniciar o loop de batalha
         while (vidaJogador > 0 && vidaInimigo > 0) {
