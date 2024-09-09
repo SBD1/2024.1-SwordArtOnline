@@ -740,6 +740,27 @@ END;
 $$
 LANGUAGE plpgsql;
 
+-- Procedure responsável por fazer o jogador subir de andar
+CREATE OR REPLACE FUNCTION subirAndar(jogador_atual INTEGER, sala_atual INTEGER) 
+RETURNS INTEGER AS 
+$$
+DECLARE 
+	sala_nova INTEGER;
+BEGIN 
+	-- Pega a sala do próximo andar
+	SELECT id_instancia_sala INTO sala_nova
+	FROM instancia_sala
+	WHERE sala_anterior = sala_atual;
+
+	-- Atualiza a sala do jogador
+	UPDATE jogador SET sala_atual = sala_nova
+	WHERE id_jogador = jogador_atual;
+
+	RETURN sala_nova;
+END;
+$$
+LANGUAGE plpgsql;
+
 -----------------------------------------------------------------------------------------
 -- Triggers e stored procedures:
 
