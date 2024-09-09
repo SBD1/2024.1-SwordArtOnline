@@ -67,9 +67,9 @@ Prepare-se para uma aventura intensa e emocionante, onde cada decisão pode sign
 
 - Módulo 3
 
-  - [Dinâmica do Jogo]()
-  - [Histórias de usuários adaptado]()
-  - [Stored Procedures, Triggers e Views]()
+  - [Jogo](./game)
+  - [Tables ,Stored Procedures, Triggers e Views](./game/src/scripts/ddl.sql)
+  - [Inserts](./game/src/scripts/dml.sql)
 
 - Módulo Final
   - Jogo MUD

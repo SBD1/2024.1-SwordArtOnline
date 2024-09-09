@@ -1166,3 +1166,6 @@ AFTER INSERT
 ON batalha
 FOR EACH ROW
 EXECUTE PROCEDURE resultadoBatalha();
+
+
+

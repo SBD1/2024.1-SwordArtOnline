@@ -63,9 +63,9 @@ const createPlayer = async () => {
 
     const xp = 0;
     const nivel = 1;
-    let defesa = 15;
-    let magia = 15;
-    let ataque = 15;
+    let defesa = 20;
+    let magia = 20;
+    let ataque = 20;
     let vida = 50;
 
     setTimeout(async () => {

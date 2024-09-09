@@ -929,7 +929,7 @@ const battle = async (jogador, inimigo) => {
                 ]);
 
                 let acaoJogador = parseInt(await question('\n-> '), 10);
-
+                
                 switch (acaoJogador) {
                     case 0:
                         console.log(blueBoldText, '\nVocê escolheu Ataque Físico!');
@@ -954,7 +954,8 @@ const battle = async (jogador, inimigo) => {
 
                         console.log(magentaBoldText, '\n\tAtacando o inimigo...');
                         // Calcular dano da magia
-                        let danoMagico = (magiaJogador < danoMinimo) ? danoMinimo : magiaJogador;
+                        let danoBase2 = magiaJogador - defesaInimigo;
+                        let danoMagico = danoBase2 < danoMinimo ? danoMinimo : danoBase2;
 
                         // Atualizar vida do inimigo
                         vidaInimigo = vidaInimigo - danoMagico;
