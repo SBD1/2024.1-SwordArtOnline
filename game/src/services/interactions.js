@@ -22,10 +22,6 @@ const getOptions = async (jogador, sala) => {
         { Opções: 'Ver suas estatísticas' }
     ];
 
-    if (jogador.item_atual) {
-        options.push({ Opções: 'Ver seu item atual' });
-    }
-
     console.table(options);
     console.log('\n');
 
@@ -428,23 +424,29 @@ const yourInformations = async (jogador) => {
             }
         ]);
 
-        console.log(yellowBoldText, '\nDigite 1 para fechar suas estatísticas!');
-
-        let keepRunning = true;
-        while (keepRunning) {
-            const choice = parseInt(await question('\n-> '), 10);
-
-            if (choice != 1) {
-                console.log(redBoldText, '\nOpção inválida...');
-            } else {
-                keepRunning = false;
-
-                // Fecho o inventário
-                setTimeout(() => {
-                    describeCurrentRoom(jogador);
-                }, 1500)
-            }
+        if (jogador.item_atual) {
+            detailCurrentItem(jogador);
         }
+
+        setTimeout(async () => {
+            console.log(yellowBoldText, '\nDigite 1 para fechar suas estatísticas!');
+
+            let keepRunning = true;
+            while (keepRunning) {
+                const choice = parseInt(await question('\n-> '), 10);
+
+                if (choice != 1) {
+                    console.log(redBoldText, '\nOpção inválida...');
+                } else {
+                    keepRunning = false;
+
+                    // Fecho o inventário
+                    setTimeout(() => {
+                        describeCurrentRoom(jogador);
+                    }, 1500)
+                }
+            }
+        }, 500);
 
     }, 1000);
 }
@@ -538,7 +540,7 @@ const detailWeapons = async (jogador) => {
 const detailCurrentItem = async (jogador) => {
     const currentItem = await jogadorDatabase.getCurrentItem(jogador.id_jogador);
 
-    console.log(greenBoldText, '**Item Atual**\n');
+    console.log(greenBoldText, '\n**Item Atual**\n');
     console.table([
         {
             Nome: currentItem.nome,
@@ -546,24 +548,6 @@ const detailCurrentItem = async (jogador) => {
             Buff: `Buff de ${currentItem.buff} pontos em ${currentItem.efeito}`
         }
     ]);
-
-    console.log(yellowBoldText, '\nDigite 1 para fechar o inventário!');
-
-    let keepRunning = true;
-    while (keepRunning) {
-        const choice = parseInt(await question('\n-> '), 10);
-
-        if (choice != 1) {
-            console.log(redBoldText, '\nOpção inválida...');
-        } else {
-            keepRunning = false;
-
-            // Fecho o inventário
-            setTimeout(() => {
-                describeCurrentRoom(jogador);
-            }, 1500)
-        }
-    }
 }
 
 // Ver os itens consumíveis do inventário
