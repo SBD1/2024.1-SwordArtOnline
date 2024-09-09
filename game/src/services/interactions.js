@@ -701,7 +701,7 @@ const talkWithNpc = async (npcs, jogador) => {
                 clearTerminal(1000);
 
                 setTimeout(async () => {
-                    console.log(yellowBoldText, `Olá ${jogador.nome}!`);
+                    console.log(yellowBoldText, `\nOlá ${jogador.nome}!`);
                     console.log(yellowBoldText, currentNpc.fala);
 
                     console.log(cyanBoldText, `\nSuas opções são:\n`);
@@ -735,7 +735,7 @@ const talkWithNpc = async (npcs, jogador) => {
                                 // Mostrar a missão e o item imediatamente sem delay
                                 const mission = await npcDatabase.getMission(currentNpc.id_instancia_npc);
                                 if (mission) {
-                                    console.log(greenBoldText, `${currentNpc.nome} te passou uma nova missão!\n`);
+                                    console.log(greenBoldText, `\n${currentNpc.nome} te passou uma nova missão!\n`);
 
                                     console.table([
                                         {
@@ -750,7 +750,7 @@ const talkWithNpc = async (npcs, jogador) => {
 
                                 const item = await npcDatabase.getDropItem(currentNpc.id_instancia_npc);
                                 if (item) {
-                                    console.log(greenBoldText, `${currentNpc.nome} te dropou um novo item!\n`);
+                                    console.log(greenBoldText, `\n${currentNpc.nome} te dropou um novo item!\n`);
 
                                     console.table([
                                         {
