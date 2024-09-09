@@ -2,7 +2,7 @@
 
 -- ENUMS:
     CREATE TYPE tipo_sala AS ENUM ('Comum', 'Boss');
-    CREATE TYPE status_missao AS ENUM ('Em andamento', 'Concluido');
+    CREATE TYPE status_missao AS ENUM ('Em andamento', 'Concluida');
     CREATE TYPE passiva_boss AS ENUM ('Vida', 'Defesa', 'Ataque');
     CREATE TYPE nome_classe AS ENUM ('Assassino', 'Mago', 'Tanque', 'Espadachim');
     CREATE TYPE atributo AS ENUM ('Vida', 'Defesa', 'Ataque', 'Magia');
@@ -60,9 +60,9 @@ CREATE TABLE Inventario (
 );
 
 CREATE TABLE Inventario_Item (
+    id_inventario_item SERIAL PRIMARY KEY,
     id_inventario INTEGER NOT NULL,
     id_item INTEGER NOT NULL,
-    PRIMARY KEY (id_inventario, id_item),
     CONSTRAINT FK_Inventario_Item_Inventario FOREIGN KEY (id_inventario) REFERENCES Inventario (id_inventario),
     CONSTRAINT FK_Inventario_Item_Item FOREIGN KEY (id_item) REFERENCES Item (id_item)
 );
@@ -189,6 +189,148 @@ CREATE TABLE Jogador_Missao (
     CONSTRAINT FK_Jogador_Missao_Jogador FOREIGN KEY (id_jogador) REFERENCES Jogador (id_jogador),
     CONSTRAINT FK_Jogador_Missao_Missao FOREIGN KEY (id_missao) REFERENCES Missao (id_missao)
 );
+
+-----------------------------------------------------------------------------------------
+-- Views:
+
+-- View responsável por descrever as informações da sala atual do jogador
+CREATE OR REPLACE VIEW sala_atual AS
+	SELECT 
+		i.id_instancia_sala,
+		i.id_sala,
+		l.id_localizacao,
+		i.sala_anterior,
+		i.sala_posterior,
+		l.andar,
+		l.descricao,
+		l.estacao,
+		s.nome,
+		s.tipo
+	FROM instancia_sala AS i 
+	INNER JOIN sala AS s USING (id_sala) 
+	INNER JOIN localizacao AS l using (id_localizacao);
+
+-- View que mostra a missao de uma instancia de npc
+CREATE OR REPLACE VIEW missao_instancia_npc AS
+	SELECT i.id_instancia_npc, m.nome, m.descricao, m.recompensa_xp FROM missao m 
+	INNER JOIN npc n ON m.id_missao = n.missao
+	INNER JOIN instancia_npc i ON n.id_npc = i.id_npc;
+
+-- View que mostra o item dropado por uma instancia de npc
+CREATE OR REPLACE VIEW item_instancia_npc AS
+	SELECT ins.id_instancia_npc, i.nome, i.descricao, i.tipo, i.buff, i.efeito FROM item i
+	INNER JOIN npc n ON i.id_item = n.item_drop
+	INNER JOIN instancia_npc ins ON n.id_npc = ins.id_npc;
+
+-- View que mostra o inventario do jogador
+CREATE OR REPLACE VIEW inventario_jogador AS
+	SELECT 
+		id_inventario, 
+		qnt_max, 
+		COUNT(CASE WHEN i.tipo = 'Arma' THEN 1 END) AS qnt_armas, 
+		COUNT(CASE WHEN i.tipo = 'Consumivel' THEN 1 END) AS qnt_itens_consumiveis
+	FROM inventario
+	LEFT JOIN inventario_item USING (id_inventario)
+	LEFT JOIN item i USING (id_item)
+	GROUP BY id_inventario;
+
+-- View que lista os itens do tipo arma do jogador
+CREATE OR REPLACE VIEW armas_jogador AS
+	SELECT * FROM inventario_item ii
+	INNER JOIN item i USING (id_item)
+    WHERE i.tipo = 'Arma';
+
+-- View que lista os itens consumiveis do jogador
+CREATE OR REPLACE VIEW itens_consumiveis_jogador AS
+	SELECT * FROM inventario_item ii
+	INNER JOIN item i USING (id_item)
+    WHERE i.tipo = 'Consumivel';
+
+-- View usada para mostrar o item atual do jogador
+CREATE OR REPLACE VIEW item_atual AS
+	SELECT 
+		id_jogador,
+		i.nome,
+		i.descricao,
+		i.buff,
+		i.efeito
+	FROM item i
+	INNER JOIN jogador j 
+	ON i.id_item = j.item_atual 
+	WHERE i.tipo = 'Arma';
+
+-- View responsável pelas informações dos jogadores
+CREATE OR REPLACE VIEW informacao_jogadores AS
+	SELECT 
+		id_jogador, 
+		xp, 
+		nivel, 
+		defesa, 
+		magia, 
+		ataque, 
+		vida, 
+		j.nome, 
+		inventario, 
+		item_atual, 
+		classe, 
+		sala_atual, 
+		c.nome as nome_classe 
+	FROM jogador AS j 
+	INNER JOIN classe AS c 
+	ON j.classe = c.id_classe;
+
+-- View que lista todas as instâncias de boss vivas
+CREATE OR REPLACE VIEW boss_vivo AS
+	SELECT * FROM instancia_inimigo 
+    INNER JOIN inimigo USING (id_inimigo) 
+    INNER JOIN boss USING (id_inimigo)
+    WHERE vida > 0;
+
+-- View que lista todas as instâncias de mob vivas
+CREATE OR REPLACE VIEW mob_vivo AS
+		SELECT * FROM instancia_inimigo 
+        INNER JOIN inimigo USING (id_inimigo) 
+        INNER JOIN mob USING (id_inimigo)
+        WHERE vida > 0;
+
+-- View que lista os inimigos que devem estar com a vida zerada pra missao ser concluida
+CREATE OR REPLACE VIEW instancia_inimigo_missao AS
+	SELECT 
+		m.id_missao,
+		jm.id_jogador,
+		i.id_inimigo,
+		ii.vida,
+		i.nome AS nome_inimigo
+	FROM missao m 
+	INNER JOIN jogador_missao jm
+	USING (id_missao)
+	INNER JOIN missao_inimigo mi 
+	USING (id_missao)
+	INNER JOIN instancia_inimigo ii 
+	USING (id_inimigo)
+	INNER JOIN inimigo i 
+	USING (id_inimigo)
+	WHERE jm.status = 'Em andamento' 
+	AND ii.vida > 0;
+
+-- View que lista as missões em andamento de um jogador
+CREATE OR REPLACE VIEW missao_andamento AS
+	SELECT 
+		id_jogador,
+		id_missao,
+		id_inimigo,
+		m.nome,
+		descricao,
+		recompensa_xp,
+		status
+	FROM missao m 
+	INNER JOIN jogador_missao jm
+	USING (id_missao)
+	INNER JOIN missao_inimigo mi 
+	USING (id_missao)
+	INNER JOIN inimigo i 
+	USING (id_inimigo)
+	WHERE jm.status = 'Em andamento';
 
 -----------------------------------------------------------------------------------------
 -- Procedures:
@@ -949,7 +1091,6 @@ END;
 $$
 LANGUAGE plpgsql;
 
-
 -- Trigger responsável por fazer as atualizações e inserções necessárias apos uma batalha
 CREATE TRIGGER resultadoBatalha
 AFTER INSERT 
@@ -957,105 +1098,59 @@ ON batalha
 FOR EACH ROW
 EXECUTE PROCEDURE resultadoBatalha();
 
------------------------------------------------------------------------------------------
--- Views:
+-- Stored procedure responsável por verificar se uma missão foi concluída ou não
+CREATE OR REPLACE FUNCTION verificarStatusMissao()
+RETURNS TRIGGER AS 
+$$ 
+DECLARE 
+	inimigo_missao INTEGER;
+	xp_dropado INTEGER;
+	missao_jogador INTEGER;
+BEGIN 
+	-- Pegando o id do inimigo envolvido na missao
+	SELECT id_inimigo INTO inimigo_missao
+	FROM instancia_inimigo 
+	WHERE id_instancia = NEW.id_instancia;
+		
+	-- Verifica se ainda existe alguma instância viva desse inimigo na missão
+    IF NOT EXISTS (
+        SELECT * FROM instancia_inimigo_missao 
+		WHERE id_jogador = NEW.id_jogador 
+		AND id_inimigo = inimigo_missao
+    ) THEN
+        -- Pegando o id da missão que foi concluída
+        SELECT id_missao INTO missao_jogador
+        FROM missao_andamento
+        WHERE id_jogador = NEW.id_jogador
+        AND id_inimigo = inimigo_missao;
 
--- View responsável por descrever as informações da sala atual do jogador
-CREATE OR REPLACE VIEW sala_atual AS
-	SELECT 
-		i.id_instancia_sala,
-		i.id_sala,
-		l.id_localizacao,
-		i.sala_anterior,
-		i.sala_posterior,
-		l.andar,
-		l.descricao,
-		l.estacao,
-		s.nome,
-		s.tipo
-	FROM instancia_sala AS i 
-	INNER JOIN sala AS s USING (id_sala) 
-	INNER JOIN localizacao AS l using (id_localizacao);
+        -- Atualizando o status da missão do jogador
+        UPDATE jogador_missao
+        SET status = 'Concluida'
+        WHERE id_jogador = NEW.id_jogador
+        AND id_missao = missao_jogador;
 
--- View que mostra a missao de uma instancia de npc
-CREATE OR REPLACE VIEW missao_instancia_npc AS
-	SELECT i.id_instancia_npc, m.nome, m.descricao, m.recompensa_xp FROM missao m 
-	INNER JOIN npc n ON m.id_missao = n.missao
-	INNER JOIN instancia_npc i ON n.id_npc = i.id_npc;
+        -- Pegando a recompensa da missão
+        SELECT recompensa_xp INTO xp_dropado
+        FROM missao
+        WHERE id_missao = missao_jogador;
 
--- View que mostra o item dropado por uma instancia de npc
-CREATE OR REPLACE VIEW item_instancia_npc AS
-	SELECT ins.id_instancia_npc, i.nome, i.descricao, i.tipo, i.buff, i.efeito FROM item i
-	INNER JOIN npc n ON i.id_item = n.item_drop
-	INNER JOIN instancia_npc ins ON n.id_npc = ins.id_npc;
+        -- Atribuindo a recompensa da missão para o jogador
+        UPDATE jogador
+        SET xp = xp + xp_dropado
+        WHERE id_jogador = NEW.id_jogador;
 
--- View que mostra o inventario do jogador
-CREATE OR REPLACE VIEW inventario_jogador AS
-	SELECT 
-		id_inventario, 
-		qnt_max, 
-		COUNT(CASE WHEN i.tipo = 'Arma' THEN 1 END) AS qnt_armas, 
-		COUNT(CASE WHEN i.tipo = 'Consumivel' THEN 1 END) AS qnt_itens_consumiveis
-	FROM inventario
-	LEFT JOIN inventario_item USING (id_inventario)
-	LEFT JOIN item i USING (id_item)
-	GROUP BY id_inventario;
+        RETURN NEW;
+    END IF;
 
--- View que lista os itens do tipo arma do jogador
-CREATE OR REPLACE VIEW armas_jogador AS
-	SELECT * FROM inventario_item ii
-	INNER JOIN item i USING (id_item)
-    WHERE i.tipo = 'Arma';
+    RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
 
--- View que lista os itens consumiveis do jogador
-CREATE OR REPLACE VIEW itens_consumiveis_jogador AS
-	SELECT * FROM inventario_item ii
-	INNER JOIN item i USING (id_item)
-    WHERE i.tipo = 'Consumivel';
-
--- View usada para mostrar o item atual do jogador
-CREATE OR REPLACE VIEW item_atual AS
-	SELECT 
-		id_jogador,
-		i.nome,
-		i.descricao,
-		i.buff,
-		i.efeito
-	FROM item i
-	INNER JOIN jogador j 
-	ON i.id_item = j.item_atual 
-	WHERE i.tipo = 'Arma';
-
--- View responsável pelas informações dos jogadores
-CREATE OR REPLACE VIEW informacao_jogadores AS
-	SELECT 
-		id_jogador, 
-		xp, 
-		nivel, 
-		defesa, 
-		magia, 
-		ataque, 
-		vida, 
-		j.nome, 
-		inventario, 
-		item_atual, 
-		classe, 
-		sala_atual, 
-		c.nome as nome_classe 
-	FROM jogador AS j 
-	INNER JOIN classe AS c 
-	ON j.classe = c.id_classe;
-
--- View que lista todas as instâncias de boss vivas
-CREATE OR REPLACE VIEW boss_vivo AS
-	SELECT * FROM instancia_inimigo 
-    INNER JOIN inimigo USING (id_inimigo) 
-    INNER JOIN boss USING (id_inimigo)
-    WHERE vida > 0;
-
--- View que lista todas as instâncias de mob vivas
-CREATE OR REPLACE VIEW mob_vivo AS
-		SELECT * FROM instancia_inimigo 
-        INNER JOIN inimigo USING (id_inimigo) 
-        INNER JOIN mob USING (id_inimigo)
-        WHERE vida > 0;
+-- Trigger responsável por verificar se uma missão foi concluída ou não
+CREATE TRIGGER verificarStatusMissao
+AFTER INSERT
+ON batalha
+FOR EACH ROW
+EXECUTE PROCEDURE verificarStatusMissao();
