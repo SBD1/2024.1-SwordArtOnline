@@ -1167,5 +1167,32 @@ ON batalha
 FOR EACH ROW
 EXECUTE PROCEDURE resultadoBatalha();
 
+-- Stored procedure responsável pela lógica de subir de nível
+CREATE OR REPLACE FUNCTION subirNivel()
+RETURNS TRIGGER AS
+$$
+BEGIN
+	IF (NEW.xp >= 100) THEN 
+		-- Subiu de nível, então eu atualizo os atributos
+		UPDATE jogador SET
+		xp = (xp - 100),
+		nivel = (nivel + 1),
+		defesa = (defesa + 10),
+		magia = (magia + 10),
+		ataque = (ataque + 10),
+		vida = (vida + 10)
+		WHERE id_jogador = NEW.id_jogador;
+	END IF;
+	
+	RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
 
+-- Trigger responsável pela lógica de subir de nível
+CREATE TRIGGER subirNivel
+AFTER UPDATE
+ON jogador
+FOR EACH ROW
+EXECUTE PROCEDURE subirNivel();
 
