@@ -133,6 +133,42 @@ const goToAnotherRoom = async (idAnotherRoom, idJogador) => {
     }
 }
 
+const tookDamage = async (vida, idJogador) => {
+    let client;
+    const sql = 'UPDATE jogador SET vida = $1 WHERE id_jogador = $2';
+    const values = [vida, idJogador]
+
+    try {
+        client = await connection();
+        await client.query(sql, values);
+    } catch (err) {
+        console.error('\nErro ao atualizar vida do jogador:', err);
+    } finally {
+        if (client) client.release();
+    }
+}
+
+const ressurgePlayer = async (jogador) => {
+    let client;
+    let life = 100;
+
+    if (jogador.nome_classe == 'Assassino') {
+        life = life + 50;
+    }
+
+    const sql = 'UPDATE jogador SET vida = $1 WHERE id_jogador = $2';
+    const values = [life, jogador.idJogador]
+
+    try {
+        client = await connection();
+        await client.query(sql, values);
+    } catch (err) {
+        console.error('\nErro ao atualizar vida do jogador:', err);
+    } finally {
+        if (client) client.release();
+    }
+}
+
 module.exports = {
     createNewGame,
     insert,
@@ -141,5 +177,7 @@ module.exports = {
     updateCurrentWeapon,
     getCurrentItem,
     getOne,
-    goToAnotherRoom
+    goToAnotherRoom,
+    tookDamage,
+    ressurgePlayer
 };

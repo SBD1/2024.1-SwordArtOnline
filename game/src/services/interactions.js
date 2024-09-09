@@ -6,6 +6,8 @@ const enumDatabase = require('../database/enum');
 const npcDatabase = require('../database/npc');
 const dialogoDatabase = require('../database/dialogo');
 const jogadorDatabase = require('../database/jogador');
+const inimigoDatabase = require('../database/inimigo');
+const batalhaDatabase = require('../database/batalha');
 const { blueBoldText, cyanBoldText, yellowBoldText, redBoldText, magentaBoldText, greenBoldText } = require('../utils/colors');
 
 // Exibe opções para o jogador e trata a escolha
@@ -266,9 +268,22 @@ const describeCurrentRoom = async (jogador) => {
     setTimeout(async () => {
         const sala = await salaDatabase.getSalaInformations(jogador.sala_atual);
 
-        console.log(blueBoldText, `${sala.nome} (Tipo: ${sala.tipo})`);
-        console.log(blueBoldText, `  Andar: ${sala.andar}`);
-        console.log(blueBoldText, `  Descrição: ${sala.descricao}`);
+        console.log(
+            greenBoldText,
+            `Sala: ${sala.nome}`
+        );
+        console.log(
+            magentaBoldText,
+            `Tipo de sala: ${sala.tipo}`
+        );
+        console.log(
+            magentaBoldText,
+            `Localização: ${sala.andar}° andar | Estação: ${sala.estacao}`
+        );
+        console.log(
+            magentaBoldText,
+            `Descrição da sala: ${sala.descricao}`
+        );
 
         await getOptions(jogador, sala);
     }, 1000);
@@ -747,8 +762,6 @@ const talkWithNpc = async (npcs, jogador) => {
     }
 };
 
-
-
 // Batalhar com um inimigo
 const battleWithMob = async (mobs, jogador) => {
     console.log(redBoldText, `\nEscolha com que inimigo quer batalhar:\n`);
@@ -773,29 +786,46 @@ const battleWithMob = async (mobs, jogador) => {
             const currentEnemy = mobs[enemyChoice];
 
             keepRunning = false;
-            battle(jogador, currentEnemy);
+            await battle(jogador, currentEnemy);
         } else {
-            console.log(redBoldText, '\nOpção inválida. Por favor, escolha um NPC válido.');
+            console.log(redBoldText, '\nOpção inválida. Por favor, escolha um inimigo válido.');
         }
     }
 }
 
 // Batalhar com um boss
 const battleWithBoss = async (boss, jogador) => {
-    console.log(`\nEscolha o Boss para batalhar:\n`);
+    console.log(redBoldText, `\nEscolha o Boss que quer batalhar:\n`);
+
+    const options = [];
     for (let i = 0; i < boss.length; i++) {
-        console.log(`${i + 1} - ${boss[i].nome}\n`);
+        options.push({
+            Nome: boss[i].nome,
+            Ataque: boss[i].ataque,
+            Defesa: boss[i].defesa,
+            Vida: boss[i].vida,
+            Buff: `${boss[i].buff} pontos a mais de ${boss[i].passiva}`
+        });
     }
-    const bossChoice = parseInt(await question('\n-> '), 10);
-    if (bossChoice > 0 && bossChoice <= boss.length) {
-        console.log(`\nVocê enfrenta o Boss ${boss[bossChoice - 1].nome}!\n`);
-        // Implemente a lógica para batalhar com o Boss
-    } else {
-        console.log('\nOpção inválida. Por favor, escolha um Boss válido.');
+
+    console.table(options);
+
+    let keepRunning = true;
+    while (keepRunning) {
+        const enemyChoice = parseInt(await question('\n-> '), 10);
+
+        if (enemyChoice >= 0 && enemyChoice < boss.length) {
+            const currentEnemy = boss[enemyChoice];
+
+            keepRunning = false;
+            await battle(jogador, currentEnemy);
+        } else {
+            console.log(redBoldText, '\nOpção inválida. Por favor, escolha um boss válido.');
+        }
     }
 }
 
-const battle = (jogador, inimigo) => {
+const battle = async (jogador, inimigo) => {
     clearTerminal();
 
     setTimeout(() => {
@@ -811,10 +841,10 @@ const battle = (jogador, inimigo) => {
         const danoMinimo = 1;
 
         // Atributos do jogador
-        const { ataque: ataqueJogador, defesa: defesaJogador, magia: magiaJogador, vida: vidaJogador } = jogador;
+        let { ataque: ataqueJogador, defesa: defesaJogador, magia: magiaJogador, vida: vidaJogador } = jogador;
 
         // Atributos do inimigo
-        const { ataque: ataqueInimigo, defesa: defesaInimigo, vida: vidaInimigo } = inimigo;
+        let { ataque: ataqueInimigo, defesa: defesaInimigo, vida: vidaInimigo } = inimigo;
 
         // Iniciar o loop de batalha
         while (vidaJogador > 0 && vidaInimigo > 0) {
@@ -834,24 +864,35 @@ const battle = (jogador, inimigo) => {
                 switch (acaoJogador) {
                     case 0:
                         console.log(blueBoldText, '\nVocê escolheu Ataque Físico!');
+
+                        console.log(magentaBoldText, '\n\tAtacando o inimigo...');
+
                         // Calcular dano do ataque físico
                         let danoBase = ataqueJogador - defesaInimigo;
                         let danoJogador = danoBase < danoMinimo ? danoMinimo : danoBase;
 
                         // Atualizar vida do inimigo
-                        vidaInimigo -= danoJogador;
+                        vidaInimigo = vidaInimigo - danoJogador;
+                        await inimigoDatabase.updateLifeEnemy(vidaInimigo, inimigo.id_instancia);
+
                         console.log(greenBoldText, `\nVocê causou ${danoJogador} de dano físico! Vida restante do inimigo: ${vidaInimigo}\n`);
+
                         keepRunning = false;
                         break;
 
                     case 1:
                         console.log(magentaBoldText, '\nVocê escolheu Ataque Mágico!');
+
+                        console.log(magentaBoldText, '\n\tAtacando o inimigo...');
                         // Calcular dano da magia
-                        let danoMagico = magiaJogador < danoMinimo ? danoMinimo : magiaJogador;
+                        let danoMagico = (magiaJogador < danoMinimo) ? danoMinimo : magiaJogador;
 
                         // Atualizar vida do inimigo
-                        vidaInimigo -= danoMagico;
+                        vidaInimigo = vidaInimigo - danoMagico;
+                        await inimigoDatabase.updateLifeEnemy(vidaInimigo, inimigo.id_instancia);
+
                         console.log(greenBoldText, `\nVocê causou ${danoMagico} de dano mágico! Vida restante do inimigo: ${vidaInimigo}\n`);
+
                         keepRunning = false;
                         break;
 
@@ -864,7 +905,17 @@ const battle = (jogador, inimigo) => {
             if (vidaInimigo <= 0) {
                 console.log(greenBoldText, `Você derrotou ${inimigo.nome}!`);
                 // Criar método que cria uma batalha e um trigger pra deletar uma instancia caso você tenha vencido... 
-                RegistrarResultadoBatalha(true, jogador.id_jogador, inimigo.id_instancia_inimigo); // Supondo que essas propriedades existem
+                await batalhaDatabase.createBatalha(true, inimigo.id_instancia, jogador.id_jogador);
+
+                clearTerminal(2000);
+                setTimeout(() => {
+                    console.log(yellowBoldText, '\n\tSe recuperando da batalha...');
+                }, 2001);
+
+                setTimeout(() => {
+                    describeCurrentRoom(jogador);
+                }, 4000);
+
                 return;
             }
 
@@ -876,12 +927,24 @@ const battle = (jogador, inimigo) => {
 
             // Atualizar vida do jogador
             vidaJogador -= danoInimigo;
+            await jogadorDatabase.tookDamage(vidaJogador, jogador.id_jogador);
             console.log(redBoldText, `O inimigo causou ${danoInimigo} de dano! Sua vida restante: ${vidaJogador}`);
 
             // Verificar se o jogador foi derrotado
             if (vidaJogador <= 0) {
                 console.log(redBoldText, 'Você foi derrotado!');
-                RegistrarResultadoBatalha(false, jogador.id_jogador, inimigo.id_instancia_inimigo); // Supondo que essas propriedades existem
+                await batalhaDatabase.createBatalha(false, jogador.id_jogador, inimigo.id_instancia); // Supondo que essas propriedades existem
+
+                clearTerminal(1000);
+                setTimeout(async () => {
+                    await jogadorDatabase.ressurgePlayer(jogador);
+                    console.log(greenBoldText, '\n\tRenascendo no seu último checkpoint...');
+                }, 1001);
+
+                setTimeout(() => {
+                    describeCurrentRoom(jogador);
+                }, 3000);
+
                 return;
             }
         }
