@@ -150,13 +150,13 @@ const tookDamage = async (vida, idJogador) => {
 
 const ressurgePlayer = async (jogador) => {
     let client;
-    let life = 100;
+    let life = 50;
 
     if (jogador.nome_classe == 'Assassino') {
-        life = life + 50;
+        life = life + 30;
     }
 
-    const sql = 'UPDATE jogador SET vida = $1 WHERE id_jogador = $2';
+    const sql = 'UPDATE jogador SET vida = $1, xp = 0 WHERE id_jogador = $2';
     const values = [life, jogador.id_jogador]
 
     try {

@@ -1000,6 +1000,22 @@ const battle = async (jogador, inimigo) => {
                     ]);
                 }
 
+                const jogadorUpdated = await jogadorDatabase.getOne(jogador.id_jogador);
+
+                if (jogadorUpdated.nivel > jogador.nivel) {
+                    // Atribuindo o jogador atualizado para o jogador atual...
+                    jogador = jogadorUpdated;
+
+                    console.log(cyanBoldText, '\n**Parabéns você subiu de nível**')
+                    console.log(cyanBoldText, '**Informações**')
+                    console.table([
+                        {
+                            Nível: jogador.nivel,
+                            XP: `${jogador.xp} pontos de XP`
+                        }
+                    ]);
+                }
+
                 // Mostrar mensagem "Digite 1 para fechar" aqui, sem delay
                 console.log(yellowBoldText, 'Digite 1 para fechar!');
 
@@ -1034,17 +1050,17 @@ const battle = async (jogador, inimigo) => {
             // Verificar se o jogador foi derrotado
             if (vidaJogador <= 0) {
                 console.log(redBoldText, 'Você foi derrotado!');
-                await batalhaDatabase.createBatalha(false, jogador.id_jogador, inimigo.id_instancia); // Supondo que essas propriedades existem
+                await batalhaDatabase.createBatalha(false, inimigo.id_instancia, jogador.id_jogador); // Supondo que essas propriedades existem
 
-                clearTerminal(1000);
+                clearTerminal(3000);
                 setTimeout(async () => {
                     await jogadorDatabase.ressurgePlayer(jogador);
                     console.log(greenBoldText, '\n\tRenascendo no seu último checkpoint...');
-                }, 1001);
+                }, 3001);
 
                 setTimeout(() => {
                     describeCurrentRoom(jogador);
-                }, 3000);
+                }, 5000);
 
                 return;
             }
