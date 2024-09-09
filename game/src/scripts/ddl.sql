@@ -332,6 +332,25 @@ CREATE OR REPLACE VIEW missao_andamento AS
 	USING (id_inimigo)
 	WHERE jm.status = 'Em andamento';
 
+-- View que lista as missões em andamento de um jogador
+CREATE OR REPLACE VIEW missao_concluida AS
+	SELECT 
+		id_jogador,
+		id_missao,
+		id_inimigo,
+		m.nome,
+		descricao,
+		recompensa_xp,
+		status
+	FROM missao m 
+	INNER JOIN jogador_missao jm
+	USING (id_missao)
+	INNER JOIN missao_inimigo mi 
+	USING (id_missao)
+	INNER JOIN inimigo i 
+	USING (id_inimigo)
+	WHERE jm.status = 'Concluida';
+
 -----------------------------------------------------------------------------------------
 -- Procedures:
 
