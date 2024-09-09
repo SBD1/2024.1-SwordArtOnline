@@ -18,6 +18,7 @@ const askQuestion = async () => {
 };
 
 const welcomeToGame = () => {
+    console.log('\n');
     console.log(greenBoldText, 'Bem vindo ao Sword Art Online!\n');
 
     console.log(magentaBoldText, 'O que você deseja fazer?\n');

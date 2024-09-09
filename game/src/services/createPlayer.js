@@ -10,7 +10,7 @@ const selectClasse = async () => {
     const classes = await classeDatabase.getAll();
     const classesLog = [];
 
-    console.log(greenBoldText, '\n**Escolha uma classe** \n');
+    console.log(greenBoldText, '\n**Escolha uma classe** ');
     for (const classe of classes) {
         classesLog.push(
             {
@@ -69,7 +69,8 @@ const createPlayer = async () => {
     let vida = 100;
 
     setTimeout(async () => {
-        console.log(greenBoldText, '***Criação de Personagem***\n');
+        console.log('\n');
+        console.log(greenBoldText, '**Criação de Personagem**\n');
         console.log(cyanBoldText, 'Digite o nome do seu personagem: \n');
         const nome = await question(' -> ');
 
@@ -94,6 +95,7 @@ const createPlayer = async () => {
         clearTerminal();
 
         setTimeout(() => {
+            console.log('\n');
             console.log(greenBoldText, `**Personagem Criado!**\n`);
             console.table([
                 {

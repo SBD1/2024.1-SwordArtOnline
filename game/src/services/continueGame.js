@@ -9,7 +9,8 @@ const continueGame = async () => {
     clearTerminal();
 
     setTimeout(async () => {
-        console.log(greenBoldText, '***Seleção de Personagem***\n');
+        console.log('\n');
+        console.log(greenBoldText, '**Seleção de Personagem**\n');
         await getOldGames();
     }, 1);
 }
@@ -55,6 +56,7 @@ const getOldGames = async () => {
                 clearTerminal();
 
                 setTimeout(() => {
+                    console.log('\n');
                     console.log(greenBoldText, `**Jogador selecionado**\n`);
                     console.table([
                         {
