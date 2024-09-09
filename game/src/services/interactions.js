@@ -945,18 +945,35 @@ const battle = async (jogador, inimigo) => {
 
             // Verificar se o inimigo foi derrotado
             if (vidaInimigo <= 0) {
-                console.log(greenBoldText, `Você derrotou ${inimigo.nome}!`);
+                console.log(greenBoldText, `Parabens você derrotou ${inimigo.nome}!`);
                 // Criar método que cria uma batalha e um trigger pra deletar uma instancia caso você tenha vencido... 
                 await batalhaDatabase.createBatalha(true, inimigo.id_instancia, jogador.id_jogador);
+                const newItem = await inventarioDatabase.getItemById(inimigo.item_drop);
 
-                clearTerminal(2000);
-                setTimeout(() => {
-                    console.log(yellowBoldText, '\n\tSe recuperando da batalha...');
-                }, 2001);
+                console.log(cyanBoldText, '\n**Recompensas**\n')
+                console.table([
+                    {
+                        Item: newItem.nome,
+                        XP: `Ganhou mais ${inimigo.xp} de XP`
+                    }
+                ]);
 
-                setTimeout(() => {
-                    describeCurrentRoom(jogador);
-                }, 4000);
+                // Mostrar mensagem "Digite 1 para fechar" aqui, sem delay
+                console.log(yellowBoldText, 'Digite 1 para fechar!');
+
+                let keepRunning3 = true;
+                while (keepRunning3) {
+                    const choice = parseInt(await question('\n-> '), 10);
+
+                    if (choice !== 1) {
+                        console.log(redBoldText, '\nOpção inválida...');
+                    } else {
+                        keepRunning3 = false;
+
+                        // Fecho a tela
+                        describeCurrentRoom(jogador);
+                    }
+                }
 
                 return;
             }

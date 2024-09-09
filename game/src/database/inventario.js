@@ -115,6 +115,26 @@ const consumeItem = async (idInventario, idItem) => {
     }
 }
 
+const getItemById = async (idItem) => {
+    let client, item;
+    const sql = `
+        SELECT * FROM item WHERE id_item = $1;
+    `;
+    const values = [idItem];
+
+    try {
+        client = await connection();
+
+        const response = await client.query(sql, values);
+        item = response.rows[0];
+    } catch (err) {
+        console.error('\nErro ao buscar item:', err);
+    } finally {
+        if (client) client.release();
+        return item;
+    }
+}
+
 
 module.exports = {
     insert,
@@ -122,5 +142,6 @@ module.exports = {
     getInventory,
     getWeapons,
     getConsumableItens,
-    consumeItem
+    consumeItem, 
+    getItemById
 }
