@@ -41,12 +41,13 @@ Prepare-se para uma aventura intensa e emocionante, onde cada decisão pode sign
 
 ## Apresentações
 
+Todas as Apresentações estão no YouTube nos links a seguir:
+
 | Módulo | Link da gravação                                                                                    | Data       |
 | ------ | --------------------------------------------------------------------------------------------------- | ---------- |
 | 1      | [Apresentação Módulo 1](https://youtu.be/DtC8UW9KK5I)                                               | 22/07/2024 |
 | 2      | [Apresentação Módulo 2](https://youtu.be/hE4lcQh91ak)                                               | 19/08/2024 |
-| 3      | [Apresentação Módulo 3]()                                                                           |      -     |
-| Final  | [Apresentação Final]()                                                                              |      -     |
+| 3      | [Apresentação Módulo Final](https://youtu.be/FlJ2Sy_Tt_o)                                           | 09/09/2024 |
 
 
 ## Entregas
