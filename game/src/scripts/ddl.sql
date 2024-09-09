@@ -971,3 +971,17 @@ CREATE OR REPLACE VIEW informacao_jogadores AS
 	FROM jogador AS j 
 	INNER JOIN classe AS c 
 	ON j.classe = c.id_classe;
+
+-- View que lista todas as instâncias de boss vivas
+CREATE OR REPLACE VIEW boss_vivo AS
+	SELECT * FROM instancia_inimigo 
+    INNER JOIN inimigo USING (id_inimigo) 
+    INNER JOIN boss USING (id_inimigo)
+    WHERE vida > 0;
+
+-- View que lista todas as instâncias de mob vivas
+CREATE OR REPLACE VIEW mob_vivo AS
+		SELECT * FROM instancia_inimigo 
+        INNER JOIN inimigo USING (id_inimigo) 
+        INNER JOIN mob USING (id_inimigo)
+        WHERE vida > 0;
