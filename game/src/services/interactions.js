@@ -182,7 +182,7 @@ const detailRoom = async (jogador, sala) => {
             optionsTable.push({ Opções: 'Ir para a próxima sala' });
         }
 
-        if (sala.sala_posterior == null) {
+        if (mobs.length === 0 && boss.length === 0 && sala.sala_posterior == null) {
             options.push({ number: optionNumber++, text: 'Subir para o próximo andar' });
             optionsTable.push({ Opções: 'Subir para o próximo andar' });
         }
