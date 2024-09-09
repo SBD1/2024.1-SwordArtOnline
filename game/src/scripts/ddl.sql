@@ -904,6 +904,59 @@ ON inventario_item
 FOR EACH ROW 
 EXECUTE PROCEDURE consumirItem();
 
+-- Stored procedure responsável por fazer as atualizações e inserções necessárias apos uma batalha
+CREATE OR REPLACE FUNCTION resultadoBatalha()
+RETURNS TRIGGER AS
+$$
+DECLARE 
+	xp_ganho INTEGER;
+	item_droppado INTEGER;
+	inventario_jogador INTEGER;
+BEGIN 
+	IF (NEW.venceu = true) THEN
+		-- Garantindo que a vida do inimigo (instancia) fique em 0 quendo ele morreu
+		UPDATE instancia_inimigo SET vida = 0 WHERE id_instancia = NEW.id_instancia;
+	
+		-- Pegando o xp dropado pelo inimigo
+		SELECT xp INTO xp_ganho
+		FROM inimigo i 
+		LEFT JOIN instancia_inimigo ii USING (id_inimigo)
+		WHERE ii.id_instancia = NEW.id_instancia;
+	
+		-- Atribuindo o xp ganho para o jogador
+		UPDATE jogador SET xp = (xp + xp_ganho)
+		WHERE id_jogador = NEW.id_jogador;
+		
+		-- Pegando o item dropado pelo inimigo
+		SELECT item_drop INTO item_droppado
+		FROM inimigo i 
+		LEFT JOIN instancia_inimigo ii USING (id_inimigo)
+		WHERE ii.id_instancia = NEW.id_instancia;
+	
+		-- Pegando o inventário do jogador
+		SELECT inventario INTO inventario_jogador
+		FROM jogador j WHERE id_jogador = NEW.id_jogador;
+	
+		-- Adicionando esse item dropado ao inventario do jogador
+		INSERT INTO inventario_item (id_inventario, id_item)
+		VALUES (inventario_jogador, item_droppado);
+		
+		RETURN NEW;
+	END IF;
+
+	RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+
+-- Trigger responsável por fazer as atualizações e inserções necessárias apos uma batalha
+CREATE TRIGGER resultadoBatalha
+AFTER INSERT 
+ON batalha
+FOR EACH ROW
+EXECUTE PROCEDURE resultadoBatalha();
+
 -----------------------------------------------------------------------------------------
 -- Views:
 
