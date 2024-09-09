@@ -77,12 +77,12 @@ Prepare-se para uma aventura intensa e emocionante, onde cada decisão pode sign
   1. **Crie o arquivo `.env`:**
     - Baseie-se no modelo fornecido em `./game/.env.example` para criar o arquivo `.env` na mesma pasta.
 
-  2. **Configure o Docker:**
+  2. **Rodar Banco PostgreSQL(Recomendado uso de Docker):**
     - Certifique-se de que o Docker está em execução.
     - Execute o script Docker também indicado em `./game/.env.example` para configurar os containers necessários.
 
   3. **Acesse o diretório do projeto:**
-    - Abra o terminal e navegue até `./game/src`.
+    - Abra o terminal e navegue até `./game`.
 
   4. **Inicialize o jogo:**
     - Execute o comando `npm run initialize-game` para configurar o ambiente de jogo.
