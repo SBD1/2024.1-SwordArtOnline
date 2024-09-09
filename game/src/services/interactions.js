@@ -81,6 +81,10 @@ const detailRoom = async (jogador, sala) => {
         const mobs = await salaDatabase.getMobsInRoom(jogador.sala_atual);
         let boss = [];
 
+        if (sala.andar === 10 && sala.sala_posterior == null) {
+            console.log(greenBoldText, `\nParabéns, você conseguiu chegar até a última sala do jogo!\n`);
+        }
+
         if (sala.tipo === 'Boss') {
             boss = await salaDatabase.getBossInRoom(jogador.sala_atual);
         }
@@ -178,6 +182,11 @@ const detailRoom = async (jogador, sala) => {
             optionsTable.push({ Opções: 'Ir para a próxima sala' });
         }
 
+        if (sala.sala_posterior == null) {
+            options.push({ number: optionNumber++, text: 'Subir para o próximo andar' });
+            optionsTable.push({ Opções: 'Subir para o próximo andar' });
+        }
+
         console.table(optionsTable);
 
         // Tratando a escolha do jogador
@@ -233,6 +242,22 @@ const detailRoom = async (jogador, sala) => {
                             jogador.sala_atual = sala.sala_posterior;
                             describeCurrentRoom(jogador);
                         }, 1000);
+
+                        keepRunning = false;
+                        break;
+
+                    case 'Subir para o próximo andar':
+                        clearTerminal();
+                        setTimeout(async () => {
+                            const andarAtual = await jogadorDatabase.goUp(jogador);
+                            console.log(blueBoldText, '\n\tSubindo para o próximo andar...\n');
+
+                            clearTerminal(1000);
+                            setTimeout(() => {
+                                jogador.sala_atual = andarAtual;
+                                describeCurrentRoom(jogador);
+                            }, 1000);
+                        }, 1);
 
                         keepRunning = false;
                         break;

@@ -157,7 +157,7 @@ const ressurgePlayer = async (jogador) => {
     }
 
     const sql = 'UPDATE jogador SET vida = $1 WHERE id_jogador = $2';
-    const values = [life, jogador.idJogador]
+    const values = [life, jogador.id_jogador]
 
     try {
         client = await connection();
@@ -166,6 +166,23 @@ const ressurgePlayer = async (jogador) => {
         console.error('\nErro ao atualizar vida do jogador:', err);
     } finally {
         if (client) client.release();
+    }
+}
+
+const goUp = async (jogador) => {
+    let client, novoAndar;
+    const sql = 'SELECT subirAndar($1, $2) AS novo_andar;';
+    const values = [jogador.id_jogador, jogador.sala_atual]
+
+    try {
+        client = await connection();
+        const response = await client.query(sql, values);
+        novoAndar = response.rows[0].novo_andar;
+    } catch (err) {
+        console.error('\nErro ao subir de andar:', err);
+    } finally {
+        if (client) client.release();
+        return novoAndar;
     }
 }
 
@@ -179,5 +196,6 @@ module.exports = {
     getOne,
     goToAnotherRoom,
     tookDamage,
-    ressurgePlayer
+    ressurgePlayer,
+    goUp
 };
