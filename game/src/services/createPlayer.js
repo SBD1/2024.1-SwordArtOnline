@@ -63,10 +63,10 @@ const createPlayer = async () => {
 
     const xp = 0;
     const nivel = 1;
-    let defesa = 50;
-    let magia = 50;
-    let ataque = 50;
-    let vida = 100;
+    let defesa = 15;
+    let magia = 15;
+    let ataque = 15;
+    let vida = 50;
 
     setTimeout(async () => {
         console.log('\n');
@@ -77,7 +77,7 @@ const createPlayer = async () => {
         const classe = await selectClasse();
         const atributosBuffados = applyClassBuff(classe, defesa, magia, ataque, vida);
 
-        await inventarioDatabase.insert(20);
+        await inventarioDatabase.insert(50);
         const id_inventario = await inventarioDatabase.getLastInserted();
 
         await jogadorDatabase.createNewGame(

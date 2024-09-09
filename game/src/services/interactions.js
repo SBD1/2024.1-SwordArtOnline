@@ -875,7 +875,7 @@ const battle = async (jogador, inimigo) => {
         console.log(redBoldText, `**Batalha iniciada contra ${inimigo.nome}!**\n`);
 
         // Definir dano mínimo
-        const danoMinimo = 1;
+        const danoMinimo = 5;
 
         // Atributos do jogador
         let { ataque: ataqueJogador, defesa: defesaJogador, magia: magiaJogador, vida: vidaJogador } = jogador;
