@@ -4,7 +4,7 @@ const classeDatabase = require('../database/classe');
 const inventarioDatabase = require('../database/inventario');
 const jogadorDatabase = require('../database/jogador');
 const interactions = require('./interactions');
-const { greenBoldText, cyanBoldText } = require('../utils/colors');
+const { greenBoldText, cyanBoldText, redBoldText, blueBoldText } = require('../utils/colors');
 
 const selectClasse = async () => {
     const classes = await classeDatabase.getAll();
@@ -30,10 +30,10 @@ const selectClasse = async () => {
 
         if (selectedIndex >= 0 && selectedIndex < classes.length) {
             const selectedClasse = classes[selectedIndex];
-            console.log(`\nVocê escolheu a classe **${selectedClasse.nome}**`);
+
             return selectedClasse;
         } else {
-            console.log('\nOpção inválida. Por favor, digite um número válido...\n');
+            console.log(redBoldText, '\nOpção inválida. Por favor, digite um número válido...\n');
         }
     }
 };
