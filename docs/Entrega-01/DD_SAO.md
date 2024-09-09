@@ -1,201 +1,255 @@
-# DD - Dicionário de Dados
+Claro! Com base nos scripts DDL fornecidos, aqui está o Dicionário de Dados completo, incluindo todas as entidades e seus atributos atualizados:
 
-> Um dicionário de dados é um documento de texto ou planilha que centraliza informações sobre o conjunto de dados (dataset) sob análise dos cientistas de dados.
-> Segundo a IBM, um dicionário de dados:
-> “é um repositório centralizado com informações sobre os dados, tais como: significado, relacionamentos, origem, uso e formatos”
+---
+
+# Dicionário de Dados
+
+> Um dicionário de dados é um documento que centraliza informações sobre o conjunto de dados sob análise, descrevendo as entidades, atributos e suas características.
 
 ## Entidades e Atributos
 
-### Entidade: `Localizacao`
+### **Enumerações (ENUMs)**
 
-| Nome Variável         | Tipo         | Descrição                                                                 | Permite valores nulos? | É chave? | Outras Restrições                                            |
-|-----------------------|--------------|---------------------------------------------------------------------------|------------------------|----------|--------------------------------------------------------------|
-| `id_localizacao`      | SERIAL       | Identificador único para cada localização.                                | não                    | PK       |                                                              |
-| `andar`               | INTEGER      | Número do andar onde a localização se encontra.                           | não                    |          |                                                              |
-| `descricao`           | VARCHAR      | Breve descrição da localização.                                           | não                    |          |                                                              |
-| `estacao`             | tipo_estacao | Estação do ano predominante na localização.                               | não                    |          |                                                              |
-| `localizacao_anterior`| INTEGER      | Referência à localização anterior no jogo.                                | sim                    | FK       | FK para `Localizacao(id_localizacao)`                         |
-| `localizacao_posterior`| INTEGER     | Referência à localização posterior no jogo.                               | sim                    | FK       | FK para `Localizacao(id_localizacao)`                         |
+Antes de descrever as entidades, aqui estão os tipos ENUM definidos:
 
-**Observação**: Esta entidade organiza as diferentes localizações do jogo, permitindo a criação de um mapa ou labirinto.
+- **`tipo_sala`**: 'Comum', 'Boss'
+- **`status_missao`**: 'Em andamento', 'Concluida'
+- **`passiva_boss`**: 'Vida', 'Defesa', 'Ataque'
+- **`nome_classe`**: 'Assassino', 'Mago', 'Tanque', 'Espadachim'
+- **`atributo`**: 'Vida', 'Defesa', 'Ataque', 'Magia'
+- **`tipo_decisao`**: 'Aceitar', 'Ignorar'
+- **`tipo_estacao`**: 'Outono', 'Inverno', 'Primavera', 'Verao'
+- **`tipo_item`**: 'Consumivel', 'Arma'
+- **`tipo_efeito`**: 'Ataque', 'Magia', 'Cura', 'Defesa'
 
-### Entidade: `Sala`
+---
 
-| Nome Variável      | Tipo         | Descrição                                                                 | Permite valores nulos? | É chave? | Outras Restrições                                            |
-|--------------------|--------------|---------------------------------------------------------------------------|------------------------|----------|--------------------------------------------------------------|
-| `id_sala`          | SERIAL       | Identificador único para cada sala.                                       | não                    | PK       |                                                              |
-| `nome`             | VARCHAR      | Nome da sala.                                                             | não                    |          |                                                              |
-| `tipo`             | tipo_sala    | Tipo da sala, indicando se é uma sala comum ou de chefão (Boss).          | não                    |          |                                                              |
-| `sala_anterior`    | INTEGER      | Referência à sala anterior.                                               | sim                    | FK       | FK para `Sala(id_sala)`                                       |
-| `sala_posterior`   | INTEGER      | Referência à sala posterior.                                              | sim                    | FK       | FK para `Sala(id_sala)`                                       |
-| `id_localizacao`   | INTEGER      | Referência à localização onde a sala está situada.                        | não                    | FK       | FK para `Localizacao(id_localizacao)`                         |
+### **Entidade: `Localizacao`**
 
-**Observação**: A entidade Sala está vinculada a uma Localização e permite a criação de desafios e progressão dentro de cada andar ou área.
+| Nome Variável           | Tipo           | Descrição                                             | Permite Nulos? | Chave  | Restrições                                           |
+|-------------------------|----------------|-------------------------------------------------------|----------------|--------|------------------------------------------------------|
+| `id_localizacao`        | SERIAL         | Identificador único da localização                    | Não            | PK     |                                                      |
+| `andar`                 | INTEGER        | Número do andar da localização                        | Não            |        | Valor mínimo 0                                       |
+| `descricao`             | VARCHAR        | Descrição da localização                              | Não            |        |                                                      |
+| `estacao`               | tipo_estacao   | Estação predominante na localização                   | Não            |        |                                                      |
+| `localizacao_anterior`  | INTEGER        | Referência à localização anterior                     | Sim            | FK     | FK para `Localizacao(id_localizacao)`                |
+| `localizacao_posterior` | INTEGER        | Referência à localização posterior                    | Sim            | FK     | FK para `Localizacao(id_localizacao)`                |
 
-### Entidade: `Item`
+---
 
-| Nome Variável      | Tipo         | Descrição                                                                 | Permite valores nulos? | É chave? | Outras Restrições                                            |
-|--------------------|--------------|---------------------------------------------------------------------------|------------------------|----------|--------------------------------------------------------------|
-| `id_item`          | SERIAL       | Identificador único para cada item.                                       | não                    | PK       |                                                              |
-| `nome`             | VARCHAR      | Nome do item.                                                             | não                    |          |                                                              |
-| `tipo`             | tipo_item    | Tipo de item, categorizando como consumível ou arma.                      | não                    |          |                                                              |
-| `descricao`        | VARCHAR      | Descrição detalhada do item.                                              | não                    |          |                                                              |
-| `buff`             | INTEGER      | Valor de aumento de atributo fornecido pelo item.                         | não                    |          |                                                              |
-| `efeito`           | tipo_efeito  | Efeito causado pelo item ao ser utilizado.                                | não                    |          |                                                              |
+### **Entidade: `Sala`**
 
-**Observação**: A entidade Item é essencial para definir os recursos que os jogadores podem usar ou equipar ao longo do jogo.
+| Nome Variável    | Tipo         | Descrição                                           | Permite Nulos? | Chave  | Restrições                                           |
+|------------------|--------------|-----------------------------------------------------|----------------|--------|------------------------------------------------------|
+| `id_sala`        | SERIAL       | Identificador único da sala                         | Não            | PK     |                                                      |
+| `nome`           | VARCHAR      | Nome da sala                                        | Não            |        |                                                      |
+| `tipo`           | tipo_sala    | Tipo da sala ('Comum' ou 'Boss')                    | Não            |        |                                                      |
+| `sala_anterior`  | INTEGER      | Referência à sala anterior                          | Sim            | FK     | FK para `Sala(id_sala)`                              |
+| `sala_posterior` | INTEGER      | Referência à sala posterior                         | Sim            | FK     | FK para `Sala(id_sala)`                              |
+| `id_localizacao` | INTEGER      | Referência à localização da sala                    | Não            | FK     | FK para `Localizacao(id_localizacao)`                |
 
-### Entidade: `Inventario`
+---
 
-| Nome Variável      | Tipo         | Descrição                                                                 | Permite valores nulos? | É chave? | Outras Restrições                                            |
-|--------------------|--------------|---------------------------------------------------------------------------|------------------------|----------|--------------------------------------------------------------|
-| `id_inventario`    | SERIAL       | Identificador único para cada inventário.                                 | não                    | PK       |                                                              |
-| `qnt_max`          | INTEGER      | Quantidade máxima de itens que o inventário pode armazenar.               | não                    |          |                                                              |
+### **Entidade: `Instancia_Sala`**
 
-**Observação**: O inventário é usado para gerenciar os itens coletados pelos jogadores, com uma restrição de quantidade máxima.
+| Nome Variável       | Tipo    | Descrição                                               | Permite Nulos? | Chave  | Restrições                                           |
+|---------------------|---------|---------------------------------------------------------|----------------|--------|------------------------------------------------------|
+| `id_instancia_sala` | SERIAL  | Identificador único da instância de sala                | Não            | PK     |                                                      |
+| `id_sala`           | INTEGER | Referência à sala base                                  | Não            | FK     | FK para `Sala(id_sala)`                              |
+| `sala_anterior`     | INTEGER | Referência à instância de sala anterior                 | Sim            | FK     | FK para `Instancia_Sala(id_instancia_sala)`          |
+| `sala_posterior`    | INTEGER | Referência à instância de sala posterior                | Sim            | FK     | FK para `Instancia_Sala(id_instancia_sala)`          |
 
-### Entidade: `Inventario_Item`
+---
 
-| Nome Variável      | Tipo         | Descrição                                                                 | Permite valores nulos? | É chave? | Outras Restrições                                            |
-|--------------------|--------------|---------------------------------------------------------------------------|------------------------|----------|--------------------------------------------------------------|
-| `id_inventario`    | INTEGER      | Referência ao inventário.                                                 | não                    | FK, PK   | FK para `Inventario(id_inventario)`                           |
-| `id_item`          | INTEGER      | Referência ao item contido no inventário.                                 | não                    | FK, PK   | FK para `Item(id_item)`                                       |
+### **Entidade: `Item`**
 
-**Observação**: Relaciona inventários a itens, permitindo que múltiplos itens sejam atribuídos a um único inventário.
+| Nome Variável | Tipo         | Descrição                                           | Permite Nulos? | Chave  | Restrições                                           |
+|---------------|--------------|-----------------------------------------------------|----------------|--------|------------------------------------------------------|
+| `id_item`     | SERIAL       | Identificador único do item                         | Não            | PK     |                                                      |
+| `nome`        | VARCHAR      | Nome do item                                        | Não            |        |                                                      |
+| `tipo`        | tipo_item    | Tipo do item ('Consumivel' ou 'Arma')               | Não            |        |                                                      |
+| `descricao`   | VARCHAR      | Descrição do item                                   | Não            |        |                                                      |
+| `buff`        | INTEGER      | Valor de buff proporcionado pelo item               | Não            |        | Valor mínimo 0                                       |
+| `efeito`      | tipo_efeito  | Efeito do item ('Ataque', 'Magia', 'Cura', 'Defesa')| Não            |        |                                                      |
 
-### Entidade: `Inimigo`
+---
 
-| Nome Variável      | Tipo         | Descrição                                                                 | Permite valores nulos? | É chave? | Outras Restrições                                            |
-|--------------------|--------------|---------------------------------------------------------------------------|------------------------|----------|--------------------------------------------------------------|
-| `id_inimigo`       | SERIAL       | Identificador único para cada inimigo.                                    | não                    | PK       |                                                              |
-| `nome`             | VARCHAR      | Nome do inimigo.                                                          | não                    |          |                                                              |
-| `ataque`           | INTEGER      | Valor de ataque do inimigo.                                               | não                    |          |                                                              |
-| `defesa`           | INTEGER      | Valor de defesa do inimigo.                                               | não                    |          |                                                              |
-| `item_drop`        | INTEGER      | Referência ao item que o inimigo deixa cair ao ser derrotado.             | não                    | FK       | FK para `Item(id_item)`                                       |
+### **Entidade: `Inventario`**
 
-**Observação**: A entidade Inimigo define os oponentes que os jogadores encontram no jogo, incluindo os itens que podem ser obtidos ao derrotá-los.
+| Nome Variável  | Tipo    | Descrição                                         | Permite Nulos? | Chave  | Restrições                         |
+|----------------|---------|---------------------------------------------------|----------------|--------|------------------------------------|
+| `id_inventario`| SERIAL  | Identificador único do inventário                 | Não            | PK     |                                    |
+| `qnt_max`      | INTEGER | Quantidade máxima de itens no inventário          | Não            |        | Valor mínimo 1                     |
 
-### Entidade: `Boss`
+---
 
-| Nome Variável      | Tipo         | Descrição                                                                 | Permite valores nulos? | É chave? | Outras Restrições                                            |
-|--------------------|--------------|---------------------------------------------------------------------------|------------------------|----------|--------------------------------------------------------------|
-| `id_boss`          | SERIAL       | Identificador único para cada chefe.                                      | não                    | PK       |                                                              |
-| `passiva`          | passiva_boss | Habilidade passiva associada ao chefe.                                    | não                    |          |                                                              |
-| `id_inimigo`       | INTEGER      | Referência ao inimigo básico que forma a base para o chefe.               | não                    | FK       | FK para `Inimigo(id_inimigo)`                                 |
-| `buff`             | INTEGER      | Valor de buff adicional dado ao chefe.                                    | não                    |          |                                                              |
+### **Entidade: `Inventario_Item`**
 
-**Observação**: A entidade Boss é uma especialização de Inimigo, com habilidades e atributos adicionais que tornam o combate mais desafiador.
+| Nome Variável        | Tipo    | Descrição                                         | Permite Nulos? | Chave  | Restrições                                         |
+|----------------------|---------|---------------------------------------------------|----------------|--------|----------------------------------------------------|
+| `id_inventario_item` | SERIAL  | Identificador único da relação inventário-item    | Não            | PK     |                                                    |
+| `id_inventario`      | INTEGER | Referência ao inventário                          | Não            | FK     | FK para `Inventario(id_inventario)`                |
+| `id_item`            | INTEGER | Referência ao item                                | Não            | FK     | FK para `Item(id_item)`                            |
 
-### Entidade: `Mob`
+---
 
-| Nome Variável      | Tipo         | Descrição                                                                 | Permite valores nulos? | É chave? | Outras Restrições                                            |
-|--------------------|--------------|---------------------------------------------------------------------------|------------------------|----------|--------------------------------------------------------------|
-| `id_mob`           | SERIAL       | Identificador único para cada mob (monstro básico).                       | não                    | PK       |                                                              |
-| `id_inimigo`       |
+### **Entidade: `Missao`**
 
- INTEGER      | Referência ao inimigo básico que forma a base para o mob.                 | não                    | FK       | FK para `Inimigo(id_inimigo)`                                 |
+| Nome Variável   | Tipo    | Descrição                                         | Permite Nulos? | Chave  | Restrições                         |
+|-----------------|---------|---------------------------------------------------|----------------|--------|------------------------------------|
+| `id_missao`     | SERIAL  | Identificador único da missão                     | Não            | PK     |                                    |
+| `nome`          | VARCHAR | Nome da missão                                    | Não            |        |                                    |
+| `descricao`     | VARCHAR | Descrição detalhada da missão                     | Não            |        |                                    |
+| `recompensa_xp` | INTEGER | Recompensa em XP por concluir a missão            | Não            |        | Valor mínimo 0                     |
 
-**Observação**: Mob representa inimigos comuns e mais fáceis, encontrados em grande quantidade no jogo.
+---
 
-### Entidade: `Instancia_Inimigo`
+### **Entidade: `Inimigo`**
 
-| Nome Variável      | Tipo         | Descrição                                                                 | Permite valores nulos? | É chave? | Outras Restrições                                            |
-|--------------------|--------------|---------------------------------------------------------------------------|------------------------|----------|--------------------------------------------------------------|
-| `id_instancia`     | SERIAL       | Identificador único para cada instância de um inimigo em uma sala.        | não                    | PK       |                                                              |
-| `id_inimigo`       | INTEGER      | Referência ao inimigo instanciado.                                        | não                    | FK       | FK para `Inimigo(id_inimigo)`                                 |
-| `id_sala`          | INTEGER      | Referência à sala onde o inimigo está localizado.                         | não                    | FK       | FK para `Sala(id_sala)`                                       |
+| Nome Variável | Tipo    | Descrição                                         | Permite Nulos? | Chave  | Restrições                                         |
+|---------------|---------|---------------------------------------------------|----------------|--------|----------------------------------------------------|
+| `id_inimigo`  | SERIAL  | Identificador único do inimigo                    | Não            | PK     |                                                    |
+| `nome`        | VARCHAR | Nome do inimigo                                   | Não            |        |                                                    |
+| `ataque`      | INTEGER | Valor de ataque do inimigo                        | Não            |        | Valor mínimo 0                                     |
+| `defesa`      | INTEGER | Valor de defesa do inimigo                        | Não            |        | Valor mínimo 0                                     |
+| `item_drop`   | INTEGER | Referência ao item que o inimigo pode dropar      | Não            | FK     | FK para `Item(id_item)`                            |
+| `xp`          | INTEGER | XP concedido ao derrotar o inimigo                | Não            |        | Valor mínimo 0                                     |
 
-**Observação**: Cada instância representa uma ocorrência única de um inimigo em uma sala específica.
+---
 
-### Entidade: `NPC`
+### **Entidade: `Boss`**
 
-| Nome Variável      | Tipo         | Descrição                                                                 | Permite valores nulos? | É chave? | Outras Restrições                                            |
-|--------------------|--------------|---------------------------------------------------------------------------|------------------------|----------|--------------------------------------------------------------|
-| `id_npc`           | SERIAL       | Identificador único para cada NPC (Personagem Não Jogável).               | não                    | PK       |                                                              |
-| `nome`             | VARCHAR      | Nome do NPC.                                                              | não                    |          |                                                              |
-| `funcao`           | VARCHAR      | Função desempenhada pelo NPC (vendedor, guia, etc.).                      | não                    |          |                                                              |
-| `id_sala`          | INTEGER      | Referência à sala onde o NPC está localizado.                             | não                    | FK       | FK para `Sala(id_sala)`                                       |
+| Nome Variável | Tipo         | Descrição                                         | Permite Nulos? | Chave  | Restrições                                         |
+|---------------|--------------|---------------------------------------------------|----------------|--------|----------------------------------------------------|
+| `id_boss`     | SERIAL       | Identificador único do boss                       | Não            | PK     |                                                    |
+| `passiva`     | passiva_boss | Habilidade passiva do boss                        | Não            |        |                                                    |
+| `id_inimigo`  | INTEGER      | Referência ao inimigo base do boss                | Não            | FK     | FK para `Inimigo(id_inimigo)`                      |
+| `buff`        | INTEGER      | Valor de buff adicional do boss                   | Não            |        | Valor mínimo 0                                     |
 
-**Observação**: NPCs são personagens que interagem com jogadores, oferecendo missões, itens, ou informações.
+---
 
-### Entidade: `Missao`
+### **Entidade: `Mob`**
 
-| Nome Variável      | Tipo         | Descrição                                                                 | Permite valores nulos? | É chave? | Outras Restrições                                            |
-|--------------------|--------------|---------------------------------------------------------------------------|------------------------|----------|--------------------------------------------------------------|
-| `id_missao`        | SERIAL       | Identificador único para cada missão.                                     | não                    | PK       |                                                              |
-| `nome`             | VARCHAR      | Nome da missão.                                                           | não                    |          |                                                              |
-| `descricao`        | VARCHAR      | Descrição detalhada da missão.                                            | não                    |          |                                                              |
-| `recompensa_xp`    | INTEGER      | Pontos de experiência (XP) dados como recompensa ao completar a missão.   | não                    |          |                                                              |
-| `status`           | status_missao| Status atual da missão (em andamento, concluída).                         | não                    |          |                                                              |
+| Nome Variável | Tipo    | Descrição                                         | Permite Nulos? | Chave  | Restrições                                         |
+|---------------|---------|---------------------------------------------------|----------------|--------|----------------------------------------------------|
+| `id_mob`      | SERIAL  | Identificador único do mob                        | Não            | PK     |                                                    |
+| `id_inimigo`  | INTEGER | Referência ao inimigo base do mob                 | Não            | FK     | FK para `Inimigo(id_inimigo)`                      |
 
-**Observação**: Missões são desafios ou tarefas que os jogadores podem completar para ganhar recompensas.
+---
 
-### Entidade: `Classe`
+### **Entidade: `Instancia_Inimigo`**
 
-| Nome Variável      | Tipo         | Descrição                                                                 | Permite valores nulos? | É chave? | Outras Restrições                                            |
-|--------------------|--------------|---------------------------------------------------------------------------|------------------------|----------|--------------------------------------------------------------|
-| `id_classe`        | SERIAL       | Identificador único para cada classe de personagem.                       | não                    | PK       |                                                              |
-| `nome`             | nome_classe  | Nome da classe (Assassino, Mago, etc.).                                   | não                    |          |                                                              |
-| `descricao`        | VARCHAR      | Descrição da classe e suas especializações.                               | não                    |          |                                                              |
-| `atributo_melhorado`| atributo    | Atributo principal melhorado pela classe (ataque, magia, etc.).           | não                    |          |                                                              |
-| `buff`             | INTEGER      | Buff ou melhoria adicional concedida pela classe.                         | não                    |          |                                                              |
+| Nome Variável  | Tipo    | Descrição                                         | Permite Nulos? | Chave  | Restrições                                            |
+|----------------|---------|---------------------------------------------------|----------------|--------|-------------------------------------------------------|
+| `id_instancia` | SERIAL  | Identificador único da instância do inimigo       | Não            | PK     |                                                       |
+| `vida`         | INTEGER | Vida atual da instância do inimigo                | Não            |        | Valor mínimo 0                                        |
+| `sala_atual`   | INTEGER | Referência à instância de sala onde o inimigo está| Não            | FK     | FK para `Instancia_Sala(id_instancia_sala)`           |
+| `id_inimigo`   | INTEGER | Referência ao inimigo base                        | Não            | FK     | FK para `Inimigo(id_inimigo)`                         |
 
-**Observação**: Define as classes disponíveis para os jogadores, cada uma com atributos e habilidades únicas.
+---
 
-### Entidade: `Jogador`
+### **Entidade: `Missao_Inimigo`**
 
-| Nome Variável      | Tipo         | Descrição                                                                 | Permite valores nulos? | É chave? | Outras Restrições                                            |
-|--------------------|--------------|---------------------------------------------------------------------------|------------------------|----------|--------------------------------------------------------------|
-| `id_jogador`       | SERIAL       | Identificador único para cada jogador.                                    | não                    | PK       |                                                              |
-| `xp`               | INTEGER      | Pontos de experiência acumulados pelo jogador.                            | não                    |          |                                                              |
-| `nivel`            | INTEGER      | Nível atual do jogador.                                                   | não                    |          |                                                              |
-| `defesa`           | INTEGER      | Valor de defesa do jogador.                                               | não                    |          |                                                              |
-| `magia`            | INTEGER      | Valor de magia do jogador.                                                | não                    |          |                                                              |
-| `ataque`           | INTEGER      | Valor de ataque do jogador.                                               | não                    |          |                                                              |
-| `vida`             | INTEGER      | Pontos de vida do jogador.                                                | não                    |          |                                                              |
-| `nome`             | VARCHAR      | Nome do jogador.                                                          | não                    |          |                                                              |
-| `inventario`       | INTEGER      | Referência ao inventário do jogador.                                      | não                    | FK       | FK para `Inventario(id_inventario)`                           |
-| `item_atual`       | INTEGER      | Referência ao item atualmente equipado pelo jogador.                      | não                    | FK       | FK para `Item(id_item)`                                       |
-| `classe`           | INTEGER      | Referência à classe do jogador.                                           | não                    | FK       | FK para `Classe(id_classe)`                                   |
-| `sala_atual`       | INTEGER      | Referência à sala onde o jogador está atualmente.                         | não                    | FK       | FK para `Sala(id_sala)`                                       |
+| Nome Variável | Tipo    | Descrição                                         | Permite Nulos? | Chave   | Restrições                                         |
+|---------------|---------|---------------------------------------------------|----------------|---------|----------------------------------------------------|
+| `id_missao`   | INTEGER | Referência à missão                               | Não            | PK, FK  | FK para `Missao(id_missao)`                        |
+| `id_inimigo`  | INTEGER | Referência ao inimigo                             | Não            | PK, FK  | FK para `Inimigo(id_inimigo)`                      |
+| `quantidade`  | INTEGER | Quantidade do inimigo necessária para a missão    | Não            |         | Valor mínimo 1                                     |
 
-**Observação**: Esta entidade armazena as principais informações sobre os jogadores, incluindo seus atributos, classe e progresso.
+---
 
-### Entidade: `Batalha`
+### **Entidade: `NPC`**
 
-| Nome Variável      | Tipo         | Descrição                                                                 | Permite valores nulos? | É chave? | Outras Restrições                                            |
-|--------------------|--------------|---------------------------------------------------------------------------|------------------------|----------|--------------------------------------------------------------|
-| `id_batalha`       | SERIAL       | Identificador único para cada batalha.                                    | não                    | PK       |                                                              |
-| `venceu`           | BOOLEAN      | Indicador se o jogador venceu a batalha.                                  | não                    |          |                                                              |
-| `id_instancia`     | INTEGER      | Referência à instância do inimigo combatido.                              | não                    | FK       | FK para `Instancia_Inimigo(id_instancia)`                     |
-| `id_jogador`       | INTEGER      | Referência ao jogador envolvido na batalha.                               | não                    | FK       | FK para `Jogador(id_jogador)`                                 |
+| Nome Variável | Tipo    | Descrição                                         | Permite Nulos? | Chave  | Restrições                                         |
+|---------------|---------|---------------------------------------------------|----------------|--------|----------------------------------------------------|
+| `id_npc`      | SERIAL  | Identificador único do NPC                        | Não            | PK     |                                                    |
+| `profissao`   | VARCHAR | Profissão do NPC                                  | Não            |        |                                                    |
+| `nome`        | VARCHAR | Nome do NPC                                       | Não            |        |                                                    |
+| `fala`        | VARCHAR | Fala padrão do NPC                                | Não            |        |                                                    |
+| `item_drop`   | INTEGER | Referência ao item que o NPC pode fornecer        | Sim            | FK     | FK para `Item(id_item)`                            |
+| `missao`      | INTEGER | Referência à missão oferecida pelo NPC            | Sim            | FK     | FK para `Missao(id_missao)`                        |
 
-**Observação**: Registra os detalhes das batalhas entre jogadores e inimigos, incluindo o resultado e as instâncias envolvidas.
+---
 
-### Entidade: `Dialogo`
+### **Entidade: `Instancia_NPC`**
 
-| Nome Variável      | Tipo         | Descrição                                                                 | Permite valores nulos? | É chave? | Outras Restrições                                            |
-|--------------------|--------------|---------------------------------------------------------------------------|------------------------|----------|--------------------------------------------------------------|
-| `id_dialogo`       | SERIAL       | Identificador único para cada diálogo.                                    | não                    | PK       |                                                              |
-| `decisao`          | tipo_decisao | Decisão tomada pelo jogador durante o diálogo.                            | não                    |          |                                                              |
-| `id_npc`           | INTEGER      | Referência ao NPC com quem o jogador interagiu.                           | não                    | FK       | FK para `NPC(id_npc)`                                         |
-| `id_jogador`       | INTEGER      | Referência ao jogador participante do diálogo.                            | não                    | FK       | FK para `Jogador(id_jogador)`                                 |
+| Nome Variável       | Tipo     | Descrição                                         | Permite Nulos? | Chave  | Restrições                                         |
+|---------------------|----------|---------------------------------------------------|----------------|--------|----------------------------------------------------|
+| `id_instancia_npc`  | SERIAL   | Identificador único da instância do NPC           | Não            | PK     |                                                    |
+| `sala_atual`        | INTEGER  | Referência à instância de sala onde o NPC está    | Não            | FK     | FK para `Instancia_Sala(id_instancia_sala)`        |
+| `id_npc`            | INTEGER  | Referência ao NPC base                            | Não            | FK     | FK para `NPC(id_npc)`                              |
+| `interagiu_jogador` | BOOLEAN  | Indica se o jogador já interagiu com o NPC        | Não            |        | Valor padrão: FALSE                                |
 
-**Observação**: Registra as interações e decisões tomadas em diálogos entre jogadores e NPCs.
+---
 
-### Entidade: `Jogador_Missao`
+### **Entidade: `Classe`**
 
-| Nome Variável      | Tipo         | Descrição                                                                 | Permite valores nulos? | É chave? | Outras Restrições                                            |
-|--------------------|--------------|---------------------------------------------------------------------------|------------------------|----------|--------------------------------------------------------------|
-| `id_jogador`       | INTEGER      | Referência ao jogador.                                                    | não                    | FK, PK   | FK para `Jogador(id_jogador)`                                 |
-| `id_missao`        | INTEGER      | Referência à missão atribuída ao jogador.                                 | não                    | FK, PK   | FK para `Missao(id_missao)`                                   |
+| Nome Variável       | Tipo          | Descrição                                         | Permite Nulos? | Chave  | Restrições                                         |
+|---------------------|---------------|---------------------------------------------------|----------------|--------|----------------------------------------------------|
+| `id_classe`         | SERIAL        | Identificador único da classe                     | Não            | PK     |                                                    |
+| `nome`              | nome_classe   | Nome da classe ('Assassino', 'Mago', etc.)        | Não            |        |                                                    |
+| `descricao`         | VARCHAR       | Descrição da classe                               | Não            |        |                                                    |
+| `atributo_melhorado`| atributo      | Atributo aprimorado pela classe                   | Não            |        |                                                    |
+| `buff`              | INTEGER       | Valor de buff concedido pela classe               | Não            |        | Valor mínimo 0                                     |
 
-**Observação**: Relaciona jogadores às missões que eles aceitam e completam durante o jogo.
+---
 
+### **Entidade: `Jogador`**
+
+| Nome Variável   | Tipo          | Descrição                                         | Permite Nulos? | Chave  | Restrições                                         |
+|-----------------|---------------|---------------------------------------------------|----------------|--------|----------------------------------------------------|
+| `id_jogador`    | SERIAL        | Identificador único do jogador                    | Não            | PK     |                                                    |
+| `xp`            | INTEGER       | Pontos de experiência do jogador                  | Não            |        | Valor mínimo 0                                     |
+| `nivel`         | INTEGER       | Nível atual do jogador                            | Não            |        | Valor mínimo 1                                     |
+| `defesa`        | INTEGER       | Valor de defesa do jogador                        | Não            |        | Valor mínimo 0                                     |
+| `magia`         | INTEGER       | Valor de magia do jogador                         | Não            |        | Valor mínimo 0                                     |
+| `ataque`        | INTEGER       | Valor de ataque do jogador                        | Não            |        | Valor mínimo 0                                     |
+| `vida`          | INTEGER       | Vida atual do jogador                             | Não            |        | Valor mínimo 1                                     |
+| `nome`          | VARCHAR       | Nome do jogador                                   | Não            |        |                                                    |
+| `inventario`    | INTEGER       | Referência ao inventário do jogador               | Não            | FK     | FK para `Inventario(id_inventario)`                |
+| `item_atual`    | INTEGER       | Referência ao item atualmente equipado            | Sim            | FK     | FK para `Item(id_item)`                            |
+| `classe`        | INTEGER       | Referência à classe do jogador                    | Não            | FK     | FK para `Classe(id_classe)`                        |
+| `sala_atual`    | INTEGER       | Referência à instância de sala atual              | Sim            | FK     | FK para `Instancia_Sala(id_instancia_sala)`        |
+
+---
+
+### **Entidade: `Batalha`**
+
+| Nome Variável  | Tipo     | Descrição                                         | Permite Nulos? | Chave  | Restrições                                         |
+|----------------|----------|---------------------------------------------------|----------------|--------|----------------------------------------------------|
+| `id_batalha`   | SERIAL   | Identificador único da batalha                    | Não            | PK     |                                                    |
+| `venceu`       | BOOLEAN  | Indica se o jogador venceu a batalha              | Não            |        |                                                    |
+| `id_instancia` | INTEGER  | Referência à instância do inimigo                 | Não            | FK     | FK para `Instancia_Inimigo(id_instancia)`          |
+| `id_jogador`   | INTEGER  | Referência ao jogador                             | Não            | FK     | FK para `Jogador(id_jogador)`                      |
+
+---
+
+Claro! Aqui está a tabela `Dialogo` e a tabela `Jogador_Missao` no formato desejado:
+
+### **Entidade: `Dialogo`**
+
+| Nome Variável        | Tipo          | Descrição                                         | Permite Nulos? | Chave  | Restrições                                         |
+|----------------------|---------------|---------------------------------------------------|----------------|--------|----------------------------------------------------|
+| `id_dialogo`         | SERIAL        | Identificador único do diálogo                    | Não            | PK     |                                                    |
+| `decisao`            | tipo_decisao  | Verificador da decisão do diálogo                 | Não            |        |                                                    |
+| `id_instancia_npc`   | INTEGER       | Código do NPC no diálogo                          | Não            | FK     |FK para `Instancia NPC` |
+| `id_jogador`         | INTEGER       | Código do jogador no diálogo                      | Não            | FK     |FK para `Jogador(id_jogador)` |
+
+### **Entidade: `Jogador_Missao`**
+
+| Nome Variável        | Tipo          | Descrição                                         | Permite Nulos? | Chave  | Restrições                                         |
+|----------------------|---------------|---------------------------------------------------|----------------|--------|----------------------------------------------------|
+| `id_jogador`         | INTEGER       | Código do jogador na missão                       | Não            | PK     | FK para `Jogador(id_jogador)` |
+| `id_missao`          | INTEGER       | Código da missão                                  | Não            | PK     | FK para `Missao` |
+| `status`             | STATUS_MISSAO | Status da missão para o jogador                   | Não            |        |                                                    |
+
+
+---
 
 ## Histórico de versão
 
 | Versão |    Data    | Descrição                                      | Autor                                               | Revisão                                                      |
 | :----: | :--------: | ---------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------ |
-| `1.0`  | 22/07/2024 | Criação do documento e adicionando conteúdo    | [Henrique Torres](https://github.com/henriqtorresl) | [Douglas Marinho](https://github.com/M4RINH0)                |
-| `2.0`  | 17/08/2024 | Atualizando dicionario baseado na versão 2.0 do DER e MREL    | [Douglas Marinho](https://github.com/M4RINH0) | [Henrique Torres](https://github.com/henriqtorresl)                |
+| 1.0  | 22/07/2024 | Criação do documento e adicionando conteúdo    | [Henrique Torres](https://github.com/henriqtorresl) | [Douglas Marinho](https://github.com/M4RINH0)                |
+| 2.0  | 17/08/2024 | Atualizando dicionario baseado na versão 2.0 do DER e MREL    | [Douglas Marinho](https://github.com/M4RINH0) | [Henrique Torres](https://github.com/henriqtorresl)                |
+| 3.0  | 09/09/2024 | Versão Final DD   | [Douglas Marinho](https://github.com/M4RINH0) | [Henrique Torres](https://github.com/henriqtorresl)                |

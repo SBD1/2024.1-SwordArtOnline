@@ -24,9 +24,20 @@ A seguir na figura 2 temos a versão 2.0 do DER
   <p style="margin-top: -1%; font-size: 12px">Fonte: Douglas Marinho e Henrique Torres</p>
 </div>
 
+A seguir na figura 3 temos a versão Final do DER
+
+<img src= '/docs/images/DER-Final.png' />
+
+<div style="text-align: center">
+  <p>Figura 3: DER Sword Art Online Final</p>
+  <p style="margin-top: -1%; font-size: 12px">Fonte: Douglas Marinho e Henrique Torres</p>
+</div>
+
 ## Histórico de versão
 
 | Versão |    Data    | Descrição                                      | Autor                                               | Revisão                                                      |
 | :----: | :--------: | ---------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------ |
 | `1.0`  | 22/07/2024 | Criação do documento DER                       | [Douglas Marinho](https://github.com/M4RINH0)       | [Henrique Torres](https://github.com/henriqtorresl)          |
 | `2.0`  | 17/08/2024 | Nova Versão DER                       | [Douglas Marinho](https://github.com/M4RINH0)       | [Henrique Torres](https://github.com/henriqtorresl)          |
+| `3.0`  | 09/09/2024 | Versão Final DER                       | [Douglas Marinho](https://github.com/M4RINH0)       | [Henrique Torres](https://github.com/henriqtorresl)          |
+

@@ -71,8 +71,25 @@ Prepare-se para uma aventura intensa e emocionante, onde cada decisão pode sign
   - [Tables ,Stored Procedures, Triggers e Views](./game/src/scripts/ddl.sql)
   - [Inserts](./game/src/scripts/dml.sql)
 
-- Módulo Final
-  - Jogo MUD
+
+## Como Rodar
+
+  1. **Crie o arquivo `.env`:**
+    - Baseie-se no modelo fornecido em `./game/.env.example` para criar o arquivo `.env` na mesma pasta.
+
+  2. **Configure o Docker:**
+    - Certifique-se de que o Docker está em execução.
+    - Execute o script Docker também indicado em `./game/.env.example` para configurar os containers necessários.
+
+  3. **Acesse o diretório do projeto:**
+    - Abra o terminal e navegue até `./game/src`.
+
+  4. **Inicialize o jogo:**
+    - Execute o comando `npm run initialize-game` para configurar o ambiente de jogo.
+
+  5. **Inicie o jogo:**
+    - Use o comando `npm start` para iniciar o jogo.
+
 
 ### Histórico de versões
 
@@ -80,3 +97,4 @@ Prepare-se para uma aventura intensa e emocionante, onde cada decisão pode sign
 | :----: | :--------: | ---------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------ |
 | `1.0`  | 21/07/2024 | Criação do README e enredo | [Douglas Marinho](https://github.com/M4RINH0)  | [Henrique Torres](https://github.com/henriqtorresl)          |
 | `2.0`  | 19/08/2024 | Atualização de links para módulo 2 | [Douglas Marinho](https://github.com/M4RINH0)  | [Henrique Torres](https://github.com/henriqtorresl)          |
+| `3.0`  | 19/08/2024 | Atualização de links para módulo 3 e como rodar| [Douglas Marinho](https://github.com/M4RINH0)  | [Henrique Torres](https://github.com/henriqtorresl)          |
