@@ -8,6 +8,7 @@ const dialogoDatabase = require('../database/dialogo');
 const jogadorDatabase = require('../database/jogador');
 const inimigoDatabase = require('../database/inimigo');
 const batalhaDatabase = require('../database/batalha');
+const missaoDatabase = require('../database/missao');
 const { blueBoldText, cyanBoldText, yellowBoldText, redBoldText, magentaBoldText, greenBoldText } = require('../utils/colors');
 
 // Exibe opções para o jogador e trata a escolha
@@ -289,6 +290,7 @@ const describeCurrentRoom = async (jogador) => {
     setTimeout(async () => {
         const sala = await salaDatabase.getSalaInformations(jogador.sala_atual);
 
+        console.log('\n');
         console.log(
             greenBoldText,
             `Sala: ${sala.nome}`
@@ -323,6 +325,7 @@ const openInventory = async (jogador) => {
     setTimeout(async () => {
         const inventario = await inventarioDatabase.getInventory(jogador.inventario);
 
+        console.log('\n');
         console.log(greenBoldText, '**Inventário**\n');
         console.table([
             {
@@ -411,8 +414,10 @@ const yourInformations = async (jogador) => {
 
     setTimeout(async () => {
         const currentPlayer = await jogadorDatabase.getOne(jogador.id_jogador);
+        const missoes = await missaoDatabase.getMissionsInProgress(jogador.id_jogador);
 
-        console.log(greenBoldText, '**Suas Estatísticas**\n');
+        console.log('\n');
+        console.log(greenBoldText, '**Suas Estatísticas**');
         console.table([
             {
                 Nome: currentPlayer.nome,
@@ -425,6 +430,22 @@ const yourInformations = async (jogador) => {
                 XP: currentPlayer.xp
             }
         ]);
+
+        if (missoes.length > 0) {
+            console.log(greenBoldText, '\n**Missões em Andamento**');
+            const missoesOptions = [];
+
+            for (missao of missoes) {
+                missoesOptions.push({
+                    Nome: missao.nome,
+                    Descrição: missao.descricao,
+                    Recompensa: `${missao.recompensa_xp} pontos de XP`,
+                    Status: missao.status
+                });
+            }
+
+            console.table(missoesOptions);
+        }
 
         if (jogador.item_atual) {
             detailCurrentItem(jogador);
@@ -458,6 +479,7 @@ const detailWeapons = async (jogador) => {
     const itens = await inventarioDatabase.getWeapons(jogador.inventario);
     const itensOptions = [];
 
+    console.log('\n');
     console.log(greenBoldText, '**Armas do seu Inventário**\n');
 
     for (item of itens) {
@@ -542,7 +564,7 @@ const detailWeapons = async (jogador) => {
 const detailCurrentItem = async (jogador) => {
     const currentItem = await jogadorDatabase.getCurrentItem(jogador.id_jogador);
 
-    console.log(greenBoldText, '\n**Item Atual**\n');
+    console.log(greenBoldText, '\n**Item Atual**');
     console.table([
         {
             Nome: currentItem.nome,
@@ -556,6 +578,7 @@ const detailCurrentItem = async (jogador) => {
 const detailConsumableItens = async (jogador) => {
     const itens = await inventarioDatabase.getConsumableItens(jogador.inventario);
     const itensOptions = [];
+    console.log('\n');
     console.log(greenBoldText, '**Itens consumíveis do seu Inventário**\n');
 
     for (item of itens) {
@@ -847,6 +870,7 @@ const battle = async (jogador, inimigo) => {
     clearTerminal(2000);
 
     setTimeout(async () => {
+        console.log('\n');
         console.log(redBoldText, `**Batalha iniciada contra ${inimigo.nome}!**\n`);
 
         // Definir dano mínimo
@@ -947,18 +971,32 @@ const battle = async (jogador, inimigo) => {
 
             // Verificar se o inimigo foi derrotado
             if (vidaInimigo <= 0) {
-                console.log(greenBoldText, `Parabens você derrotou ${inimigo.nome}!`);
+                console.log(cyanBoldText, `Parabens você derrotou ${inimigo.nome}!`);
                 // Criar método que cria uma batalha e um trigger pra deletar uma instancia caso você tenha vencido... 
                 await batalhaDatabase.createBatalha(true, inimigo.id_instancia, jogador.id_jogador);
                 const newItem = await inventarioDatabase.getItemById(inimigo.item_drop);
 
-                console.log(cyanBoldText, '\n**Recompensas**\n')
+                console.log(cyanBoldText, '**Recompensas**\n')
                 console.table([
                     {
                         Item: newItem.nome,
                         XP: `Ganhou mais ${inimigo.xp} de XP`
                     }
                 ]);
+
+                const completedMission = await missaoDatabase.getCompletedMission(jogador.id_jogador, inimigo.id_inimigo);
+
+                if (completedMission) {
+                    console.log(cyanBoldText, '\n**Parabéns você completou uma missão**')
+                    console.log(cyanBoldText, '**Informações**\n')
+                    console.table([
+                        {
+                            Nome: completedMission.nome,
+                            Descrição: completedMission.descricao,
+                            Recompensa_XP: `Ganhou mais ${completedMission.recompensa_xp} de XP`
+                        }
+                    ]);
+                }
 
                 // Mostrar mensagem "Digite 1 para fechar" aqui, sem delay
                 console.log(yellowBoldText, 'Digite 1 para fechar!');
