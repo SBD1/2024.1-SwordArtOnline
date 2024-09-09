@@ -922,6 +922,56 @@ END;
 $$
 LANGUAGE plpgsql;
 
+-- Procedure responsável por verificar se uma missão foi concluída ou não e atualiza-la
+CREATE OR REPLACE FUNCTION atualizarStatusMissao(id_jogador_atual INTEGER, instancia_atual INTEGER)
+RETURNS VOID AS 
+$$ 
+DECLARE 
+	inimigo_missao INTEGER;
+	xp_dropado INTEGER;
+	missao_jogador INTEGER;
+BEGIN 
+	-- Pegando o id do inimigo envolvido na missao
+	SELECT id_inimigo INTO inimigo_missao
+	FROM instancia_inimigo 
+	WHERE id_instancia = instancia_atual;
+		
+	-- Verifica se ainda existe alguma instância viva desse inimigo na missão
+    IF NOT EXISTS (
+        SELECT * FROM instancia_inimigo_missao 
+		WHERE id_jogador = id_jogador_atual 
+		AND id_inimigo = inimigo_missao
+    ) THEN
+        -- Pegando o id da missão que foi concluída
+        SELECT id_missao INTO missao_jogador
+        FROM missao_andamento
+        WHERE id_jogador = id_jogador_atual
+        AND id_inimigo = inimigo_missao;
+
+        IF (missao_jogador IS NULL) THEN
+            RETURN;
+        END IF;
+
+        -- Atualizando o status da missão do jogador
+        UPDATE jogador_missao
+        SET status = 'Concluida'
+        WHERE id_jogador = id_jogador_atual
+        AND id_missao = missao_jogador;
+
+        -- Pegando a recompensa da missão
+        SELECT recompensa_xp INTO xp_dropado
+        FROM missao
+        WHERE id_missao = missao_jogador;
+
+        -- Atribuindo a recompensa da missão para o jogador
+        UPDATE jogador
+        SET xp = xp + xp_dropado
+        WHERE id_jogador = id_jogador_atual;
+    END IF;
+END;
+$$
+LANGUAGE plpgsql;
+
 -----------------------------------------------------------------------------------------
 -- Triggers e stored procedures:
 
@@ -1116,60 +1166,3 @@ AFTER INSERT
 ON batalha
 FOR EACH ROW
 EXECUTE PROCEDURE resultadoBatalha();
-
--- Stored procedure responsável por verificar se uma missão foi concluída ou não
-CREATE OR REPLACE FUNCTION verificarStatusMissao()
-RETURNS TRIGGER AS 
-$$ 
-DECLARE 
-	inimigo_missao INTEGER;
-	xp_dropado INTEGER;
-	missao_jogador INTEGER;
-BEGIN 
-	-- Pegando o id do inimigo envolvido na missao
-	SELECT id_inimigo INTO inimigo_missao
-	FROM instancia_inimigo 
-	WHERE id_instancia = NEW.id_instancia;
-		
-	-- Verifica se ainda existe alguma instância viva desse inimigo na missão
-    IF NOT EXISTS (
-        SELECT * FROM instancia_inimigo_missao 
-		WHERE id_jogador = NEW.id_jogador 
-		AND id_inimigo = inimigo_missao
-    ) THEN
-        -- Pegando o id da missão que foi concluída
-        SELECT id_missao INTO missao_jogador
-        FROM missao_andamento
-        WHERE id_jogador = NEW.id_jogador
-        AND id_inimigo = inimigo_missao;
-
-        -- Atualizando o status da missão do jogador
-        UPDATE jogador_missao
-        SET status = 'Concluida'
-        WHERE id_jogador = NEW.id_jogador
-        AND id_missao = missao_jogador;
-
-        -- Pegando a recompensa da missão
-        SELECT recompensa_xp INTO xp_dropado
-        FROM missao
-        WHERE id_missao = missao_jogador;
-
-        -- Atribuindo a recompensa da missão para o jogador
-        UPDATE jogador
-        SET xp = xp + xp_dropado
-        WHERE id_jogador = NEW.id_jogador;
-
-        RETURN NEW;
-    END IF;
-
-    RETURN NEW;
-END;
-$$
-LANGUAGE plpgsql;
-
--- Trigger responsável por verificar se uma missão foi concluída ou não
-CREATE TRIGGER verificarStatusMissao
-AFTER INSERT
-ON batalha
-FOR EACH ROW
-EXECUTE PROCEDURE verificarStatusMissao();
