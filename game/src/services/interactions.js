@@ -538,6 +538,7 @@ const detailWeapons = async (jogador) => {
 
                             // atualizo o item atual
                             await jogadorDatabase.updateCurrentWeapon(currentItem.id_item, jogador.id_jogador);
+                            jogador.item_atual = currentItem.id_item;
 
                             // Fecho o inventário
                             setTimeout(() => {
